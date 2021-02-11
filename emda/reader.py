@@ -153,7 +153,7 @@ class lammpstrj(reader):
 
     def read_frame(self):
         """
-        reads the actual frame of an .lammpstrj file
+        reads the actual frame of a .lammpstrj file
 
         Returns
         -------

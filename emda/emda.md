@@ -1,15 +1,10 @@
 # like a to do list:
 
-* reader: 
-    * lammpstrj: q, image, qimage
-
 * writer:
-    * frame: xyz, xyz_p, xyz_image, lammpstrj, lammpstrj_q, lammpstrj_i, lammpstr_qi
+    same as reader
 
-* utilities: 
-    * sort_argsort
-
-* peaks: gaussian, lorentzian, voigt
+* utilities:
+    * sort_argsort (sort an array and use the arguments to sort another)
 
 * boundary: pbc, minimum_image
 
