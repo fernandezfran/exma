@@ -3,11 +3,6 @@
 * writer:
     same as reader
 
-* utilities:
-    * sort_argsort (sort an array and use the arguments to sort another)
-
-* boundary: pbc, minimum_image
-
 * system:
     * crystal: sc, bcc, fcc, diamond
 
