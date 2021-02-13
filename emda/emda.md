@@ -1,7 +1,8 @@
 # like a to do list:
 
-* system:
+* box:
     * crystal: sc, bcc, fcc, diamond
+    * random: uniform
 
 * sro: (short range order)
     * warren_cowley

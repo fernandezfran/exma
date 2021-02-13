@@ -1,2 +1,6 @@
 /emda/tester.*
 /emda/__pycache__/
+
+/build/
+/dist/
+/emda.egg-info/
