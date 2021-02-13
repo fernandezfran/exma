@@ -7,12 +7,20 @@
 * sro: (short range order)
     * warren_cowley
 
-* rdf: rdf, rdf_alloy
+* rdf:
+    * rdf
+    * alloy(rdf)
 
-* cn: cn, cn_alloy
+* cn:
+    * cn
+    * alloy(cn)
 
-* msd: uw, wi, uw_element, wi_element
+* msd(self, postype='unwrapped' or 'wrapped_image', element=0, image=[]):
+    if (atom_type != element): continue
 
-* en: effective_neighbours
+* en:
+    effective_neighbours (chevrier)
 
-* adf: adf, adf_alloy
+* adf:
+    * adf
+    * alloy(adf)
