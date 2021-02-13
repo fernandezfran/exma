@@ -1,10 +1,10 @@
 # like a to do list:
 
-* writer:
-    same as reader
-
 * system:
     * crystal: sc, bcc, fcc, diamond
+
+* sro: (short range order)
+    * warren_cowley
 
 * rdf: rdf, rdf_alloy
 
