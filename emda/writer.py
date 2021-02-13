@@ -1,0 +1,219 @@
+import numpy as np
+
+class writer(object):
+    """
+    used to write molecular dynamics trajectory files
+    """
+    pass
+
+class xyz(writer):
+    """
+    subclass of writer that writes xyz file
+    """
+
+
+    def __init__(self, file_xyz, ftype='typical'):
+        """
+        Parameters
+        ----------
+        file_xyz : file
+            where the trajectories in xyz format are going to be written
+
+        ftype : typical, property or image
+            typical if is the usual xyz file
+            property if in the last column there is a property
+            image if in the last three columns there are the image box of the
+                corresponding atom
+        """
+        if ((ftype != 'typical') and (ftype != 'property') and (ftype != 'image')):
+            raise ValueError("ftype must be 'typical', 'property' or 'image'")
+        
+        self.file_xyz = open(file_xyz, "w")
+        self.ftype = ftype
+
+
+    def write_frame(self, natoms, atom_type, positions, prop = [], image = []):
+        """
+        writes the actual frame in an .xyz file
+
+        Parameters
+        ----------
+        natoms : integer
+            the number of atoms in the frame
+        
+        atom_type : list of chars
+            the type of the atoms
+        
+        positions : numpy array with float32 data
+            the positions in the SoA convention
+            i.e. first all the x, then y and then z
+
+        prop : numpy array (could be integer, float, char, etc)
+            if ftype = 'property' was selected
+        
+        image : numpy array with integer data
+            same as positions, if ftype = 'image' was selected 
+        """
+
+        self.file_xyz.write("%d\n\n" % natoms)
+
+        if (self.ftype == 'typical'):
+
+            for i in range(0, natoms):
+
+                self.file_xyz.write("%s\t%g\t%g\t%g\n" % (atom_type[i], \
+                    positions[i], positions[natoms + i], positions[2*natoms + i]))
+
+            return
+
+        elif (self.ftype == 'property'):
+
+            for i in range(0, natoms):
+
+                self.file_xyz.write("%s\t%g\t%g\t%g\t%g\n" % (atom_type[i], \
+                    positions[i], positions[natoms + i], positions[2*natoms + i], \
+                    prop[i]))
+
+            return
+        
+        elif (self.ftype == 'image'):
+            
+            for i in range(0, natoms):
+
+                self.file_xyz.write("%s\t%g\t%g\t%g\t%d  %d  %d\n"%(atom_type[i], \
+                    positions[i], positions[natoms + i], positions[2*natoms + i], \
+                    image[i], image[natoms + i], image[2*natoms + i]))
+
+            return
+                
+
+    def file_close(self):
+        """
+        close the file where the trajectories of the dynamics were written
+        """
+        self.file_xyz.close()
+
+
+class lammpstrj(writer):
+    """
+    subclass of writer that writes lammpstrj file
+    """
+
+
+    def __init__(self, file_lammps, ftype='custom'):
+        """
+        Parameters
+        ----------
+        file_lammps : file
+            where the trajectories of lammps are
+
+        ftype : custom, charge, image, charge_image
+            custom = dump ... custom ... id type x y z
+            charge = dump ... custom ... id type q x y z
+            image = dump ... custom ... id type x y z ix iy iz
+            charge_image = dump ... custom ... id type q x y z ix iy iz
+        """
+        if ((ftype != 'custom') and (ftype != 'charge') and (ftype != 'image') \
+                and (ftype != 'charge_image')):
+            raise ValueError("ftype must be 'custom', 'charge', 'image' or"
+                             "'charge_image'")
+        
+        self.file_lammps = open(file_lammps, "w")
+        self.ftype = ftype
+        self.timestep = 0
+
+
+    def write_frame(self, natoms, box_size, atom_id, atom_type, positions, \
+                    atom_q = [], image = []):
+        """
+        writes the actual frame in a .lammpstrj file
+
+        Parameters
+        ----------
+        natoms : integer
+            the number of atoms in the frame
+       
+        box_size : numpy array
+            with the box lenght in x, y, z
+
+        atom_id : list of integers
+            the id of the respective atom
+        
+        atom_type : list of integers
+            the type of the atoms
+        
+        positions : numpy array with float32 data
+            the positions in the SoA convention
+            i.e. first all the x, then y and then z
+
+        atom_q : numpy array with float32 data
+            the charge of the respective atom, if ftype = 'charge' was selected
+        
+        image : numpy array with integer data
+            same as positions, if ftype = 'image' was selected 
+        """
+        self.file_lammps.write("ITEM: TIMESTEP\n")
+        self.file_lammps.write("%d\n" % self.timestep)
+        self.file_lammps.write("ITEM: NUMBER OF ATOMS\n")
+        self.file_lammps.write("%d\n" % natoms)
+        self.file_lammps.write("ITEM: BOX BOUNDS pp pp pp\n")
+        for i in range(0,3): self.file_lammps.write("0.0\t%g\n" % box_size[i])
+        
+        self.timestep += 1
+
+        if (self.ftype == 'custom'):
+    
+            self.file_lammps.write("ITEM: ATOMS id type x y z\n")
+
+            for i in range(0, natoms):
+
+                self.file_lammps.write("%d %d %g %g %g\n" % (atom_id[i], \
+                    atom_type[i], positions[i], positions[natoms + i], \
+                    positions[2*natoms + i]))
+       
+            return
+
+        elif (self.ftype == 'charge'):
+            
+            self.file_lammps.write("ITEM: ATOMS id type q x y z\n")
+
+            for i in range(0, natoms):
+                
+                self.file_lammps.write("%d %d %g %g %g %g\n" % (atom_id[i], \
+                    atom_type[i], atom_q[i], positions[i], positions[natoms + i], \
+                    positions[2*natoms + i]))
+
+            return
+
+        elif (self.ftype == 'image'):
+
+            self.file_lammps.write("ITEM: ATOMS id type x y z ix iy iz\n")
+
+            for i in range(0, natoms):
+                
+                self.file_lammps.write("%d %d %g %g %g %d %d %d\n" % (atom_id[i], \
+                    atom_type[i], positions[i], positions[natoms + i], \
+                    positions[2*natoms + i], image[i], image[natoms + i], \
+                    image[2*natoms + i]))
+       
+            return
+        
+        elif (self.ftype == 'charge_image'):
+            
+            self.file_lammps.write("ITEM: ATOMS id type q x y z ix iy iz\n")
+
+            for i in range(0, natoms):
+
+                self.file_lammps.write("%d %d %g %g %g %g %d %d %d\n"%(atom_id[i],\
+                    atom_type[i], atom_q[i], positions[i], positions[natoms + i], \
+                    positions[2*natoms + i], image[i], image[natoms + i], \
+                    image[2*natoms + i]))
+
+            return
+
+
+    def file_close(self):
+        """
+        close the file where the trajectories of the dynamics are
+        """
+        self.file_lammps.close()
