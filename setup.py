@@ -7,7 +7,7 @@ from setuptools import find_packages, setup
 with open('README.md') as file_readme:
     readme = file_readme.read()
 
-requirements = ['numpy', 'pandas']
+requirements = ['numpy', 'pandas', 'itertools']
 
 setup(
     name='emda',
@@ -22,4 +22,14 @@ setup(
     install_requires=requirements,
     setup_requires=requirements,
     keywords=['emda', 'molecular-dynamics', 'data-analysis']
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Intended Audience :: Science/Research',
+        'License :: OSI Approved :: MIT License',
+        'Natural Language :: English',
+        'Operating System :: OS Independent',
+        #'Programming Language :: C'
+        'Programming Language :: Python',
+        'Topic :: Scientific/Engineering'
+    ]
 )

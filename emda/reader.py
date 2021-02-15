@@ -4,13 +4,11 @@ class reader(object):
     """
     used to read molecular dynamics trajectory files
     """
-    pass
 
 class xyz(reader):
     """
     subclass of reader that reads xyz file
     """
-
 
     def __init__(self, file_xyz, ftype='typical'):
         """
@@ -127,7 +125,6 @@ class lammpstrj(reader):
     """
     subclass of reader that reads lammpstrj file
     """
-
 
     def __init__(self, file_lammps, ftype='custom'):
         """
