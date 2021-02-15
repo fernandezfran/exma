@@ -5,7 +5,6 @@ class statistics:
     """
     class with statistical calculations of interest
     """
-    pass
 
 
 class block_average(statistics):
@@ -15,7 +14,6 @@ class block_average(statistics):
     
     (H. Flyvbjerg and H. G. Petersen: Averages of correlated data (1989))
     """
-
 
     def __init__(self, file_data, column, comment='#', dtype=np.float32):
         """

@@ -2,14 +2,12 @@ class boundary:
     """
     boundary conditions
     """
-    pass
 
 
 class apply(boundary):
     """
     apply some boundary condition
     """
-
 
     def __init__(self, box_size):
         """

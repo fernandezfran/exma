@@ -4,13 +4,12 @@ class writer(object):
     """
     used to write molecular dynamics trajectory files
     """
-    pass
+
 
 class xyz(writer):
     """
     subclass of writer that writes xyz file
     """
-
 
     def __init__(self, file_xyz, ftype='typical'):
         """
@@ -98,7 +97,6 @@ class lammpstrj(writer):
     """
     subclass of writer that writes lammpstrj file
     """
-
 
     def __init__(self, file_lammps, ftype='custom'):
         """
