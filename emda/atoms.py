@@ -9,7 +9,7 @@ class atoms:
 
 class positions(atoms):
     """
-    define the positions of the atoms in a lattice or random
+    define the positions of the atoms in a lattice
     """
     
     def __init__(self, natoms, box_size):
@@ -21,6 +21,9 @@ class positions(atoms):
 
         box_size : float
             box size in each direction (cubic)
+
+        the density is defined by the parameters:
+            rho = natoms / (box_size^3)
         """
         self.natoms = natoms
         self.box_size = box_size
@@ -28,7 +31,7 @@ class positions(atoms):
 
     def sc(self):
         """
-        simple cubic (note that density will be np.cbrt(natoms)/box_size)
+        simple cubic
         """
         nside = np.cbrt(self.natoms, dtype=np.float32)
         tmp = np.intc(nside)
@@ -47,10 +50,9 @@ class positions(atoms):
 
     def bcc(self):
         """
-        body-centered cubic (note that density will be 
-                             np.cbrt(natoms/2)/box_size)
+        body-centered cubic 
         """
-        nside = np.cbrt(0.5 * self.natoms, dtype=np.float32)
+        nside = np.cbrt(self.natoms / 2, dtype=np.float32)
         tmp = np.intc(nside)
         if (nside % tmp != 0): raise ValueError(
             "Number of atoms must be a power of three multiplied by two"
@@ -71,10 +73,9 @@ class positions(atoms):
 
     def fcc(self):
         """
-        face-centered cubic (note that density will be 
-                             np.cbrt(natoms/4)/box_size)
+        face-centered cubic
         """
-        nside = np.cbrt(0.25 * self.natoms, dtype=np.float32)
+        nside = np.cbrt(self.natoms / 4, dtype=np.float32)
         tmp = np.intc(nside)
         if (nside % tmp != 0): raise ValueError(
             "Number of atoms must be a power of three multiplied by four"
@@ -93,16 +94,3 @@ class positions(atoms):
         positions = np.transpose(positions) * (self.box_size / nside)
 
         return np.ravel(positions)
-
-
-class velocities(atoms):
-    """
-    random velocities
-    """
-    pass
-
-class forces(atoms):
-    """
-    set forces to zero
-    """
-    pass
