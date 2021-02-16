@@ -3,10 +3,6 @@
 * sro: (short range order)
     * warren_cowley
 
-* rdf:
-    * rdf
-    * alloy(rdf)
-
 * cn:
     * cn
     * alloy(cn)
