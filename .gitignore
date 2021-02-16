@@ -1,5 +1,8 @@
 /emda/tester.*
 /emda/__pycache__/
+/emda/*.dat
+/emda/*.xyz
+/emda/*.lammpstrj
 
 /build/
 /dist/

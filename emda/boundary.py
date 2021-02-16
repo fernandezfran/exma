@@ -69,7 +69,7 @@ class apply(boundary):
         x_ci = np.zeros(3, dtype=np.float32)
 
         for i in range(0,3):
-            x_ci[i] = x_central[i] - x_interact[i]
+            x_ci[i] = x_interact[i] - x_central[i]
             while (x_ci[i] > 0.5 * self.box_size[i]): x_ci[i] -= self.box_size[i]
             while (x_ci[i] < -0.5 * self.box_size[i]): x_ci[i] += self.box_size[i]
         
