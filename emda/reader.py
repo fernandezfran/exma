@@ -211,7 +211,10 @@ class lammpstrj(reader):
                 positions[           i] = np.float32(idtxyz[2])
                 positions[  natoms + i] = np.float32(idtxyz[3])
                 positions[2*natoms + i] = np.float32(idtxyz[4])
-       
+            
+            atom_id = np.array(atom_id, dtype=np.intc)
+            atom_type = np.array(atom_type, dtype=np.intc)
+
             return natoms, box_size, atom_id, atom_type, positions
 
         elif (self.ftype == 'charge'):
@@ -231,6 +234,9 @@ class lammpstrj(reader):
                 
                 atom_q[i] = np.float32(idtqxyz[2])
        
+            atom_id = np.array(atom_id, dtype=np.intc)
+            atom_type = np.array(atom_type, dtype=np.intc)
+            
             return natoms, box_size, atom_id, atom_type, positions, atom_q
 
         elif (self.ftype == 'image'):
@@ -252,6 +258,9 @@ class lammpstrj(reader):
                 image[  natoms + i] = np.float32(idtxyzi[6])
                 image[2*natoms + i] = np.float32(idtxyzi[7])
        
+            atom_id = np.array(atom_id, dtype=np.intc)
+            atom_type = np.array(atom_type, dtype=np.intc)
+            
             return natoms, box_size, atom_id, atom_type, positions, image
         
         elif (self.ftype == 'charge_image'):
@@ -276,6 +285,9 @@ class lammpstrj(reader):
                 image[  natoms + i] = np.float32(idtqxyzi[7])
                 image[2*natoms + i] = np.float32(idtqxyzi[8])
 
+            atom_id = np.array(atom_id, dtype=np.intc)
+            atom_type = np.array(atom_type, dtype=np.intc)
+            
             return natoms, box_size, atom_id, atom_type, positions, atom_q, image
 
 
