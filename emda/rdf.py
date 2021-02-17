@@ -124,10 +124,10 @@ class diatomic(rdf):
         nbin : integer
             number of bins in the histogram
         
-        atom_type_a : integer
+        atom_type_a : integer (or char)
             type of central atoms
 
-        atom_type_a : integer
+        atom_type_a : integer (or char)
             type of interacting atoms
         """
         self.natoms = natoms
@@ -150,7 +150,7 @@ class diatomic(rdf):
 
         Parameters
         ----------
-        atom_type : numpy array with integers
+        atom_type : numpy array with integers (could be char)
             type of atoms
 
         positions : numpy array with float32 data
@@ -164,6 +164,8 @@ class diatomic(rdf):
             ri = [positions[i + k*self.natoms] for k in range(0,3)]
 
             for j in range(0, self.natoms):
+                
+                if (j == i): continue
                 
                 if (atom_type[j] != self.atom_type_b): continue
                 rj = [positions[j + k*self.natoms] for k in range(0,3)]
