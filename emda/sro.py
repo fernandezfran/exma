@@ -28,7 +28,7 @@ class warren_cowley(sro):
         atom_type_a : integer
             type of central atoms
 
-        atom_type_a : integer
+        atom_type_b : integer
             type of interacting atoms
 
         rcut : float
