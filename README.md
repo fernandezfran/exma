@@ -1,3 +1,3 @@
-# emda
+# exma
 
-**emda** is an extendable molecular dynamics analyzer
+**exma** is an extendable molecular analyzer
