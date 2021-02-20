@@ -1,9 +1,11 @@
-/emda/tester.*
-/emda/__pycache__/
-/emda/*.dat
-/emda/*.xyz
-/emda/*.lammpstrj
+/exma/tester.*
+/exma/__pycache__/
+/exma/*.dat
+/exma/*.xyz
+/exma/*.lammpstrj
+
+/tests/__pycache__/
 
 /build/
 /dist/
-/emda.egg-info/
+/exma.egg-info/
