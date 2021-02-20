@@ -14,7 +14,7 @@ class test_cn(unittest.TestCase):
         N = 27
         size = np.array([1.0, 1.0, 1.0])
         rcut = 0.4
-
+        
         reference = np.full(N, 6.0)
         
         particles = atoms.positions(N, size[0])
@@ -34,7 +34,7 @@ class test_cn(unittest.TestCase):
         N = 54
         size = np.array([1.0, 1.0, 1.0])
         rcut = 0.3
-
+        
         reference = np.full(np.intc(N/2), 8.0)
 
         type1 = np.full(np.intc(N/2), 1)

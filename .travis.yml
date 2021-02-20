@@ -1,7 +1,0 @@
-language: python
-python:
-    - "3.8"
-install:
-    - pip3 install -r requirements.rst
-script:
-    - python3 -m unittest discover
