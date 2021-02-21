@@ -15,11 +15,11 @@ class test_writer_and_reader(unittest.TestCase):
                       0.05432, 0.89325, 0.43142, 0.23451, 0.55556,
                       1.15145, 2.31451, 3.96893, 4.96905, 5.98693])
 
-        wxyz = writer.xyz("data/test.xyz")
+        wxyz = writer.xyz("tests/data/test.xyz")
         wxyz.write_frame(N, types, x)
         wxyz.file_close()
 
-        rxyz = reader.xyz("data/test.xyz")
+        rxyz = reader.xyz("tests/data/test.xyz")
         result = rxyz.read_frame()
         rxyz.file_close()
 
@@ -39,11 +39,11 @@ class test_writer_and_reader(unittest.TestCase):
                       1.15145, 2.31451, 3.96893, 4.96905, 5.98693])
         prop = np.arange(0,5)
 
-        wxyz = writer.xyz("data/test.xyz", 'property')
+        wxyz = writer.xyz("tests/data/test.xyz", 'property')
         wxyz.write_frame(N, types, x, prop)
         wxyz.file_close()
 
-        rxyz = reader.xyz("data/test.xyz", 'property')
+        rxyz = reader.xyz("tests/data/test.xyz", 'property')
         result = rxyz.read_frame()
         rxyz.file_close()
 
@@ -66,11 +66,11 @@ class test_writer_and_reader(unittest.TestCase):
                         2, 3, 0, 0, 1,
                         -2, -1, 0, 0, 1])
 
-        wxyz = writer.xyz("data/test.xyz", 'image')
+        wxyz = writer.xyz("tests/data/test.xyz", 'image')
         wxyz.write_frame(N, types, x, image=img)
         wxyz.file_close()
 
-        rxyz = reader.xyz("data/test.xyz", 'image')
+        rxyz = reader.xyz("tests/data/test.xyz", 'image')
         result = rxyz.read_frame()
         rxyz.file_close()
 
@@ -85,12 +85,12 @@ class test_writer_and_reader(unittest.TestCase):
         check raises write and read .xyz file
         """
         with self.assertRaises(ValueError):
-            wxyz = writer.xyz("data/test.xyz", 'error')
+            wxyz = writer.xyz("tests/data/test.xyz", 'error')
 
         with self.assertRaises(ValueError):
-            rxyz = reader.xyz("data/test.xyz", 'error')
+            rxyz = reader.xyz("tests/data/test.xyz", 'error')
 
-        rxyz = reader.xyz("data/test.xyz")
+        rxyz = reader.xyz("tests/data/test.xyz")
         result = rxyz.read_frame()
         with self.assertRaises(EOFError):
             result = rxyz.read_frame()
@@ -109,11 +109,11 @@ class test_writer_and_reader(unittest.TestCase):
                       0.05432, 0.89325, 0.43142, 0.23451, 0.55556,
                       1.15145, 2.31451, 3.96893, 4.96905, 5.98693])
 
-        wlmp = writer.lammpstrj("data/test.lammpstrj")
+        wlmp = writer.lammpstrj("tests/data/test.lammpstrj")
         wlmp.write_frame(N, size, idx, types, x)
         wlmp.file_close()
 
-        rlmp = reader.lammpstrj("data/test.lammpstrj")
+        rlmp = reader.lammpstrj("tests/data/test.lammpstrj")
         result = rlmp.read_frame()
         rlmp.file_close()
 
@@ -137,11 +137,11 @@ class test_writer_and_reader(unittest.TestCase):
                       1.15145, 2.31451, 3.96893, 4.96905, 5.98693])
         q = np.array([-0.3356, -0.32636, -0.34256, 0.54365, 0.46463])
 
-        wlmp = writer.lammpstrj("data/test.lammpstrj", 'charge')
+        wlmp = writer.lammpstrj("tests/data/test.lammpstrj", 'charge')
         wlmp.write_frame(N, size, idx, types, x, q)
         wlmp.file_close()
 
-        rlmp = reader.lammpstrj("data/test.lammpstrj", 'charge')
+        rlmp = reader.lammpstrj("tests/data/test.lammpstrj", 'charge')
         result = rlmp.read_frame()
         rlmp.file_close()
 
@@ -168,11 +168,11 @@ class test_writer_and_reader(unittest.TestCase):
                         2, 3, 0, 0, 1,
                         -2, -1, 0, 0, 1])
 
-        wlmp = writer.lammpstrj("data/test.lammpstrj", 'image')
+        wlmp = writer.lammpstrj("tests/data/test.lammpstrj", 'image')
         wlmp.write_frame(N, size, idx, types, x, image=img)
         wlmp.file_close()
 
-        rlmp = reader.lammpstrj("data/test.lammpstrj", 'image')
+        rlmp = reader.lammpstrj("tests/data/test.lammpstrj", 'image')
         result = rlmp.read_frame()
         rlmp.file_close()
 
@@ -200,11 +200,11 @@ class test_writer_and_reader(unittest.TestCase):
                         2, 3, 0, 0, 1,
                         -2, -1, 0, 0, 1])
 
-        wlmp = writer.lammpstrj("data/test.lammpstrj", 'charge_image')
+        wlmp = writer.lammpstrj("tests/data/test.lammpstrj", 'charge_image')
         wlmp.write_frame(N, size, idx, types, x, q, img)
         wlmp.file_close()
 
-        rlmp = reader.lammpstrj("data/test.lammpstrj", 'charge_image')
+        rlmp = reader.lammpstrj("tests/data/test.lammpstrj", 'charge_image')
         result = rlmp.read_frame()
         rlmp.file_close()
 
@@ -222,12 +222,12 @@ class test_writer_and_reader(unittest.TestCase):
         check raises write and read .lammpstrj file
         """
         with self.assertRaises(ValueError):
-            wxyz = writer.xyz("data/test.lammpstrj", 'error')
+            wxyz = writer.xyz("tests/data/test.lammpstrj", 'error')
 
         with self.assertRaises(ValueError):
-            rxyz = reader.xyz("data/test.lammpstrj", 'error')
+            rxyz = reader.xyz("tests/data/test.lammpstrj", 'error')
 
-        rlmp = reader.lammpstrj("data/test.lammpstrj")
+        rlmp = reader.lammpstrj("tests/data/test.lammpstrj")
         result = rlmp.read_frame()
         with self.assertRaises(EOFError):
             result = rlmp.read_frame()

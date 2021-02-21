@@ -12,7 +12,7 @@ class test_statistics(unittest.TestCase):
         """
         reference = 0
 
-        BA = statistics.block_average("data/test_block_average.dat", 0)
+        BA = statistics.block_average("tests/data/test_block_average.dat", 0)
         result = BA.estimate_error()
 
         self.assertListEqual(result[0], [0, 1])
