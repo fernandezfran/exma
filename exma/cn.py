@@ -1,5 +1,5 @@
 import numpy as np
-import boundary
+from . import boundary
 
 class cn:
     """
@@ -58,7 +58,8 @@ class monoatomic(cn):
                 rij = np.linalg.norm(rij)
 
                 if (rij <= self.rcut_i or rij > self.rcut_e): continue
-                self.cn[idx] += 1
+                self.cn[i] += 1
+                self.cn[j] += 1
 
         self.ncn +=1
     

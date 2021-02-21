@@ -1,5 +1,5 @@
 import numpy as np
-import boundary
+from . import boundary
 
 class rdf:
     """

@@ -67,9 +67,9 @@ class monoatomic(msd):
             rr = np.linalg.norm(xx)
             r2 = rr * rr
 
-            msd_t += r2
+            msd += r2
         
-        msd_t /= self.natoms
+        msd /= self.natoms
 
         self.frame += 1
         return np.array([self.frame, msd], dtype=np.float32)
@@ -141,7 +141,6 @@ class diatomic(msd):
         """
         self.natoms = natoms
         self.box_size = box_size
-        self.atom_type = atom_type
         self.x_ref = x_ref
         self.atom_type_a = atom_type_a
         self.atom_type_b = atom_type_b
@@ -151,13 +150,16 @@ class diatomic(msd):
         self.N_b = np.count_nonzero(atom_type == atom_type_b)
 
 
-    def wrapped(self, positions, image):
+    def wrapped(self, atom_type, positions, image):
         """
         to use if the trajectory is wrapped inside the simulation box and you
         have the image of each particle in the different directions
 
         Parameters
         ----------
+        atom_type : list of integers
+            the type of the atoms
+        
         positions : numpy array with float32 data
             the positions in the SoA convention
             i.e. first all the x, then y and then z
@@ -186,9 +188,9 @@ class diatomic(msd):
             r2 = rr * rr
 
             msd_t += r2
-            if (self.atom_type[i] == self.atom_type_a):
+            if (atom_type[i] == self.atom_type_a):
                 msd_a += r2
-            else: # i.e.: self.atom_type[i] == self.atom_type_b
+            else: # i.e.: atom_type[i] == self.atom_type_b
                 msd_b += r2
         
         msd_t /= self.natoms
@@ -199,12 +201,15 @@ class diatomic(msd):
         return np.array([self.frame, msd_a, msd_b, msd_t], dtype=np.float32)
 
 
-    def unwrapped(self, positions):
+    def unwrapped(self, atom_type, positions):
         """
         to use if the trajectory is unwrapped outside of the simulation box
         
         Parameters
         ----------
+        atom_type : list of integers
+            the type of the atoms
+        
         positions : numpy array with float32 data
             the positions in the SoA convention
             i.e. first all the x, then y and then z
@@ -229,9 +234,9 @@ class diatomic(msd):
             r2 = rr * rr
 
             msd_t += r2
-            if (self.atom_type[i] == self.atom_type_a):
+            if (atom_type[i] == self.atom_type_a):
                 msd_a += r2
-            else: # i.e.: self.atom_type[i] == self.atom_type_b
+            else: # i.e.: atom_type[i] == self.atom_type_b
                 msd_b += r2
         
         msd_t /= self.natoms
