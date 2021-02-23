@@ -25,31 +25,39 @@ _exma_ requires Python 3.8 to run, the others specific requirements are provided
 
 ## Installation
 
-To installing _exma_ you can clone the GitHub repo [exma](https://github.com/fernandezfran/exma) and inside your local directory install it with [pip](https://pip.pypa.io/en/stable/)
+### Stable release
 
-```bash
-pip3 install .
-```
-
-or you can use the package manager and install it by the usual way
+To install the most recent stable release of _exma_ with [pip](https://pip.pypa.io/en/stable/), run the following command in your termninal:
 
 ```bash
 pip3 install exma
 ```
 
+### From sources
+
+To installing _exma_ from sources you can clone this [GitHub repo](https://github.com/fernandezfran/exma) 
+
+```bash
+git clone https://github.com/fernandezfran/exma
+```
+
+and inside your local directory install it in the following way 
+
+```bash
+pip3 install .
+```
+
+or
+
+```bash
+python3 setup.py install
+```
 
 ## Usage
 
 ```python
 import exma
 ```
-
-or
-
-```python
-from exma import ... # replace the three dots by the module of interest
-```
-you can read the [Documentation](link.agregar) to see some examples.
 
 
 ## License
