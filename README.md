@@ -38,7 +38,7 @@ pip3 install exma
 To installing _exma_ from sources you can clone this [GitHub repo](https://github.com/fernandezfran/exma) 
 
 ```bash
-git clone https://github.com/fernandezfran/exma
+git clone https://github.com/fernandezfran/exma.git
 ```
 
 and inside your local directory install it in the following way 
