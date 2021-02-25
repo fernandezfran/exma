@@ -77,11 +77,11 @@ class cluster(clusterization):
 
         for i in range(0, natoms_c - 1):
 
-            ri = [positions[i + k*natoms_c] for k in range(0,3)]
+            ri = [positions_c[i + k*natoms_c] for k in range(0,3)]
 
             for j in range(i + 1, natoms_c):
            
-                rj = [positions[j + k*natoms_c] for k in range(0,3)]
+                rj = [positions_c[j + k*natoms_c] for k in range(0,3)]
 
                 rij = self.bound.minimum_image(ri, rj)
                 r2 = np.linalg.norm(rij)
