@@ -1,3 +1,4 @@
+sklearn
+more-itertools
 numpy
 pandas
-more-itertools

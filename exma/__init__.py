@@ -1,5 +1,6 @@
 from .atoms import positions
 from .boundary import apply
+from .clusterization import cluster 
 from .cn import monoatomic, diatomic
 from .en import effective_neighbors
 from .msd import monoatomic, diatomic
