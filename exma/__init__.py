@@ -1,3 +1,8 @@
+__author__ = """Francisco Fernandez"""
+__email__ = "fernandezfrancisco2195@gmail.com"
+__version__ = "0.1.0" 
+
+
 from .atoms import positions
 from .boundary import apply
 from .clusterization import cluster 

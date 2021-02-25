@@ -13,24 +13,24 @@ class block_average(statistics):
     are correlated
     
     (H. Flyvbjerg and H. G. Petersen: Averages of correlated data (1989))
+
+    Parameters
+    ----------
+    file_data : file
+        where the time series is
+
+    column : integer
+        number of the column for which you want to calculate the error
+
+    comment : str
+        how are the comments denoted in the file
+
+    dtype : str
+        type of data
     """
 
     def __init__(self, file_data, column, comment='#', dtype=np.float32):
-        """
-        Parameters
-        ----------
-        file_data : file
-            where the time series is
 
-        column : integer
-            number of the column for which you want to calculate the error
-
-        comment : str
-            how are the comments denoted in the file
-
-        dtype : str
-            type of data
-        """
         self.file_data = file_data
         self.column = column
         self.comment = comment

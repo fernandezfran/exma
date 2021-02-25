@@ -9,25 +9,25 @@ class clusterization:
 
 class cluster(clusterization):
     """
-    the main objetivo of this module is to accomodate data (calculate the
-    distance matrix taking account of the PBC) before using sklearn.clustering
+    the main objetive of this module is to accomodate data (calculate the
+    distance matrix taking account of the PBC) before using sklearn.cluster 
+
+    Parameters
+    ----------
+
+    box_size : numpy array with three floats
+        the box size in x, y, z
+
+    eps : float
+        like an rcut where an atoms stop to be considered part of a cluster
+
+    min_samples : int, default=2
+        the number of atoms that can be a core point
+        by default, 2 atoms can be a cluster
     """
 
     def __init__(self, box_size, eps, min_samples=2):
-        """
-        Parameters
-        ----------
 
-        box_size : numpy array with three floats
-            the box size in x, y, z
-
-        eps : float
-            like an rcut where an atoms stop to be considered part of a cluster
-
-        min_samples : int, default=2
-            the number of atoms that can be a core point
-            by default, 2 atoms can be a cluster
-        """
         self.box_size = box_size
         self.eps = eps
         self.min_samples = min_samples

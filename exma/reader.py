@@ -8,21 +8,24 @@ class reader(object):
 class xyz(reader):
     """
     subclass of reader that reads xyz file
+ 
+    Parameters
+    ----------
+    file_xyz : file
+        where the trajectories in xyz format are
+
+    ftype : typical, property or image
+
+        typical if is the usual xyz file
+        
+        property if in the last column there is a property
+        
+        image if in the last three columns there are the image box of the
+        corresponding atom
     """
 
     def __init__(self, file_xyz, ftype='typical'):
-        """
-        Parameters
-        ----------
-        file_xyz : file
-            where the trajectories in xyz format are
 
-        ftype : typical, property or image
-            typical if is the usual xyz file
-            property if in the last column there is a property
-            image if in the last three columns there are the image box of the
-                corresponding atom
-        """
         if ((ftype != 'typical') and (ftype != 'property') and (ftype != 'image')):
             raise ValueError("ftype must be 'typical', 'property' or 'image'")
         
@@ -124,21 +127,25 @@ class xyz(reader):
 class lammpstrj(reader):
     """
     subclass of reader that reads lammpstrj file
+    
+    Parameters
+    ----------
+    file_lammps : file
+        where the trajectories of lammps are
+
+    ftype : custom, charge, image, charge_image
+        
+        custom = dump ... custom ... id type x y z
+        
+        charge = dump ... custom ... id type q x y z
+        
+        image = dump ... custom ... id type x y z ix iy iz
+        
+        charge_image = dump ... custom ... id type q x y z ix iy iz
     """
 
     def __init__(self, file_lammps, ftype='custom'):
-        """
-        Parameters
-        ----------
-        file_lammps : file
-            where the trajectories of lammps are
-
-        ftype : custom, charge, image, charge_image
-            custom = dump ... custom ... id type x y z
-            charge = dump ... custom ... id type q x y z
-            image = dump ... custom ... id type x y z ix iy iz
-            charge_image = dump ... custom ... id type q x y z ix iy iz
-        """
+        
         if ((ftype != 'custom') and (ftype != 'charge') and (ftype != 'image') \
                 and (ftype != 'charge_image')):
             raise ValueError("ftype must be 'custom', 'charge', 'image' or"
