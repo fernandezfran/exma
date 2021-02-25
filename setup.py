@@ -7,7 +7,7 @@ from setuptools import find_packages, setup
 with open('README.md') as file_readme:
     readme = file_readme.read()
 
-requirements = ['numpy', 'pandas', 'more-itertools']
+requirements = ['sklearn', 'more-itertools', 'numpy', 'pandas']
 
 setup(
     name='exma',
