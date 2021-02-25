@@ -2,6 +2,9 @@
 
 > **exma** is an extendable molecular analyzer.
 
+This project is mainly developed with the objective of analyzing molecular dynamics trajectories using different tools that characterize both the configurational properties and the dynamics of the system. It is intended to analyze monatomic materials or alloys.
+
+
 ## Features
 
 With _exma_ you can:
@@ -77,6 +80,9 @@ import exma
 - [ ] write rdf.accumulte in C and use ctypes.
 - [ ] write cn.accumulte in C and use ctypes.
 - [ ] write sro.warren_cowley.accumulte in C and use ctypes.
+- [ ] write effective neighbors distance and weight matrix in C.
+- [ ] write cluster distance with pbc in C.
+- [ ] triclinic (non-orthogonal) boxes for the different modules.
 
 
 ## Contibuting
