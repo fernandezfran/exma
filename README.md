@@ -14,10 +14,11 @@ With _exma_ you can:
 * Initializate positions of atoms in SC, BCC or FCC crystals.
 * Apply PBC.
 * Calculate:
-    - the coordination number (CN), the ligancy or in a shell, for monoatomic or diatomic systems.
-    - effective neighbors (EN).
-    - mean square displacement (MSD).
-    - the radial distribution function (RDF) of monoatomic or diatomic systems.
+    - clusterization,
+    - the coordination number (CN), the ligancy or in a shell, for monoatomic or diatomic systems,
+    - effective neighbors (EN),
+    - mean square displacement (MSD),
+    - the radial distribution function (RDF) of monoatomic or diatomic systems,
     - short range order (SRO): Warren-Cowley parameter (WCP).
 
 
