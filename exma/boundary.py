@@ -9,15 +9,15 @@ class boundary:
 class apply(boundary):
     """
     apply some boundary condition
+    
+    Parameters
+    ----------
+    box_size : numpy array of three floats
+        box size in x, y, z
     """
 
     def __init__(self, box_size):
-        """
-        Parameters
-        ----------
-        box_size : numpy array of three floats
-            box size in x, y, z
-        """
+
         self.box_size = box_size
 
 

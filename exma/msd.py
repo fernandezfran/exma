@@ -12,22 +12,22 @@ class msd:
 class monoatomic(msd):
     """
     msd of a monoatomic system
+    
+    Parameters
+    ----------
+    natoms : integer
+        the number of atoms in the frame
+   
+    box_size : numpy array
+        with the box lenght in x, y, z
+    
+    x_ref : numpy array with float32 data
+        the reference positions in the SoA convention
+        i.e. first all the x, then y and then z
     """
     
     def __init__(self, natoms, box_size, x_ref):
-        """
-        Parameters
-        ----------
-        natoms : integer
-            the number of atoms in the frame
-       
-        box_size : numpy array
-            with the box lenght in x, y, z
-        
-        x_ref : numpy array with float32 data
-            the reference positions in the SoA convention
-            i.e. first all the x, then y and then z
-        """
+
         self.natoms = natoms
         self.box_size = box_size
         self.x_ref = x_ref
@@ -113,32 +113,32 @@ class monoatomic(msd):
 class diatomic(msd):
     """
     msd of a diatomic system
+    
+    Parameters
+    ----------
+    natoms : integer
+        the number of atoms in the frame
+   
+    box_size : numpy array
+        with the box lenght in x, y, z
+    
+    atom_type : list of integers
+        the type of the atoms
+    
+    x_ref : numpy array with float32 data
+        the reference positions in the SoA convention
+        i.e. first all the x, then y and then z
+    
+    atom_type_a : integer
+        one type of atom
+
+    atom_type_a : integer
+        another type of atom
     """
 
     def __init__(self, natoms, box_size, atom_type, x_ref, atom_type_a,
             atom_type_b):
-        """
-        Parameters
-        ----------
-        natoms : integer
-            the number of atoms in the frame
-       
-        box_size : numpy array
-            with the box lenght in x, y, z
-        
-        atom_type : list of integers
-            the type of the atoms
-        
-        x_ref : numpy array with float32 data
-            the reference positions in the SoA convention
-            i.e. first all the x, then y and then z
-        
-        atom_type_a : integer
-            one type of atom
-
-        atom_type_a : integer
-            another type of atom
-        """
+  
         self.natoms = natoms
         self.box_size = box_size
         self.x_ref = x_ref

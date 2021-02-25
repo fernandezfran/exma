@@ -9,31 +9,31 @@ class sro:
 class warren_cowley(sro):
     """
     warren cowley parameters
+    
+    Parameters
+    ----------
+    natoms : integer
+        number of atoms
+    
+    box_size : numpy array with three floats
+        the box size in x, y, z
+    
+    atom_type : numpy array with integers
+        type of atoms
+    
+    atom_type_a : integer
+        type of central atoms
+
+    atom_type_b : integer
+        type of interacting atoms
+
+    rcut : float
+        cut radius    
     """
 
     def __init__(self, natoms, box_size, atom_type, atom_type_a, atom_type_b, \
                  rcut):
-        """
-        Parameters
-        ----------
-        natoms : integer
-            number of atoms
-        
-        box_size : numpy array with three floats
-            the box size in x, y, z
-        
-        atom_type : numpy array with integers
-            type of atoms
-        
-        atom_type_a : integer
-            type of central atoms
 
-        atom_type_b : integer
-            type of interacting atoms
-
-        rcut : float
-            cut radius    
-        """
         self.natoms = natoms
         self.box_size = box_size
         self.rcut = rcut

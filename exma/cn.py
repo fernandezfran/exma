@@ -9,24 +9,24 @@ class cn:
 class monoatomic(cn):
     """
     cn of a monoatomic system
+    
+    Parameters
+    ----------
+    natoms : integer
+        number of atoms
+
+    box_size : numpy array with three floats
+        the box size in x, y, z
+
+    rcut_e : float
+        external of the shell
+
+    rcut_i : float
+        internal of the shell
     """
     
     def __init__(self, natoms, box_size, rcut_e, rcut_i=0.0):
-        """
-        Parameters
-        ----------
-        natoms : integer
-            number of atoms
 
-        box_size : numpy array with three floats
-            the box size in x, y, z
-
-        rcut_e : float
-            external of the shell
-
-        rcut_i : float
-            internal of the shell
-        """
         self.natoms = natoms
         self.box_size = box_size
         self.rcut_e = rcut_e
@@ -102,34 +102,34 @@ class monoatomic(cn):
 class diatomic(cn):
     """
     cn of a diatomic system
+    
+    Parameters
+    ----------
+    natoms : integer
+        number of atoms
+
+    box_size : numpy array with three floats
+        the box size in x, y, z
+
+    atom_type : numpy array with integers (could be char)
+        type of atoms
+    
+    atom_type_a : integer (or char)
+        type of central atoms
+
+    atom_type_a : integer (or char)
+        type of interacting atoms
+
+    rcut_e : float
+        external of the shell
+
+    rcut_i : float
+        internal of the shell
     """
     
     def __init__(self, natoms, box_size, atom_type, atom_type_a, atom_type_b, \
                     rcut_e, rcut_i=0.0):
-        """
-        Parameters
-        ----------
-        natoms : integer
-            number of atoms
 
-        box_size : numpy array with three floats
-            the box size in x, y, z
-
-        atom_type : numpy array with integers (could be char)
-            type of atoms
-        
-        atom_type_a : integer (or char)
-            type of central atoms
-
-        atom_type_a : integer (or char)
-            type of interacting atoms
-
-        rcut_e : float
-            external of the shell
-
-        rcut_i : float
-            internal of the shell
-        """
         self.natoms = natoms
         self.box_size = box_size
         self.atom_type_a = atom_type_a

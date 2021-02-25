@@ -10,21 +10,20 @@ class atoms:
 class positions(atoms):
     """
     define the positions of the atoms in a lattice
+    
+    the density is defined by the parameters rho = natoms / (box_size^3)
+    
+    Parameters
+    ----------
+    natoms : int
+        number of atoms
+
+    box_size : float
+        box size in each direction (cubic)
     """
     
     def __init__(self, natoms, box_size):
-        """
-        Parameters
-        ----------
-        natoms : int
-            number of atoms
 
-        box_size : float
-            box size in each direction (cubic)
-
-        the density is defined by the parameters:
-            rho = natoms / (box_size^3)
-        """
         self.natoms = natoms
         self.box_size = box_size
 
@@ -32,6 +31,11 @@ class positions(atoms):
     def sc(self):
         """
         simple cubic
+
+        Returns
+        -------
+        positions : numpy array
+            of the atoms in an sc crystal
         """
         nside = np.cbrt(self.natoms, dtype=np.float32)
         tmp = np.intc(nside)
@@ -51,6 +55,11 @@ class positions(atoms):
     def bcc(self):
         """
         body-centered cubic 
+        
+        Returns
+        -------
+        positions : numpy array
+            of the atoms in a bcc crystal
         """
         nside = np.cbrt(self.natoms / 2, dtype=np.float32)
         tmp = np.intc(nside)
@@ -74,6 +83,11 @@ class positions(atoms):
     def fcc(self):
         """
         face-centered cubic
+        
+        Returns
+        -------
+        positions : numpy array
+            of the atoms in an fcc crystal
         """
         nside = np.cbrt(self.natoms / 4, dtype=np.float32)
         tmp = np.intc(nside)

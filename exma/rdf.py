@@ -4,28 +4,26 @@ from . import boundary
 class rdf:
     """
     radial distribution function
-    
-    this module is extremely slow and requires some functions to be written in C
     """
 
 class monoatomic(rdf):
     """
     rdf of a monoatomic system 
+    
+    Parameters
+    ----------
+    natoms : integer
+        number of atoms
+
+    box_size : numpy array with three floats
+        the box size in x, y, z
+
+    nbin : integer
+        number of bins in the histogram
     """
 
     def __init__(self, natoms, box_size, nbin):
-        """
-        Parameters
-        ----------
-        natoms : integer
-            number of atoms
 
-        box_size : numpy array with three floats
-            the box size in x, y, z
-
-        nbin : integer
-            number of bins in the histogram
-        """
         self.natoms = natoms
         self.box_size = box_size
         self.nbin = nbin
@@ -109,27 +107,27 @@ class monoatomic(rdf):
 class diatomic(rdf):
     """
     rdf of diatomic systems
+    
+    Parameters
+    ----------
+    natoms : integer
+        number of atoms
+
+    box_size : numpy array with three floats
+        the box size in x, y, z
+
+    nbin : integer
+        number of bins in the histogram
+    
+    atom_type_a : integer (or char)
+        type of central atoms
+
+    atom_type_a : integer (or char)
+        type of interacting atoms
     """
     
     def __init__(self, natoms, box_size, nbin, atom_type_a, atom_type_b):
-        """
-        Parameters
-        ----------
-        natoms : integer
-            number of atoms
-
-        box_size : numpy array with three floats
-            the box size in x, y, z
-
-        nbin : integer
-            number of bins in the histogram
-        
-        atom_type_a : integer (or char)
-            type of central atoms
-
-        atom_type_a : integer (or char)
-            type of interacting atoms
-        """
+    
         self.natoms = natoms
         self.box_size = box_size
         self.nbin = nbin

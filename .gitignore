@@ -1,3 +1,5 @@
+/docs/builds/
+
 /exma/tester.*
 /exma/__pycache__/
 /exma/*.dat

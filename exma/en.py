@@ -10,24 +10,24 @@ class effective_neighbors:
 
     (V. L. Chevrier and J. R. Dahn 2010 J. Electrochem. Soc. 157 A392)
     (R. Hoppe et al., J. Less Common Met., 156, 105 (1989))
+    
+    Parameters
+    ----------
+    natoms : integer
+        number of atoms
+    
+    box_size : numpy array with three floats
+        the box size in x, y, z
+    
+    atom_type_central : integer
+        type of central atoms
+
+    atom_type_interact : integer
+        type of interacting atoms
     """
 
     def __init__(self, natoms, box_size, atom_type_central, atom_type_interact):
-        """
-        Parameters
-        ----------
-        natoms : integer
-            number of atoms
-        
-        box_size : numpy array with three floats
-            the box size in x, y, z
-        
-        atom_type_central : integer
-            type of central atoms
 
-        atom_type_interact : integer
-            type of interacting atoms
-        """
         self.natoms = natoms
         self.box_size = box_size
         self.atom_type_central = atom_type_central
