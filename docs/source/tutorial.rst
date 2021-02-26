@@ -1,7 +1,9 @@
 Tutorial
 ========
 
-In this tutorial we will use *exma* to calculate some properties of a Lennard-Jones fluid in a solid (fcc) and in a liquid phase. The data was generated using a homemade MD code. The trajectory and thermo files are in 'exma/docs/source/_statics/'. The scripts of python using here can be found in 'exma/docs/source/_templates/'. Not all exma modules will be used but much of them will be covered. If you want to use another module, you can read the API and replicate what is done below.
+In this tutorial we will use *exma* to calculate some properties of a Lennard-Jones fluid in a solid (fcc) and in a liquid phase. The data was generated using a homemade `MD code`_. The trajectory and thermo files are in 'exma/docs/source/_statics/'. The scripts of python using here can be found in 'exma/docs/source/_templates/'. Not all exma modules will be used but much of them will be covered. If you want to use another module, you can read the API and replicate what is done below.
+
+.. _MD code: https://github.com/fernandezfran/fiscomp2020/tree/master/labo5-Molecular_dynamics/02/c
 
 ----------------------------------------------------------------------------------
 
@@ -9,12 +11,11 @@ In this tutorial we will use *exma* to calculate some properties of a Lennard-Jo
 Radial distribution function (RDF)
 ----------------------------------
 
-The pair radial distribution function (RDF), *g(r)*, characterizes the local structure of a fluid, and describes the probability to find and atom in a shell at distance *r* from a reference atom. *exma* calculate this quantity as the ratio between the average density at distance *r* from the reference atom and the density at that same distance of an ideal gas. For more information you can start reading `rdf`_.
+The pair radial distribution function (RDF), *g(r)*, characterizes the local structure of a fluid, and describes the probability to find an atom in a shell at distance *r* from a reference atom. *exma* calculate this quantity as the ratio between the average density at distance *r* from the reference atom and the density at that same distance of an ideal gas. For more information you can start reading `rdf`_.
 
 .. _rdf: https://en.wikipedia.org/wiki/Radial_distribution_function
 
 First of all, we must import the necessary libraries at the beggining of the script in python.
-
 
 .. code-block:: python
     
@@ -33,7 +34,7 @@ Before starting we need some infomation: the number of particles, the number of 
 
 .. code-block:: python
 
-    N=500
+    N = 500
     frames = 201
     ssize = np.full(3, 7.46901)
 
@@ -107,10 +108,113 @@ and get the following graph.
 
 We get the expected results. For the solid phase we have the defined peaks of an *fcc* crystal with noise given by the temperature and for the liquid phase we get the usual behavior of a liquid. For both systems we have that the *g(r)* oscillates around 1.
 
-Calculating the RDF of a diatomic system should not cause major problems after this example.
-
 ----------------------------------------------------------------------------------
 
 
 Mean square displacement (MSD)
 ------------------------------
+
+The mean square displacement (MSD) is a measure of the deviation of the position of the particles with respect to a reference positions over time. From it, it is possible to obtain, through a linear regression, the diffusion coefficient. For more information you can start reading `MSD`_.
+
+.. _MSD: https://en.wikipedia.org/wiki/Mean_squared_displacement
+
+As in the RDF example, we first import the necessary libraries and define the information needed.
+
+.. code-block:: python
+    
+    #!/usr/bin/env python3
+    # -*- coding: utf-8 -*-
+    #
+    # Python script to calculate the MSD of a LJ fluid in a solid and in a liquid 
+    #   phase
+    #
+    import numpy as np
+    import matplotlib.pyplot as plt
+
+    import exma
+
+
+    N = 500
+    frames = 201
+
+We must read the ``.xyz`` file but taking into account that now we need the image boxes of the particles, so to ``exma.reader.xyz`` we pass the argument ``'image'`` to indicate that type of file and that we want the information that it is in the last three columns.
+
+.. code-block:: python
+    
+    ssize = np.full(3, 7.46901) 
+
+    solid = exma.reader.xyz("../_static/lj-fcc.xyz", 'image')
+
+    sN, styp, sx, simg = solid.read_frame()
+    sMSD = exma.msd.monoatomic(N, ssize, sx)
+
+We also initializate the object ``sMSD`` by reading the first frame and passing the number of particles in the system, the box size and the positions that will be used as reference positions. Then, we will have to iterate along frames but without considering the first one. So the ``for`` loop goes till ``frames - 1``.
+
+.. code-block:: python
+    
+    st, smsd = [], []
+    for i in range(0, frames - 1):
+        sN, styp, sx, simg = solid.read_frame()
+        t, msd = sMSD.wrapped(sx, simg)
+
+        st.append(t)
+        smsd.append(msd)
+
+The lists ``st`` and ``smsd`` were created to save the time [frame] and the corresponding msd of the actual frame. The data is obtained from using the function ``wrapped`` that has the actual positions and image box as arguments.
+
+When the loop finishes, we close the file and convert the lists to numpy arrays.
+
+.. code-block:: python
+    
+    solid.file_close()
+    st = np.asarray(st)
+    smsd = np.asarray(smsd)
+
+The same can be done to the liquid phase.
+
+.. code-block:: python
+
+    lsize = np.full(3, 8.54988) 
+
+    liquid = exma.reader.xyz("../_static/lj-liquid.xyz", 'image')
+
+    lN, ltyp, lx, limg = liquid.read_frame()
+    lMSD = exma.msd.monoatomic(N, lsize, lx)
+
+    lt, lmsd = [], []
+    for i in range(0, frames - 1):
+        lN, ltyp, lx, limg = liquid.read_frame()
+        t, msd = lMSD.wrapped(lx, limg)
+
+        lt.append(t)
+        lmsd.append(msd)
+
+    liquid.file_close()
+    lt = np.asarray(lt)
+    lmsd = np.asarray(lmsd)
+
+After the analysis is completed we can use ``matplotlib.pyplot``
+
+.. code-block:: python
+    
+    plt.xlabel("frames")
+    plt.ylabel("MSD")
+    plt.plot(st, smsd, label='solid')
+    plt.plot(lt, lmsd, label='liquid')
+    plt.legend()
+    plt.savefig('msd.png', dpi=600)
+    plt.show()
+
+to get the following graph
+
+.. figure:: _templates/msd.png
+   :alt: MSD solid and liquid 
+   :height: 768px
+   :width: 1024px
+   :scale: 50 %
+   :align: center
+   :figwidth: 80 %
+   
+   MSD for solid (blue line) and liquid (green line) phase. The *x* label are the frames, to calculate the diffusion coefficient they must be transformed to time units.
+
+We get that the liquid phase is diffusing with the linear expected behaivor and the solid phase is not diffusing.
