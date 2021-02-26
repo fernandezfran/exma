@@ -86,7 +86,7 @@ import exma
 - [ ] triclinic (non-orthogonal) boxes for the different modules.
 
 
-## Contibuting
+## Contributing
 
 1. Fork it: <https://github.com/fernandezfran/exma/fork>
 2. Clone your fork locally: `git clone git@github.com:your_name/exma.git`
