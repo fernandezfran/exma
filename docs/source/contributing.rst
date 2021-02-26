@@ -8,8 +8,8 @@ TODO
 - triclinic (non-orthogonal) boxes for the different modules.
 
 
-Contibuting
------------
+Contributing
+------------
 
 1. Fork the GitHub repo: https://github.com/fernandezfran/exma/fork
 
