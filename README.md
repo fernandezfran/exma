@@ -71,7 +71,7 @@ python3 setup.py install
 #
 #       2. with exma.cn.monoatomic initializate the CN calculation
 #           the first argument is the number of atoms, the second the box size
-#           in each direction and the third is r_cut
+#           in each direction and the third is a cutoff distance
 #
 #       3. with CN.accumulate calculate de CN of this "frame"
 #           the argument is the positions of the atoms
