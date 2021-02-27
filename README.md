@@ -81,27 +81,27 @@ python3 setup.py install
 #           the second are the positions and the third is False to not write an
 #           output file
 #
-    import numpy as np
-    import exma
+import numpy as np
+import exma
 
-    sc = exma.atoms.positions(8, 4.0).sc()
-    cn_sc = exma.cn.monoatomic(8, np.full(3, 4.0), 3.0)
-    cn_sc.accumulate(sc)
-    cn_sc = np.mean(cn_sc.end(0, sc, False))
+sc = exma.atoms.positions(8, 4.0).sc()
+cn_sc = exma.cn.monoatomic(8, np.full(3, 4.0), 3.0)
+cn_sc.accumulate(sc)
+cn_sc = np.mean(cn_sc.end(0, sc, False))
 
-    bcc = exma.atoms.positions(16, 4.0).bcc()
-    cn_bcc = exma.cn.monoatomic(16, np.full(3, 4.0), 1.8)
-    cn_bcc.accumulate(bcc)
-    cn_bcc = np.mean(cn_bcc.end(0, bcc, False))
+bcc = exma.atoms.positions(16, 4.0).bcc()
+cn_bcc = exma.cn.monoatomic(16, np.full(3, 4.0), 1.8)
+cn_bcc.accumulate(bcc)
+cn_bcc = np.mean(cn_bcc.end(0, bcc, False))
 
-    fcc = exma.atoms.positions(32, 4.0).fcc()
-    cn_fcc = exma.cn.monoatomic(32, np.full(3, 4.0), 1.5)
-    cn_fcc.accumulate(fcc)
-    cn_fcc = np.mean(cn_fcc.end(0, fcc, False))
+fcc = exma.atoms.positions(32, 4.0).fcc()
+cn_fcc = exma.cn.monoatomic(32, np.full(3, 4.0), 1.5)
+cn_fcc.accumulate(fcc)
+cn_fcc = np.mean(cn_fcc.end(0, fcc, False))
 
-    print("#  %d is the coordination number of a sc crystal" % cn_sc)
-    print("#  %d is the coordination number of a bcc crystal" % cn_bcc)
-    print("# %d is the coordination number of a fcc crystal" % cn_fcc)
+print("#  %d is the coordination number of a sc crystal" % cn_sc)
+print("#  %d is the coordination number of a bcc crystal" % cn_bcc)
+print("# %d is the coordination number of a fcc crystal" % cn_fcc)
 ```
 
 There are more examples in the Documentation.
