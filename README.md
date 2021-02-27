@@ -63,8 +63,8 @@ python3 setup.py install
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# in the following script the coordination numbers of sc, bcc and fcc crystals are
-#   calculated, the following steps are following for each system:
+# in this script the coordination numbers of sc, bcc and fcc crystals are 
+#   calculated, the steps are following for each system:
 #
 #       1. with exma.atoms.positions generate the positions of the atoms
 #           the first argument is the number of atoms and the second the box size
@@ -76,7 +76,7 @@ python3 setup.py install
 #       3. with CN.accumulate calculate de CN of this "frame"
 #           the argument is the positions of the atoms
 #
-#       4. with CN.end(0, positions, False) return the CN of each atom
+#       4. with CN.end return the CN of each atom
 #           the first argument is the atom type to be written (not interested here)
 #           the second are the positions and the third is False to not write an
 #           output file
