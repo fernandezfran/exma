@@ -1,90 +1,30 @@
-exma API
-========
+exma
+====
 
-``exma.atoms`` module
----------------------
+**exma** is an extendable molecular analyzer. 
 
-.. automodule:: exma.atoms
-   :members:
-   :undoc-members:
-   :show-inheritance:
+This project is mainly developed with the objective of analyzing molecular dynamics trajectories using different tools that characterize both the configurational properties and the dynamics of the system. It is intended to analyze monatomic materials or alloys.
 
-``exma.boundary`` module
-------------------------
 
-.. automodule:: exma.boundary
-   :members:
-   :undoc-members:
-   :show-inheritance:
+Features
+--------
 
-``exma.clusterization`` module
-------------------------------
+With *exma* you can:
 
-.. automodule:: exma.clusterization
-   :members:
-   :undoc-members:
-   :show-inheritance:
+* Read and write MD trajectory frames in .xyz and .lammpstrj format (including charges, image of the particles or some other property).
+* Estimate errors with the block average method.
+* Initializate positions of atoms in SC, BCC or FCC crystals.
+* Apply PBC.
+* Calculate:
+    - clusterization,
+    - the coordination number (CN), the ligancy or in a shell, for monoatomic or diatomic systems,
+    - effective neighbors (EN),
+    - mean square displacement (MSD),
+    - the radial distribution function (RDF) of monoatomic or diatomic systems,
+    - short range order (SRO): Warren-Cowley parameter (WCP).
 
-``exma.cn`` module
-------------------
 
-.. automodule:: exma.cn
-   :members:
-   :undoc-members:
-   :show-inheritance:
+GitHub Repository
+-----------------
 
-``exma.en`` module
-------------------
-
-.. automodule:: exma.en
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-``exma.msd`` module
--------------------
-
-.. automodule:: exma.msd
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-``exma.rdf`` module
--------------------
-
-.. automodule:: exma.rdf
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-``exma.reader`` module
-----------------------
-
-.. automodule:: exma.reader
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-``exma.sro`` module
--------------------
-
-.. automodule:: exma.sro
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-``exma.statistics`` module
---------------------------
-
-.. automodule:: exma.statistics
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-``exma.writer`` module
-----------------------
-
-.. automodule:: exma.writer
-   :members:
-   :undoc-members:
-   :show-inheritance:
+https://github.com/fernandezfran/exma

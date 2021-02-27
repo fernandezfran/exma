@@ -78,11 +78,6 @@ import exma
 
 ## TODO
 
-- [ ] write rdf.accumulte in C and use ctypes.
-- [ ] write cn.accumulte in C and use ctypes.
-- [ ] write sro.warren_cowley.accumulte in C and use ctypes.
-- [ ] write effective neighbors distance and weight matrix in C.
-- [ ] write cluster distance with pbc in C.
 - [ ] triclinic (non-orthogonal) boxes for the different modules.
 
 
