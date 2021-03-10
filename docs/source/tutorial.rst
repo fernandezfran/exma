@@ -1,15 +1,8 @@
 Tutorial
 ========
 
-In this tutorial we will use *exma* to calculate some properties of a Lennard-Jones fluid in a solid (fcc) and in a liquid phase. The data was generated using a homemade `MD code`_. The trajectory and thermo files are in 'exma/docs/source/_statics/'. The scripts of python using here can be found in 'exma/docs/source/_templates/'. Not all exma modules will be used but much of them will be covered. If you want to use another module, you can read the API and replicate what is done below.
-
-.. _MD code: https://github.com/fernandezfran/fiscomp2020/tree/master/labo5-Molecular_dynamics/02/c
-
-----------------------------------------------------------------------------------
-
-
-Coordination number (CN)
-------------------------
+minimal example: Coordination number (CN)
+-----------------------------------------
 
 The coordination number(CN), also called ligancy, of a given atom in a chemical system is defined as the number of atoms, molecules or ions bonded to it. *exma* calculate this quantity considered the number of neighbors surrounding a given atom type a cutoff distance.
 
@@ -58,6 +51,15 @@ The coordination number(CN), also called ligancy, of a given atom in a chemical 
     print("#  %d is the coordination number of a bcc crystal" % cn_bcc)
     print("# %d is the coordination number of a fcc crystal" % cn_fcc)
 
+
+----------------------------------------------------------------------------------
+
+LJ-Tutorial
+-----------
+
+In this tutorial we will use *exma* to calculate some properties of a Lennard-Jones fluid in a solid (fcc) and in a liquid phase. The data was generated using a homemade `MD code`_. The trajectory and thermo files are in 'exma/docs/source/_statics/'. The scripts of python using here can be found in 'exma/docs/source/_templates/'. Not all exma modules will be used but much of them will be covered. If you want to use another module, you can read the API and replicate what is done below.
+
+.. _MD code: https://github.com/fernandezfran/fiscomp2020/tree/master/labo5-Molecular_dynamics/02/c
 
 ----------------------------------------------------------------------------------
 
