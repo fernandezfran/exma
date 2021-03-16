@@ -52,7 +52,7 @@ exma API
 ``exma.rdf`` module
 -------------------
 
-.. automodule:: exma.rdf
+.. automodule:: exma.RDF.rdf
    :members:
    :undoc-members:
    :show-inheritance:

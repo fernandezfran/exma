@@ -37,7 +37,6 @@ class monoatomic(rdf):
         box_size = box_size.astype(np.float32)
 
         self.natoms = natoms
-        self.box_size = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
         self.nbin = nbin
         
         minbox = np.min(box_size)
@@ -52,12 +51,15 @@ class monoatomic(rdf):
         self.gr_C = (ct.c_int * nbin)()
 
 
-    def accumulate(self, positions):
+    def accumulate(self, box_size, positions):
         """
         accumulates the information of each frame in self.gr
 
         Parameters
         ----------
+        box_size : numpy array with three floats
+            the box size in x, y, z
+        
         positions : numpy array with float32 data
             the positions in the SoA convention
             i.e. first all the x, then y and then z
@@ -80,12 +82,15 @@ class monoatomic(rdf):
         #        ig = np.intc(rij / self.dg)
         #        self.gr[ig] += 2
         
-        # got to be sure that the positions type is np.float32 because that is
-        # the pointer type in C
+        # got to be sure that the box_size and positions type is np.float32 
+        # because that is the pointer type in C
+        box_size = box_size.astype(np.float32)
+        box_size = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
+        
         positions = positions.astype(np.float32)
         x_C = positions.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
-        self.rdf_c(self.natoms, self.box_size, x_C, self.dg, self.nbin, self.gr_C)
+        self.rdf_c(self.natoms, box_size, x_C, self.dg, self.nbin, self.gr_C)
 
         self.ngr += 1
 
@@ -153,10 +158,7 @@ class diatomic(rdf):
     
     def __init__(self, natoms, box_size, nbin, atom_type_a, atom_type_b):
     
-        box_size = box_size.astype(np.float32)
-
         self.natoms = natoms
-        self.box_size = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
         self.nbin = nbin
         self.atom_type_a = atom_type_a
         self.atom_type_b = atom_type_b
@@ -174,12 +176,15 @@ class diatomic(rdf):
         self.gr_C = (ct.c_int * nbin)()
     
 
-    def accumulate(self, atom_type, positions):
+    def accumulate(self, box_size, atom_type, positions):
         """
         accumulates the information of each frame in self.gr
 
         Parameters
         ----------
+        box_size : numpy array with three floats
+            the box size in x, y, z
+        
         atom_type : numpy array with integers (could be char)
             type of atoms
 
@@ -210,15 +215,19 @@ class diatomic(rdf):
         #            ig = np.intc(rij / self.dg)
         #            self.gr[ig] += 1
         
-        # got to be sure that the positions type is np.float32 and atom_type is
-        # an array of np.intc because those are the pointers types in C
+        # got to be sure that the box_size and the positions types are np.float32
+        # and atom_type is an array of np.intc because those are the pointers 
+        # types in C
+        box_size = box_size.astype(np.float32)
+        box_size = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
+        
         atom_type = atom_type.astype(np.intc)
         atom_C = atom_type.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
         positions = positions.astype(np.float32)
         x_C = positions.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
-        self.rdf_c(self.natoms, self.box_size, atom_C, self.atom_type_a, 
+        self.rdf_c(self.natoms, box_size, atom_C, self.atom_type_a, 
                    self.atom_type_b, x_C, self.dg, self.nbin, self.gr_C)
         
         self.ngr += 1

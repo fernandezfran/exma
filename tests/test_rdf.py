@@ -23,7 +23,7 @@ class test_rdf(unittest.TestCase):
         x = particles.fcc()
 
         gofr = rdf.monoatomic(N, size, 10)
-        gofr.accumulate(x)
+        gofr.accumulate(size, x)
         result = gofr.end(False)
         
         np.testing.assert_array_almost_equal(result, reference)
@@ -48,7 +48,7 @@ class test_rdf(unittest.TestCase):
         x = particles.bcc()
 
         gofr = rdf.diatomic(N, size, 10, 1, 2)
-        gofr.accumulate(types, x)
+        gofr.accumulate(size, types, x)
         result = gofr.end(types, False)
 
         np.testing.assert_array_almost_equal(result, reference)
