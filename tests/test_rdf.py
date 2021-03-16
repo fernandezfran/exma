@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 from exma import atoms
 
-from exma import rdf
+from exma.RDF import rdf
 
 class test_rdf(unittest.TestCase):
 
@@ -28,7 +28,6 @@ class test_rdf(unittest.TestCase):
         
         np.testing.assert_array_almost_equal(result, reference)
 
-
     def test_diatomic(self):
         """
         test the radial distribution function of a diatomic body-centered
@@ -53,7 +52,6 @@ class test_rdf(unittest.TestCase):
         result = gofr.end(types, False)
 
         np.testing.assert_array_almost_equal(result, reference)
-
 
 if __name__ == '__main__':
     unittest.main()

@@ -17,7 +17,7 @@ frames = 201
 ssize = np.full(3, 7.46901) 
 
 solid = exma.reader.xyz("../_static/lj-fcc.xyz")
-srdf = exma.rdf.monoatomic(N, ssize, 75)
+srdf = exma.RDF.rdf.monoatomic(N, ssize, 75)
 
 for i in range(0, frames):
     sN, styp, sx = solid.read_frame()
@@ -32,7 +32,7 @@ frames = 201
 lsize = np.full(3, 8.54988) 
 
 liquid = exma.reader.xyz("../_static/lj-liquid.xyz")
-lrdf = exma.rdf.monoatomic(N, lsize, 75)
+lrdf = exma.RDF.rdf.monoatomic(N, lsize, 75)
 
 for i in range(0, frames):
     lN, ltyp, lx = liquid.read_frame()
