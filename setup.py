@@ -14,7 +14,7 @@ setup(
     version='0.1.0',
     description='extendable molecular dynamics analyzer',
     long_description=readme,
-    packages=find_packages(include=['exma']),
+    packages=find_packages(),
     author='Francisco Fernandez',
     author_email='fernandezfrancisco2195@gmail.com',
     url='https://github.com/fernandezfran/exma',
@@ -28,8 +28,8 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Operating System :: OS Independent',
-        #'Programming Language :: C'
         'Programming Language :: Python',
+        'Programming Language :: C'
         'Topic :: Scientific/Engineering'
     ]
 )

@@ -3,14 +3,14 @@ __email__ = "fernandezfrancisco2195@gmail.com"
 __version__ = "0.1.0" 
 
 
-from .atoms import positions
-from .boundary import apply
-from .clusterization import cluster 
-from .cn import monoatomic, diatomic
-from .en import effective_neighbors
-from .msd import monoatomic, diatomic
-from .RDF.rdf import monoatomic, diatomic
-from .reader import xyz, lammpstrj
-from .sro import warren_cowley
-from .statistics import block_average
-from .writer import xyz, lammpstrj
+from exma.atoms import positions
+from exma.boundary import apply
+from exma.clusterization import cluster 
+from exma.cn import monoatomic, diatomic
+from exma.en import effective_neighbors
+from exma.msd import monoatomic, diatomic
+from exma.RDF.rdf import monoatomic, diatomic
+from exma.reader import xyz, lammpstrj
+from exma.sro import warren_cowley
+from exma.statistics import block_average
+from exma.writer import xyz, lammpstrj
