@@ -5,6 +5,8 @@
 /exma/*.dat
 /exma/*.xyz
 /exma/*.lammpstrj
+/exma/*/*.o
+/exma/*/*.so
 
 /tests/__pycache__/
 

@@ -42,8 +42,8 @@ class monoatomic(rdf):
         self.ngr = 0
         
         self.rdf_c = lib_rdf.monoatomic
-        self.rdf_c.argtypes = [ct.c_int, ct.c_void_p, ct.c_void_p, ct.c_float,
-                               ct.c_int, ct.c_void_p]
+        self.rdf_c.argtypes = [ct.c_int, ct.c_void_p, ct.c_void_p,
+                               ct.c_float, ct.c_int, ct.c_void_p]
         self.gr_C = (ct.c_int * nbin)()
 
 
@@ -106,7 +106,7 @@ class monoatomic(rdf):
         rho = self.natoms / self.volume
 
         r = np.zeros(self.nbin)
-        gofr = np.asarray(np.frombuffer(self.gr_C, dtype=np.intc, count=self.nbin))
+        gofr = np.asarray(np.frombuffer(self.gr_C,dtype=np.intc,count=self.nbin))
         for i in range(self.nbin):
             vb = (np.power(i+1,3) - np.power(i,3)) * np.power(self.dg,3)
             nid = 4.0 * np.pi * vb * rho / 3.0
@@ -148,18 +148,25 @@ class diatomic(rdf):
     
     def __init__(self, natoms, box_size, nbin, atom_type_a, atom_type_b):
     
+        box_size = box_size.astype(np.float32)
+
         self.natoms = natoms
-        self.box_size = box_size
+        self.box_size = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
         self.nbin = nbin
         self.atom_type_a = atom_type_a
         self.atom_type_b = atom_type_b
 
-        self.minbox = np.min(self.box_size)
-        self.gr = np.zeros(self.nbin)
-        self.dg = 0.5 * self.minbox / self.nbin
+        minbox = np.min(box_size)
+        self.volume = np.prod(box_size)
+        self.gr = np.zeros(self.nbin, dtype=np.float32)
+        self.dg = 0.5 * minbox / self.nbin
         self.ngr = 0
 
-        self.bound = boundary.apply(self.box_size)
+        self.rdf_c = lib_rdf.diatomic
+        self.rdf_c.argtypes = [ct.c_int, ct.c_void_p, ct.c_void_p,
+                               ct.c_int, ct.c_int, ct.c_void_p,
+                               ct.c_float, ct.c_int, ct.c_void_p]
+        self.gr_C = (ct.c_int * nbin)()
     
 
     def accumulate(self, atom_type, positions):
@@ -176,24 +183,38 @@ class diatomic(rdf):
             i.e. first all the x, then y and then z
         """
 
-        for i in range(0, self.natoms):
+        #  ------------------------------------------------
+        # |The C lib works like the previous python module|
+        # ------------------------------------------------
+        #for i in range(0, self.natoms):
+        #
+        #    if (atom_type[i] != self.atom_type_a): continue
+        #    ri = [positions[i + k*self.natoms] for k in range(0,3)]
+        #
+        #    for j in range(0, self.natoms):
+        #        
+        #        if (j == i): continue
+        #        
+        #        if (atom_type[j] != self.atom_type_b): continue
+        #        rj = [positions[j + k*self.natoms] for k in range(0,3)]
+        #
+        #        rij = self.bound.minimum_image(ri, rj)
+        #        rij = np.linalg.norm(rij)
+        #
+        #        if (rij < 0.5 * self.minbox):
+        #            ig = np.intc(rij / self.dg)
+        #            self.gr[ig] += 1
+        
+        # got to be sure that the positions type is np.float32 and atom_type is
+        # an array of np.intc because those are the pointers types in C
+        atom_type = atom_type.astype(np.intc)
+        atom_C = atom_type.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
-            if (atom_type[i] != self.atom_type_a): continue
-            ri = [positions[i + k*self.natoms] for k in range(0,3)]
+        positions = positions.astype(np.float32)
+        x_C = positions.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
-            for j in range(0, self.natoms):
-                
-                if (j == i): continue
-                
-                if (atom_type[j] != self.atom_type_b): continue
-                rj = [positions[j + k*self.natoms] for k in range(0,3)]
-
-                rij = self.bound.minimum_image(ri, rj)
-                rij = np.linalg.norm(rij)
-
-                if (rij < 0.5 * self.minbox):
-                    ig = np.intc(rij / self.dg)
-                    self.gr[ig] += 1
+        self.rdf_c(self.natoms, self.box_size, atom_C, self.atom_type_a, 
+                   self.atom_type_b, x_C, self.dg, self.nbin, self.gr_C)
         
         self.ngr += 1
 
@@ -216,21 +237,19 @@ class diatomic(rdf):
         self.gr : numpy array
             y of the histogram 
         """
-        volume = np.prod(self.box_size)
+        
+        N_a = np.count_nonzero(atom_type == self.atom_type_a)
+        N_b = np.count_nonzero(atom_type == self.atom_type_b)
+        rho = N_a * N_b / self.volume
 
-        N_x = np.count_nonzero(atom_type == self.atom_type_a)
-        rho_x = N_x / volume
-
-        if (self.atom_type_a != self.atom_type_b): rho_x = (self.natoms - N_x) \
-                                                           / volume
-
+        gofr = np.asarray(np.frombuffer(self.gr_C,dtype=np.intc,count=self.nbin))
         r = np.zeros(self.nbin)
         for i in range(0, self.nbin):
             vb = (np.power(i+1,3) - np.power(i,3)) * np.power(self.dg,3)
-            nid = 4.0 * np.pi * vb * rho_x / 3.0
+            nid = 4.0 * np.pi * vb * rho / 3.0
             
             r[i] = (i + 0.5) * self.dg
-            self.gr[i] /= (N_x * self.ngr * nid)
+            self.gr[i] = np.float32(gofr[i]) / (self.ngr * nid)
 
         if (writes == True):
             file_rdf = open(file_rdf, 'w')
