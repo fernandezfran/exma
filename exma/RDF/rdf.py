@@ -1,9 +1,14 @@
 import os
+import sysconfig
 import ctypes as ct
 import numpy as np
 
+suffix = sysconfig.get_config_var('EXT_SUFFIX')
+if suffix is None: suffix = ".so"
+
 rdf_dir = os.path.dirname(__file__)
-librdf = os.path.abspath(os.path.join(rdf_dir, "lib_rdf.so"))
+rdf_name = "lib_rdf" + suffix
+librdf = os.path.abspath(os.path.join(rdf_dir, rdf_name))
 lib_rdf = ct.CDLL(librdf)
 
 class rdf:
