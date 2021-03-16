@@ -2,9 +2,9 @@
 
 """ setup script """
 
-from setuptools import find_packages#, setup
-from distutils.core import setup, Extension
 import sysconfig
+from setuptools import find_packages
+from distutils.core import setup, Extension
 
 with open('README.md') as file_readme:
     readme = file_readme.read()
@@ -14,8 +14,7 @@ requirements = ['sklearn', 'more-itertools', 'numpy', 'pandas']
 exma_packages = ['exma', 'exma.RDF']
 
 CFLAGS = sysconfig.get_config_var('CFLAGS').split()
-CFLAGS += ["-O3", "-ffast-math", "-funroll-loops", "-march=native",
-           "-ftree-vectorize"]
+CFLAGS += ["-O3", "-ffast-math", "-funroll-loops", "-ftree-vectorize", "-march=native"]
 
 RDF_mod = Extension('exma/RDF/lib_rdf',
                     sources=['exma/RDF/rdf.c'],

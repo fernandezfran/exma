@@ -21,7 +21,7 @@ srdf = exma.RDF.rdf.monoatomic(N, ssize, 75)
 
 for i in range(0, frames):
     sN, styp, sx = solid.read_frame()
-    srdf.accumulate(sx)
+    srdf.accumulate(ssize, sx)
 
 sr, sgofr = srdf.end(False)
 solid.file_close()
@@ -36,7 +36,7 @@ lrdf = exma.RDF.rdf.monoatomic(N, lsize, 75)
 
 for i in range(0, frames):
     lN, ltyp, lx = liquid.read_frame()
-    lrdf.accumulate(lx)
+    lrdf.accumulate(lsize, lx)
 
 lr, lgofr = lrdf.end(False)
 liquid.file_close()
