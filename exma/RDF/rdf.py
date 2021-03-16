@@ -1,5 +1,10 @@
+import os
+import ctypes as ct
 import numpy as np
-from . import boundary
+
+rdf_dir = os.path.dirname(__file__)
+librdf = os.path.abspath(os.path.join(rdf_dir, "lib_rdf.so"))
+lib_rdf = ct.CDLL(librdf)
 
 class rdf:
     """
@@ -24,16 +29,22 @@ class monoatomic(rdf):
 
     def __init__(self, natoms, box_size, nbin):
 
+        box_size = box_size.astype(np.float32)
+
         self.natoms = natoms
-        self.box_size = box_size
+        self.box_size = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
         self.nbin = nbin
         
-        self.minbox = np.min(self.box_size)
-        self.gr = np.zeros(self.nbin)
-        self.dg = 0.5 * self.minbox / self.nbin
+        minbox = np.min(box_size)
+        self.volume = np.prod(box_size)
+        self.dg = 0.5 * minbox / self.nbin
+        self.gr = np.zeros(self.nbin, dtype=np.float32)
         self.ngr = 0
-
-        self.bound = boundary.apply(self.box_size)
+        
+        self.rdf_c = lib_rdf.monoatomic
+        self.rdf_c.argtypes = [ct.c_int, ct.c_void_p, ct.c_void_p, ct.c_float,
+                               ct.c_int, ct.c_void_p]
+        self.gr_C = (ct.c_int * nbin)()
 
 
     def accumulate(self, positions):
@@ -46,22 +57,31 @@ class monoatomic(rdf):
             the positions in the SoA convention
             i.e. first all the x, then y and then z
         """
-
-        for i in range(0, self.natoms - 1):
-
-            ri = [positions[i + k*self.natoms] for k in range(0,3)]
-
-            for j in range(i+1, self.natoms):
-                
-                rj = [positions[j + k*self.natoms] for k in range(0,3)]
-                rij = self.bound.minimum_image(ri, rj)
-                rij = np.linalg.norm(rij)
-
-                if (rij >= 0.5 * self.minbox): continue
-               
-                ig = np.intc(rij / self.dg)
-                self.gr[ig] += 2
+        #  ------------------------------------------------
+        # |The C lib works like the previous python module|
+        # ------------------------------------------------
+        #for i in range(0, self.natoms - 1):
+        #
+        #    ri = [positions[i + k*self.natoms] for k in range(0,3)]
+        #
+        #    for j in range(i+1, self.natoms):
+        #       
+        #        rj = [positions[j + k*self.natoms] for k in range(0,3)]
+        #        rij = self.bound.minimum_image(ri, rj)
+        #        rij = np.linalg.norm(rij)
+        #
+        #        if (rij >= 0.5 * self.minbox): continue
+        #       
+        #        ig = np.intc(rij / self.dg)
+        #        self.gr[ig] += 2
         
+        # got to be sure that the positions type is np.float32 because that is
+        # the pointer type in C
+        positions = positions.astype(np.float32)
+        x_C = positions.ctypes.data_as(ct.POINTER(ct.c_void_p))
+
+        self.rdf_c(self.natoms, self.box_size, x_C, self.dg, self.nbin, self.gr_C)
+
         self.ngr += 1
 
 
@@ -83,16 +103,16 @@ class monoatomic(rdf):
         self.gr : numpy array
             y of the histogram 
         """
-        volume = np.prod(self.box_size)
-        rho = self.natoms / volume
+        rho = self.natoms / self.volume
 
         r = np.zeros(self.nbin)
-        for i in range(0, self.nbin):
+        gofr = np.asarray(np.frombuffer(self.gr_C, dtype=np.intc, count=self.nbin))
+        for i in range(self.nbin):
             vb = (np.power(i+1,3) - np.power(i,3)) * np.power(self.dg,3)
             nid = 4.0 * np.pi * vb * rho / 3.0
             
             r[i] = (i + 0.5) * self.dg
-            self.gr[i] /= (self.natoms * self.ngr * nid)
+            self.gr[i] = np.float32(gofr[i]) / (self.natoms * self.ngr * nid)
 
         if (writes == True):
             file_rdf = open(file_rdf, 'w')

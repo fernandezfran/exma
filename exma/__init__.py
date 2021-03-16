@@ -9,7 +9,7 @@ from .clusterization import cluster
 from .cn import monoatomic, diatomic
 from .en import effective_neighbors
 from .msd import monoatomic, diatomic
-from .rdf import monoatomic, diatomic
+from .RDF.rdf import monoatomic, diatomic
 from .reader import xyz, lammpstrj
 from .sro import warren_cowley
 from .statistics import block_average
