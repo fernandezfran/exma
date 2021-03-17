@@ -49,8 +49,8 @@ exma API
    :undoc-members:
    :show-inheritance:
 
-``exma.rdf`` module
--------------------
+``exma.RDF.rdf`` module
+-----------------------
 
 .. automodule:: exma.RDF.rdf
    :members:
