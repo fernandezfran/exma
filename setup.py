@@ -21,14 +21,14 @@ BOUNDARY_mod = Extension('exma/BOUNDARY/lib_boundary',
                          depends=['exma/BOUNDARY/boundary.h'],
                          extra_compile_args=CFLAGS)
 
-CLUSTER_mod = Extension('exma/BOUNDARY/lib_boundary',
-                        sources=['exma/BOUNDARY/boundary.c'],
-                        depends=['exma/BOUNDARY/boundary.h'],
+CLUSTER_mod = Extension('exma/CLUSTER/lib_cluster',
+                        sources=['exma/CLUSTER/cluster.c'],
+                        depends=['exma/CLUSTER/cluster.h'],
                         extra_compile_args=CFLAGS)
 
-RDF_mod = Extension('exma/CLUSTER/lib_cluster',
-                    sources=['exma/CLUSTER/cluster.c'],
-                    depends=['exma/CLUSTER/cluster.h'],
+RDF_mod = Extension('exma/RDF/lib_rdf',
+                    sources=['exma/RDF/rdf.c'],
+                    depends=['exma/RDF/rdf.h'],
                     extra_compile_args=CFLAGS)
 
 C_modules = [BOUNDARY_mod, CLUSTER_mod, RDF_mod]
