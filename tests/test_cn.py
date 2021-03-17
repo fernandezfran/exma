@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 from exma import atoms
 
-from exma import cn
+from exma.CN import cn
 
 
 class test_cn(unittest.TestCase):
@@ -20,12 +20,11 @@ class test_cn(unittest.TestCase):
         particles = atoms.positions(N, size[0])
         x = particles.sc()
 
-        mono = cn.monoatomic(N, size, rcut)
-        mono.accumulate(x)
+        mono = cn.monoatomic(N, rcut)
+        mono.accumulate(size, x)
         result = mono.end(0, x, writes=False)
 
         np.testing.assert_array_equal(result, reference)
-
 
     def test_diatomic(self):
         """
@@ -43,12 +42,11 @@ class test_cn(unittest.TestCase):
         particles = atoms.positions(N, size[0])
         x = particles.bcc()
         
-        di = cn.diatomic(N, size, types, 1, 2, rcut)
-        di.accumulate(types, x)
+        di = cn.diatomic(N, types, 1, 2, rcut)
+        di.accumulate(size, types, x)
         result = di.end(types, x, writes=False)
         
         np.testing.assert_array_equal(result, reference)
-
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,5 +1,15 @@
+import os
+import sysconfig
+import ctypes as ct
 import numpy as np
-from .BOUNDARY import boundary
+
+suffix = sysconfig.get_config_var('EXT_SUFFIX')
+if suffix is None: suffix = ".so"
+
+cn_dir = os.path.dirname(__file__)
+cn_name = "lib_cn" + suffix
+libcn = os.path.abspath(os.path.join(cn_dir, cn_name))
+lib_cn = ct.CDLL(libcn)
 
 class cn:
     """
@@ -15,9 +25,6 @@ class monoatomic(cn):
     natoms : integer
         number of atoms
 
-    box_size : numpy array with three floats
-        the box size in x, y, z
-
     rcut_e : float
         external of the shell
 
@@ -25,41 +32,41 @@ class monoatomic(cn):
         internal of the shell
     """
     
-    def __init__(self, natoms, box_size, rcut_e, rcut_i=0.0):
+    def __init__(self, natoms, rcut_e, rcut_i=0.0):
 
         self.natoms = natoms
-        self.box_size = box_size
         self.rcut_e = rcut_e
         self.rcut_i = rcut_i
 
-        self.cn = np.zeros(self.natoms)
+        self.cn = np.zeros(self.natoms, dtype=np.intc)
         self.ncn = 0
-        self.bound = boundary.condition(self.box_size)
+
+        self.cn_c = lib_cn.monoatomic
+        self.cn_c.argtypes = [ct.c_int, ct.c_void_p, ct.c_void_p, ct.c_float,
+                              ct.c_float, ct.c_void_p]
+        self.cn_C = (ct.c_int * natoms)()
         
 
-    def accumulate(self, positions):
+    def accumulate(self, box_size, positions):
         """
         Parameters
         ----------
+        box_size : numpy array with three floats
+            the box size in x, y, z
+        
         positions : numpy array with float32 data
             the positions in the SoA convention
             i.e. first all the x, then y and then z
         """
 
-        for i in range(0, self.natoms-1):
+        box_size = box_size.astype(np.float32)
+        box_size = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
-            ri = [positions[i + k*self.natoms] for k in range(0,3)]
-            
-            for j in range(i+1, self.natoms):
+        positions = positions.astype(np.float32)
+        x_C = positions.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
-                rj = [positions[j + k*self.natoms] for k in range(0,3)]
-
-                rij = self.bound.minimum_image(ri, rj)
-                rij = np.linalg.norm(rij)
-
-                if (rij <= self.rcut_i or rij > self.rcut_e): continue
-                self.cn[i] += 1
-                self.cn[j] += 1
+        self.cn_c(self.natoms, box_size, x_C, self.rcut_i, self.rcut_e, 
+                  self.cn_C) 
 
         self.ncn +=1
     
@@ -84,6 +91,9 @@ class monoatomic(cn):
             an array with the coordination number of each atom selected
         """
 
+        CN = np.asarray(np.frombuffer(self.cn_C,dtype=np.intc,count=self.natoms))
+        self.cn = np.array(CN / self.ncn, dtype=np.float32)
+
         if (writes == True):
             file_cn = open(file_cn, 'w')
             file_cn.write("%d\n\n" % self.natoms)
@@ -92,11 +102,11 @@ class monoatomic(cn):
             
                 file_cn.write("%d %g %g %g %g\n" % (atom_type[i], positions[i], \
                     positions[self.natoms + i], positions[2*self.natoms + i], \
-                    self.cn[i]/self.ncn))
+                    self.cn[i]))
 
             file_cn.close()
 
-        return np.array(self.cn / self.ncn, dtype=np.float32)
+        return self.cn
 
 
 class diatomic(cn):
@@ -107,9 +117,6 @@ class diatomic(cn):
     ----------
     natoms : integer
         number of atoms
-
-    box_size : numpy array with three floats
-        the box size in x, y, z
 
     atom_type : numpy array with integers (could be char)
         type of atoms
@@ -127,26 +134,35 @@ class diatomic(cn):
         internal of the shell
     """
     
-    def __init__(self, natoms, box_size, atom_type, atom_type_a, atom_type_b, \
-                    rcut_e, rcut_i=0.0):
+    def __init__(self, natoms, atom_type, atom_type_a, atom_type_b, rcut_e, \
+                 rcut_i=0.0):
 
         self.natoms = natoms
-        self.box_size = box_size
         self.atom_type_a = atom_type_a
         self.atom_type_b = atom_type_b
         self.rcut_e = rcut_e
         self.rcut_i = rcut_i
 
-        N_x = np.count_nonzero(atom_type == self.atom_type_a)
-        self.cn = np.zeros(N_x)
+        N_a = np.count_nonzero(atom_type == self.atom_type_a)
+        self.N_a = N_a
+
+        self.cn = np.zeros(N_a, dtype=np.intc)
         self.ncn = 0
-        self.bound = boundary.condition(self.box_size)
+
+        self.cn_c = lib_cn.diatomic
+        self.cn_c.argtypes = [ct.c_int, ct.c_void_p, ct.c_void_p, ct.c_int, 
+                              ct.c_int, ct.c_void_p, ct.c_float, ct.c_float,
+                              ct.c_void_p]
+        self.cn_C = (ct.c_int * N_a)()
         
 
-    def accumulate(self, atom_type, positions):
+    def accumulate(self, box_size, atom_type, positions):
         """
         Parameters
         ----------
+        box_size : numpy array with three floats
+            the box size in x, y, z
+        
         atom_type : numpy array with integers (could be char)
             type of atoms
         
@@ -155,26 +171,17 @@ class diatomic(cn):
             i.e. first all the x, then y and then z
         """
 
-        idx = 0
-        for i in range(0, self.natoms):
+        box_size = box_size.astype(np.float32)
+        box_size = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
-            if (atom_type[i] != self.atom_type_a): continue
-            ri = [positions[i + k*self.natoms] for k in range(0,3)]
-            
-            for j in range(0, self.natoms):
+        positions = positions.astype(np.float32)
+        x_C = positions.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
-                if (j == i): continue
-                
-                if (atom_type[j] != self.atom_type_b): continue
-                rj = [positions[j + k*self.natoms] for k in range(0,3)]
+        atom_type = atom_type.astype(np.intc)
+        atom_C = atom_type.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
-                rij = self.bound.minimum_image(ri, rj)
-                rij = np.linalg.norm(rij)
-
-                if (rij <= self.rcut_i or rij > self.rcut_e): continue
-                self.cn[idx] += 1
-                    
-            idx += 1
+        self.cn_c(self.natoms, box_size, atom_C, self.atom_type_a,
+                  self.atom_type_b, x_C, self.rcut_i, self.rcut_e, self.cn_C)
 
         self.ncn +=1
     
@@ -199,6 +206,9 @@ class diatomic(cn):
             an array with the coordination number of each atom selected
         """
 
+        CN = np.asarray(np.frombuffer(self.cn_C,dtype=np.intc,count=self.N_a))
+        self.cn = np.array(CN / self.ncn, dtype=np.float32)
+
         if (writes == True):
             file_cn = open(file_cn, 'w')
             file_cn.write("%d\n\n" % len(self.cn))
@@ -210,10 +220,10 @@ class diatomic(cn):
                 
                 file_cn.write("%d %g %g %g %g\n" % (atom_type[i], positions[i], \
                     positions[self.natoms + i], positions[2*self.natoms + i], \
-                    self.cn[idx]/self.ncn))
+                    self.cn[idx]))
                 
                 idx += 1
 
             file_cn.close()
 
-        return np.array(self.cn / self.ncn, dtype=np.float32)
+        return self.cn

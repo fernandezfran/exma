@@ -11,7 +11,7 @@ with open('README.md') as file_readme:
 
 requirements = ['sklearn', 'more-itertools', 'numpy', 'pandas']
 
-exma_packages = ['exma', 'exma.BOUNDARY', 'exma.CLUSTER', 'exma.RDF']
+exma_packages = ['exma', 'exma.BOUNDARY', 'exma.CLUSTER', 'exma.CN', 'exma.RDF']
 
 CFLAGS = sysconfig.get_config_var('CFLAGS').split()
 CFLAGS += ["-O3", "-ffast-math", "-fPIC", "-ftree-vectorize", "-march=native"]
@@ -21,17 +21,22 @@ BOUNDARY_mod = Extension('exma/BOUNDARY/lib_boundary',
                          depends=['exma/BOUNDARY/boundary.h'],
                          extra_compile_args=CFLAGS)
 
-CLUSTER_mod = Extension('exma/BOUNDARY/lib_boundary',
-                        sources=['exma/BOUNDARY/boundary.c'],
-                        depends=['exma/BOUNDARY/boundary.h'],
+CLUSTER_mod = Extension('exma/CLUSTER/lib_cluster',
+                        sources=['exma/CLUSTER/cluster.c'],
+                        depends=['exma/CLUSTER/cluster.h'],
                         extra_compile_args=CFLAGS)
 
-RDF_mod = Extension('exma/CLUSTER/lib_cluster',
-                    sources=['exma/CLUSTER/cluster.c'],
-                    depends=['exma/CLUSTER/cluster.h'],
+CN_mod = Extension('exma/CN/lib_cn',
+                   sources=['exma/CN/cn.c'],
+                   depends=['exma/CN/cn.h'],
+                   extra_compile_args=CFLAGS)
+
+RDF_mod = Extension('exma/RDF/lib_rdf',
+                    sources=['exma/RDF/rdf.c'],
+                    depends=['exma/RDF/rdf.h'],
                     extra_compile_args=CFLAGS)
 
-C_modules = [BOUNDARY_mod, CLUSTER_mod, RDF_mod]
+C_modules = [BOUNDARY_mod, CLUSTER_mod, CN_mod, RDF_mod]
 
 setup(
     name='exma',
