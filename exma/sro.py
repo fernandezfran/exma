@@ -1,5 +1,5 @@
 import numpy as np
-from . import boundary
+from .BOUNDARY import boundary
 
 class sro:
     """
@@ -49,7 +49,7 @@ class warren_cowley(sro):
         self.m[0] = self.N[0] / natoms
         self.m[1] = self.N[1] / natoms
         self.nalpha = 0
-        self.bound = boundary.apply(self.box_size)
+        self.bound = boundary.condition(self.box_size)
 
 
     def accumulate(self, atom_type, positions):

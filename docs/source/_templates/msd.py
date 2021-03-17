@@ -4,7 +4,6 @@
 # Python script to calculate the MSD of a LJ fluid in a solid and in a liquid 
 #   phase
 #
-import time
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -15,8 +14,6 @@ N = 500
 
 frames = 201
 ssize = np.full(3, 7.46901) 
-
-start_time = time.time()
 
 solid = exma.reader.xyz("../_static/lj-fcc.xyz", 'image')
 
@@ -56,8 +53,6 @@ for i in range(0, frames - 1):
 liquid.file_close()
 lt = np.asarray(lt)
 lmsd = np.asarray(lmsd)
-
-print("--- %s sec ---" % (time.time() - start_time))
 
 # graphic
 plt.xlabel("frames")
