@@ -1,22 +1,29 @@
+import os
+import sysconfig
+import ctypes as ct
 import numpy as np
-from .BOUNDARY import boundary
 from sklearn.cluster import DBSCAN
 
-class clusterization:
+suffix = sysconfig.get_config_var('EXT_SUFFIX')
+if suffix is None: suffix = ".so"
+
+cluster_dir = os.path.dirname(__file__)
+cluster_name = "lib_cluster" + suffix
+libcluster = os.path.abspath(os.path.join(cluster_dir, cluster_name))
+lib_cluster = ct.CDLL(libcluster)
+
+class cluster:
     """
     cluster identification using scikit-learn lib
     """
 
-class cluster(clusterization):
+class clusterization(cluster):
     """
     the main objetive of this module is to accomodate data (calculate the
     distance matrix taking account of the PBC) before using sklearn.cluster 
 
     Parameters
     ----------
-
-    box_size : numpy array with three floats
-        the box size in x, y, z
 
     eps : float
         like an rcut where an atoms stop to be considered part of a cluster
@@ -26,16 +33,13 @@ class cluster(clusterization):
         by default, 2 atoms can be a cluster
     """
 
-    def __init__(self, box_size, eps, min_samples=2):
+    def __init__(self, eps, min_samples=2):
 
-        self.box_size = box_size
         self.eps = eps
         self.min_samples = min_samples
 
-        self.bound = boundary.condition(self.box_size)
 
-
-    def dbscan(self, atom_type, positions, atom_type_c):
+    def dbscan(self, box_size, atom_type, positions, atom_type_c):
         """
         DBSCAN (density-based spatial clusterin of applications with noise)
 
@@ -44,6 +48,9 @@ class cluster(clusterization):
 
         Parameters
         ----------
+        box_size : numpy array with three floats
+            the box size in x, y, z
+        
         atom_type : numpy array with integers (could be char)
             type of atoms
         
@@ -71,24 +78,24 @@ class cluster(clusterization):
         x, y, z = x[atom_type == atom_type_c], y[atom_type == atom_type_c], \
                   z[atom_type == atom_type_c]
 
-        positions_c = np.concatenate((x, y, z))
-        natoms_c = len(x)
-        distrix = np.zeros(natoms_c * natoms_c)
+        positions_c = np.concatenate((x, y, z)).astype(np.float32)
+        natoms_c = np.intc(len(x))
+        distrix = np.zeros(natoms_c * natoms_c, dtype=np.float32)
 
-        for i in range(0, natoms_c - 1):
+        # prepare data to C function
+        box_size = box_size.astype(np.float32)
+        box_C = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
-            ri = [positions_c[i + k*natoms_c] for k in range(0,3)]
+        x_C = positions_c.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
-            for j in range(i + 1, natoms_c):
-           
-                rj = [positions_c[j + k*natoms_c] for k in range(0,3)]
+        distrix_C = distrix.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
-                rij = self.bound.minimum_image(ri, rj)
-                r2 = np.linalg.norm(rij)
+        distance_matrix_c = lib_cluster.distance_matrix
+        distance_matrix_c.argtypes = [ct.c_int, ct.c_void_p, ct.c_void_p,
+                                      ct.c_void_p]
 
-                # the distance matrix is symetric
-                distrix[natoms_c * i + j] = r2
-                distrix[natoms_c * j + i] = r2
+        distance_matrix_c(natoms_c, box_C, x_C, distrix_C)
+        # a void function that modifies the values of distrix
 
         distrix = distrix.reshape((natoms_c, natoms_c))
         db = DBSCAN(eps=self.eps, min_samples=self.min_samples, \

@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 
-from exma import clusterization
+from exma.CLUSTER import cluster
 
 class test_clusterization(unittest.TestCase):
 
@@ -18,9 +18,9 @@ class test_clusterization(unittest.TestCase):
                       0.0, 0.0, 0.0,
                       0.45, 0.55, 0.0 ])
 
-        result = clusterization.cluster(size, rcut).dbscan(typ, x, 1)
+        result = cluster.clusterization(rcut).dbscan(size, typ, x, 1)
 
-        np.testing.assert_array_equal(result[0], x)
+        np.testing.assert_array_almost_equal(result[0], x)
         np.testing.assert_array_equal(result[1], reference)
 
 

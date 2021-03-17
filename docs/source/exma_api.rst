@@ -17,10 +17,10 @@ exma API
    :undoc-members:
    :show-inheritance:
 
-``exma.clusterization`` module
-------------------------------
+``exma.CLUSTER.cluster`` module
+-------------------------------
 
-.. automodule:: exma.clusterization
+.. automodule:: exma.CLUSTER.cluster
    :members:
    :undoc-members:
    :show-inheritance:

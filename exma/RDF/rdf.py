@@ -64,23 +64,6 @@ class monoatomic(rdf):
             the positions in the SoA convention
             i.e. first all the x, then y and then z
         """
-        #  ------------------------------------------------
-        # |The C lib works like the previous python module|
-        # ------------------------------------------------
-        #for i in range(0, self.natoms - 1):
-        #
-        #    ri = [positions[i + k*self.natoms] for k in range(0,3)]
-        #
-        #    for j in range(i+1, self.natoms):
-        #       
-        #        rj = [positions[j + k*self.natoms] for k in range(0,3)]
-        #        rij = self.bound.minimum_image(ri, rj)
-        #        rij = np.linalg.norm(rij)
-        #
-        #        if (rij >= 0.5 * self.minbox): continue
-        #       
-        #        ig = np.intc(rij / self.dg)
-        #        self.gr[ig] += 2
         
         # got to be sure that the box_size and positions type is np.float32 
         # because that is the pointer type in C
@@ -192,28 +175,6 @@ class diatomic(rdf):
             the positions in the SoA convention
             i.e. first all the x, then y and then z
         """
-
-        #  ------------------------------------------------
-        # |The C lib works like the previous python module|
-        # ------------------------------------------------
-        #for i in range(0, self.natoms):
-        #
-        #    if (atom_type[i] != self.atom_type_a): continue
-        #    ri = [positions[i + k*self.natoms] for k in range(0,3)]
-        #
-        #    for j in range(0, self.natoms):
-        #        
-        #        if (j == i): continue
-        #        
-        #        if (atom_type[j] != self.atom_type_b): continue
-        #        rj = [positions[j + k*self.natoms] for k in range(0,3)]
-        #
-        #        rij = self.bound.minimum_image(ri, rj)
-        #        rij = np.linalg.norm(rij)
-        #
-        #        if (rij < 0.5 * self.minbox):
-        #            ig = np.intc(rij / self.dg)
-        #            self.gr[ig] += 1
         
         # got to be sure that the box_size and the positions types are np.float32
         # and atom_type is an array of np.intc because those are the pointers 
