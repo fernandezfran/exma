@@ -14,13 +14,13 @@ class test_msd(unittest.TestCase):
         size = np.array([2.0, 2.0, 2.0])
         xi = np.array([0.0, 0.0, 0.0])
 
-        MSD = msd.monoatomic(N, size, xi)
+        MSD = msd.monoatomic(N, xi)
       
 
         reference = np.array([1.0, 12.0])
         xf = xi
         imgf = np.array([1, 1, 1])
-        result = MSD.wrapped(xf, imgf)
+        result = MSD.wrapped(size, xf, imgf)
 
         np.testing.assert_array_equal(result, reference)
         

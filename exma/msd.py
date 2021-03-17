@@ -17,31 +17,30 @@ class monoatomic(msd):
     ----------
     natoms : integer
         the number of atoms in the frame
-   
-    box_size : numpy array
-        with the box lenght in x, y, z
     
     x_ref : numpy array with float32 data
         the reference positions in the SoA convention
         i.e. first all the x, then y and then z
     """
     
-    def __init__(self, natoms, box_size, x_ref):
+    def __init__(self, natoms, x_ref):
 
         self.natoms = natoms
-        self.box_size = box_size
-        self.x_ref = x_ref
-
+        self.ref = np.split(x_ref,3)
+        
         self.frame = 0
 
     
-    def wrapped(self, positions, image):
+    def wrapped(self, box_size, positions, image):
         """
         to use if the trajectory is wrapped inside the simulation box and you
         have the image of each particle in the different directions
 
         Parameters
         ----------
+        box_size : numpy array
+            with the box lenght in x, y, z
+        
         positions : numpy array with float32 data
             the positions in the SoA convention
             i.e. first all the x, then y and then z
@@ -55,23 +54,18 @@ class monoatomic(msd):
             [0]: frame
             [1]: msd
         """
-
-        msd = 0.0
-        for i in range(0, self.natoms):
-            xx = np.zeros(3)
-            for j in range(0, 3):
-                xx[j] = positions[j*self.natoms + i] \
-                      + image[j*self.natoms + i]*self.box_size[j] \
-                      - self.x_ref[j*self.natoms + i]
-
-            rr = np.linalg.norm(xx)
-            r2 = rr * rr
-
-            msd += r2
         
-        msd /= self.natoms
+        msd = 0.0
+        positions = np.split(positions,3)
+        image = np.split(image,3)
+        MSD = np.zeros(self.natoms, dtype=np.float32)
+        for i in range(0,3):
+            xx = positions[i] + image[i]*box_size[i] - self.ref[i]
+            MSD += xx * xx
+        msd = np.sum(MSD) / self.natoms
 
         self.frame += 1
+        
         return np.array([self.frame, msd], dtype=np.float32)
 
     
@@ -93,20 +87,15 @@ class monoatomic(msd):
         """
 
         msd = 0.0
-        for i in range(0, self.natoms):
-            xx = np.zeros(3)
-            for j in range(0, 3):
-                xx[j] = positions[j*self.natoms + i] \
-                      - self.x_ref[j*self.natoms + i]
-
-            rr = np.linalg.norm(xx)
-            r2 = rr * rr
-
-            msd += r2
-        
-        msd /= self.natoms
+        positions = np.split(positions,3)
+        MSD = np.zeros(self.natoms, dtype=np.float32)
+        for i in range(0,3):
+            xx = positions[i] - self.ref[i]
+            MSD += xx * xx
+        msd = np.sum(MSD) / self.natoms
 
         self.frame += 1
+        
         return np.array([self.frame, msd], dtype=np.float32)
 
 
