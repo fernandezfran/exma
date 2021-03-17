@@ -16,21 +16,26 @@ class block_average(statistics):
 
     Parameters
     ----------
-    file_data : file
+    x : array (default = 0.0)
         where the time series is
 
-    column : integer
+    file_data : file (default = None)
+        where the time series is if not x
+
+    column : integer (default = 0)
         number of the column for which you want to calculate the error
 
-    comment : str
+    comment : str (default = '#')
         how are the comments denoted in the file
 
-    dtype : str
+    dtype : str (default = np.float32)
         type of data
     """
 
-    def __init__(self, file_data, column, comment='#', dtype=np.float32):
+    def __init__(self, x=0.0, file_data=None, column=0, comment='#',
+                 dtype=np.float32):
 
+        self.x = x
         self.file_data = file_data
         self.column = column
         self.comment = comment
@@ -41,25 +46,29 @@ class block_average(statistics):
         """
         Returns
         -------
-        idx : list of integers
+        idx : numpy array of integers
             number of times that block sums where applied
 
-        ds : list of integers
+        ds : numpy array of integers
             data size
 
-        mean : list of floats
+        mean : numpy array of floats
             with the mean value of the data considered
 
-        var : list of floats
+        var : numpy array of floats
             variance of the data considered
 
-        varerr : list of floats
+        varerr : numpy array of floats
             error of the variance
         """
-        x = pd.read_table(self.file_data, delim_whitespace=True, \
-                comment=self.comment, dtype=self.dtype)
-        x = pd.DataFrame.to_numpy(x)
-        x = x[:, self.column]
+        
+        if self.file_data is not None:
+            self.x = pd.read_table(self.file_data, delim_whitespace=True, \
+                                   comment=self.comment, dtype=self.dtype)
+            self.x = pd.DataFrame.to_numpy(self.x)
+            self.x = self.x[:, self.column]
+
+        x = self.x
 
         ds     = []
         mean   = []
@@ -87,6 +96,10 @@ class block_average(statistics):
 
             oldx = newx
 
-        idx = list(range(0, idx+1))
+        idx = np.array(list(range(0, idx+1)))
+        ds = np.array(ds)
+        mean = np.array(mean)
+        var = np.array(var)
+        varerr = np.array(varerr)
 
         return idx, ds, mean, var, varerr
