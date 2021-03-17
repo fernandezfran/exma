@@ -108,9 +108,6 @@ class diatomic(msd):
     natoms : integer
         the number of atoms in the frame
    
-    box_size : numpy array
-        with the box lenght in x, y, z
-    
     atom_type : list of integers
         the type of the atoms
     
@@ -125,12 +122,10 @@ class diatomic(msd):
         another type of atom
     """
 
-    def __init__(self, natoms, box_size, atom_type, x_ref, atom_type_a,
-            atom_type_b):
+    def __init__(self, natoms, atom_type, x_ref, atom_type_a, atom_type_b):
   
         self.natoms = natoms
-        self.box_size = box_size
-        self.x_ref = x_ref
+        self.ref = np.split(x_ref,3)
         self.atom_type_a = atom_type_a
         self.atom_type_b = atom_type_b
 
@@ -139,13 +134,16 @@ class diatomic(msd):
         self.N_b = np.count_nonzero(atom_type == atom_type_b)
 
 
-    def wrapped(self, atom_type, positions, image):
+    def wrapped(self, box_size, atom_type, positions, image):
         """
         to use if the trajectory is wrapped inside the simulation box and you
         have the image of each particle in the different directions
 
         Parameters
         ----------
+        box_size : numpy array
+            with the box lenght in x, y, z
+    
         atom_type : list of integers
             the type of the atoms
         
@@ -166,25 +164,17 @@ class diatomic(msd):
         """
 
         msd_a, msd_b, msd_t = 0.0, 0.0, 0.0
-        for i in range(0, self.natoms):
-            xx = np.zeros(3)
-            for j in range(0, 3):
-                xx[j] = positions[j*self.natoms + i] \
-                      + image[j*self.natoms + i]*self.box_size[j] \
-                      - self.x_ref[j*self.natoms + i]
-
-            rr = np.linalg.norm(xx)
-            r2 = rr * rr
-
-            msd_t += r2
-            if (atom_type[i] == self.atom_type_a):
-                msd_a += r2
-            else: # i.e.: atom_type[i] == self.atom_type_b
-                msd_b += r2
         
-        msd_t /= self.natoms
-        msd_a /= self.N_a
-        msd_b /= self.N_b
+        positions = np.split(positions,3)
+        image = np.split(image,3)
+        MSD = np.zeros(self.natoms, dtype=np.float32)
+        for i in range(0,3):
+            xx = positions[i] + image[i]*box_size[i] - self.ref[i]
+            MSD += xx * xx
+        
+        msd_t = np.sum(MSD) / self.natoms
+        msd_a = np.sum(MSD[atom_type == self.atom_type_a]) / self.N_a
+        msd_b = np.sum(MSD[atom_type == self.atom_type_b]) / self.N_b
 
         self.frame += 1
         return np.array([self.frame, msd_a, msd_b, msd_t], dtype=np.float32)
@@ -213,24 +203,16 @@ class diatomic(msd):
         """
 
         msd_a, msd_b, msd_t = 0.0, 0.0, 0.0
-        for i in range(0, self.natoms):
-            xx = np.zeros(3)
-            for j in range(0, 3):
-                xx[j] = positions[j*self.natoms + i] \
-                      - self.x_ref[j*self.natoms + i]
 
-            rr = np.linalg.norm(xx)
-            r2 = rr * rr
-
-            msd_t += r2
-            if (atom_type[i] == self.atom_type_a):
-                msd_a += r2
-            else: # i.e.: atom_type[i] == self.atom_type_b
-                msd_b += r2
+        positions = np.split(positions,3)
+        MSD = np.zeros(self.natoms, dtype=np.float32)
+        for i in range(0,3):
+            xx = positions[i] - self.ref[i]
+            MSD += xx * xx
         
-        msd_t /= self.natoms
-        msd_a /= self.N_a
-        msd_b /= self.N_b
+        msd_t = np.sum(MSD) / self.natoms
+        msd_a = np.sum(MSD[atom_type == self.atom_type_a]) / self.N_a
+        msd_b = np.sum(MSD[atom_type == self.atom_type_b]) / self.N_b
 
         self.frame += 1
         return np.array([self.frame, msd_a, msd_b, msd_t], dtype=np.float32)
