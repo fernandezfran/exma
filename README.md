@@ -19,7 +19,7 @@ With _exma_ you can:
     - effective neighbors (EN),
     - mean square displacement (MSD),
     - the radial distribution function (RDF) of monoatomic or diatomic systems,
-    - short range order (SRO): Warren-Cowley parameter (WCP).
+    - short range order (SRO): volumetric Warren-Cowley parameter (WCP).
 
 
 ## Requirements

@@ -9,10 +9,10 @@ exma API
    :undoc-members:
    :show-inheritance:
 
-``exma.boundary`` module
-------------------------
+``exma.BOUDNARY.boundary`` module
+---------------------------------
 
-.. automodule:: exma.boundary
+.. automodule:: exma.BOUNDARY.boundary
    :members:
    :undoc-members:
    :show-inheritance:

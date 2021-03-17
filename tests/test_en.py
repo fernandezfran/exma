@@ -27,7 +27,7 @@ class test_en(unittest.TestCase):
         effnei = en.effective_neighbors(N, size, 1, 2)
         result = effnei.of_this_frame(types, x)
 
-        np.testing.assert_array_equal(result, reference)
+        np.testing.assert_array_almost_equal(result, reference, 5)
 
 
 if __name__ == '__main__':

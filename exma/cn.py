@@ -1,5 +1,5 @@
 import numpy as np
-from . import boundary
+from .BOUNDARY import boundary
 
 class cn:
     """
@@ -34,7 +34,7 @@ class monoatomic(cn):
 
         self.cn = np.zeros(self.natoms)
         self.ncn = 0
-        self.bound = boundary.apply(self.box_size)
+        self.bound = boundary.condition(self.box_size)
         
 
     def accumulate(self, positions):
@@ -140,7 +140,7 @@ class diatomic(cn):
         N_x = np.count_nonzero(atom_type == self.atom_type_a)
         self.cn = np.zeros(N_x)
         self.ncn = 0
-        self.bound = boundary.apply(self.box_size)
+        self.bound = boundary.condition(self.box_size)
         
 
     def accumulate(self, atom_type, positions):

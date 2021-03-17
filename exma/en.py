@@ -1,5 +1,5 @@
 import numpy as np
-from . import boundary
+from .BOUNDARY import boundary
 
 class effective_neighbors:
     """
@@ -33,7 +33,7 @@ class effective_neighbors:
         self.atom_type_central = atom_type_central
         self.atom_type_interact = atom_type_interact
 
-        self.bound = boundary.apply(self.box_size)
+        self.bound = boundary.condition(self.box_size)
 
 
     def of_this_frame(self, atom_type, positions):

@@ -1,5 +1,5 @@
 import numpy as np
-from . import boundary
+from .BOUNDARY import boundary
 from sklearn.cluster import DBSCAN
 
 class clusterization:
@@ -31,8 +31,8 @@ class cluster(clusterization):
         self.box_size = box_size
         self.eps = eps
         self.min_samples = min_samples
-        
-        self.bound = boundary.apply(self.box_size)
+
+        self.bound = boundary.condition(self.box_size)
 
 
     def dbscan(self, atom_type, positions, atom_type_c):
