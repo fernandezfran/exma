@@ -6,11 +6,16 @@ import sysconfig
 from setuptools import find_packages
 from distutils.core import setup, Extension
 
+#### long description of project
 with open('README.md') as file_readme:
     readme = file_readme.read()
 
-requirements = ['sklearn', 'more-itertools', 'numpy', 'pandas']
+#### requirements to install and setup exma
+with open('requirements.rst') as file_requirements:
+    requirements = file_requirements.read().splitlines()
 
+
+#### modules of exma that are written in C
 exma_packages = ['exma', 'exma.BOUNDARY', 'exma.CLUSTER', 'exma.CN', 'exma.RDF']
 
 CFLAGS = sysconfig.get_config_var('CFLAGS').split()
@@ -38,6 +43,8 @@ RDF_mod = Extension('exma/RDF/lib_rdf',
 
 C_modules = [BOUNDARY_mod, CLUSTER_mod, CN_mod, RDF_mod]
 
+
+#### setup
 setup(
     name='exma',
     version='0.1.0',
