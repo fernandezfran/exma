@@ -24,7 +24,7 @@ With _exma_ you can:
 
 ## Requirements
 
-_exma_ requires Python 3.8 to run, the others specific requirements are provided during installation. 
+_exma_ requires Python 3.8 and gcc 9.3.0 to run, the others specific requirements are provided during installation. 
 
 
 ## Installation
@@ -68,14 +68,11 @@ python3 setup.py install
 #
 #       1. with exma.atoms.positions generate the positions of the atoms
 #           the first argument is the number of atoms and the second the box size
-#
 #       2. with exma.cn.monoatomic initializate the CN calculation
 #           the first argument is the number of atoms, the second the box size
 #           in each direction and the third is a cutoff distance
-#
 #       3. with CN.accumulate calculate de CN of this "frame"
 #           the argument is the positions of the atoms
-#
 #       4. with CN.end return the CN of each atom
 #           the first argument is the atom type to be written (not interested here)
 #           the second are the positions and the third is False to not write an
@@ -117,7 +114,7 @@ There are more examples in the Documentation.
 
 ## License
 
-[MIT License](https://choosealicense.com/licenses/mit/)
+[MIT License](https://github.com/fernandezfran/exma/blob/master/LICENSE)
 
 
 ## TODO
@@ -129,7 +126,7 @@ There are more examples in the Documentation.
 
 1. Fork it: <https://github.com/fernandezfran/exma/fork>
 2. Clone your fork locally: `git clone git@github.com:your_name/exma.git`
-3. Install _exma_ and test it to check if everything works fine (you can run `tox` in the directory).
+3. Install _exma_ and test it to check if everything works fine (you can run `tox` in the main directory after run `make` in each subdirectory of `exma/`).
 4. Create a new branch with your feature: `git checkout -b your_feature`
 5. Commit your changes: `git commit -am 'a detailed description of your feature'`
 6. Push the branch: `git push origin your_feature`

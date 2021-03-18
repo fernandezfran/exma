@@ -1,0 +1,5 @@
+include LICENSE
+include requirements.rst
+
+global-include exma/*/*.h
+recursive-exclude * __pycache__
