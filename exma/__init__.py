@@ -11,6 +11,5 @@ from exma.EN.en import effective_neighbors
 from exma.msd import monoatomic, diatomic
 from exma.RDF.rdf import monoatomic, diatomic
 from exma.reader import xyz, lammpstrj
-from exma.sro import warren_cowley
 from exma.statistics import block_average
 from exma.writer import xyz, lammpstrj
