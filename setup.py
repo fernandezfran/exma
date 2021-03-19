@@ -23,9 +23,9 @@ with open('exma_packages.rst') as file_exma_packages:
     exma_packages = file_exma_packages.read().splitlines()
 
 
-BOUNDARY_mod = Extension('exma/BOUNDARY/lib_boundary',
-                         sources=['exma/BOUNDARY/boundary.c'],
-                         depends=['exma/BOUNDARY/boundary.h'],
+boundary_mod = Extension('exma/boundary/lib_boundary',
+                         sources=['exma/boundary/boundary.c'],
+                         depends=['exma/boundary/boundary.h'],
                          extra_compile_args=CFLAGS)
 
 CLUSTER_mod = Extension('exma/CLUSTER/lib_cluster',
@@ -48,7 +48,7 @@ RDF_mod = Extension('exma/RDF/lib_rdf',
                     depends=['exma/RDF/rdf.h'],
                     extra_compile_args=CFLAGS)
 
-C_modules = [BOUNDARY_mod, CLUSTER_mod, CN_mod, EN_mod, RDF_mod]
+C_modules = [boundary_mod, CLUSTER_mod, CN_mod, EN_mod, RDF_mod]
 
 
 #### setup

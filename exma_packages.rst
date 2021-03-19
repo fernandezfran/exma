@@ -1,5 +1,5 @@
 exma
-exma.BOUNDARY
+exma.boundary
 exma.CLUSTER
 exma.CN
 exma.EN

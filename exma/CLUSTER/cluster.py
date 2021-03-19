@@ -12,6 +12,7 @@ cluster_name = "lib_cluster" + suffix
 libcluster = os.path.abspath(os.path.join(cluster_dir, cluster_name))
 lib_cluster = ct.CDLL(libcluster)
 
+
 class cluster:
     """
     cluster identification using scikit-learn lib

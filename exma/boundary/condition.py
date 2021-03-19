@@ -11,13 +11,8 @@ boundary_name = "lib_boundary" + suffix
 libboundary = os.path.abspath(os.path.join(boundary_dir, boundary_name))
 lib_boundary = ct.CDLL(libboundary)
 
-class boundary:
-    """
-    boundary conditions
-    """
 
-
-class condition(boundary):
+class condition:
     """
     apply some boundary condition to the particles
 
@@ -26,11 +21,16 @@ class condition(boundary):
     box_size : numpy array of three floats
         box size in x, y, z
     """
-
+    
     def __init__(self, box_size):
         
         self.box_size = box_size
 
+
+class periodic(condition):
+    """
+    apply periodic boundary condition to the particles
+    """
 
     def pbc(self, natoms, positions):
         """
@@ -68,6 +68,11 @@ class condition(boundary):
         
         return positions
 
+
+class minimum_image(condition):
+    """
+    minimum image
+    """
 
     def minimum_image(self, x_central, x_interact):
         """

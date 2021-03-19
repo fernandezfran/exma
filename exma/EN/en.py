@@ -11,6 +11,7 @@ en_name = "lib_en" + suffix
 liben = os.path.abspath(os.path.join(en_dir, en_name))
 lib_en = ct.CDLL(liben)
 
+
 class effective_neighbors:
     """
     the empirical effective coordination model, used to calculate the effective

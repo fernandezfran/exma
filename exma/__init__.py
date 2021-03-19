@@ -4,7 +4,7 @@ __version__ = "0.1.0"
 
 
 from exma.atoms import positions
-from exma.BOUNDARY.boundary import condition
+from exma.boundary.condition import periodic, minimum_image
 from exma.CLUSTER.cluster import clusterization
 from exma.CN.cn import monoatomic, diatomic
 from exma.EN.en import effective_neighbors
