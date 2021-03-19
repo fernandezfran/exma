@@ -7,7 +7,7 @@ minimal example: Coordination number (CN)
 The coordination number(CN), also called ligancy, of a given atom in a chemical system is defined as the number of atoms, molecules or ions bonded to it. *exma* calculate this quantity considered the number of neighbors surrounding a given atom type a cutoff distance.
 
 .. code-block:: python
-
+    
     #!/usr/bin/env python3
     # -*- coding: utf-8 -*-
     #
@@ -33,23 +33,24 @@ The coordination number(CN), also called ligancy, of a given atom in a chemical 
     import exma
 
     sc = exma.atoms.positions(8, 4.0).sc()
-    cn_sc = exma.CN.cn.monoatomic(8, 3.0)
+    cn_sc = exma.cn.coordination_number.monoatomic(8, 3.0)
     cn_sc.accumulate(np.full(3,4.0), sc)
     cn_sc = np.mean(cn_sc.end(0, sc, False))
 
     bcc = exma.atoms.positions(16, 4.0).bcc()
-    cn_bcc = exma.CN.cn.monoatomic(16, 1.8)
+    cn_bcc = exma.cn.coordination_number.monoatomic(16, 1.8)
     cn_bcc.accumulate(np.full(3,4.0), bcc)
     cn_bcc = np.mean(cn_bcc.end(0, bcc, False))
 
     fcc = exma.atoms.positions(32, 4.0).fcc()
-    cn_fcc = exma.CN.cn.monoatomic(32, 1.5)
+    cn_fcc = exma.cn.coordination_number.monoatomic(32, 1.5)
     cn_fcc.accumulate(np.full(3,4.0), fcc)
     cn_fcc = np.mean(cn_fcc.end(0, fcc, False))
 
     print("#  %d is the coordination number of a sc crystal" % cn_sc)
     print("#  %d is the coordination number of a bcc crystal" % cn_bcc)
     print("# %d is the coordination number of a fcc crystal" % cn_fcc)
+
 
 
 ----------------------------------------------------------------------------------
@@ -94,12 +95,12 @@ Before starting we need some infomation: the number of particles, the number of 
     frames = 201
     ssize = np.full(3, 7.46901)
 
-``np.full()`` will give us an array of three components with the same value, *i.e.* the box is cubic. Then, we use ``exma.reader.xyz`` to open the ``.xyz`` file located in 'exma/docs/source/_static/lj-fcc.xyz' and we start with ``exma.rdf.monoatomic`` declaring the number of particles of the system, the box size and the number of bins that will be considered in the histogram.
+``np.full()`` will give us an array of three components with the same value, *i.e.* the box is cubic. Then, we use ``exma.reader.xyz`` to open the ``.xyz`` file located in 'exma/docs/source/_static/lj-fcc.xyz' and we start with ``exma.rdf.gofr.monoatomic`` declaring the number of particles of the system, the box size and the number of bins that will be considered in the histogram.
 
 .. code-block:: python
 
     solid = exma.reader.xyz("../_static/lj-fcc.xyz")
-    srdf = exma.rdf.monoatomic(N, ssize, 75)
+    srdf = exma.rdf.gofr.monoatomic(N, ssize, 75)
 
 Now we can iterate along the frames that we have in our trajectory file, reading each frame with ``solid.read_frame()`` (solid is the object that we had created) and accumulated the information of the RDF using ``srdf.accumulate(sx)`` (srdf  is the object that we had created and sx are the positions of the atoms).
 
@@ -127,7 +128,7 @@ Following the same steps we can do the same for the liquid phase.
     lsize = np.full(3, 8.54988) 
 
     liquid = exma.reader.xyz("../_static/lj-liquid.xyz")
-    lrdf = exma.rdf.monoatomic(N, lsize, 75)
+    lrdf = exma.rdf.gofr.monoatomic(N, lsize, 75)
 
     for i in range(0, frames):
         lN, ltyp, lx = liquid.read_frame()
