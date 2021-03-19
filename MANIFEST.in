@@ -1,6 +1,6 @@
 include LICENSE
 include requirements.rst
 include exma_packages.rst
-
 global-include exma/*/*.h
+
 recursive-exclude * __pycache__

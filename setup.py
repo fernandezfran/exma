@@ -6,15 +6,15 @@ import sysconfig
 from setuptools import find_packages
 from distutils.core import setup, Extension
 
-#### long description of project
+""" long description of project """
 with open('README.md') as file_readme:
     readme = file_readme.read()
 
-#### requirements to install and setup exma
+""" requirements to setup exma """
 with open('requirements.rst') as file_requirements:
     requirements = file_requirements.read().splitlines()
 
-#### modules of exma that are written in C
+""" modules of exma that are written in C """
 with open('exma_packages.rst') as file_exma_packages:
     exma_packages = file_exma_packages.read().splitlines()
 
@@ -23,7 +23,6 @@ CFLAGS += ["-O3", "-ffast-math", "-fPIC", "-ftree-vectorize", "-march=native"]
 
 C_modules = []
 for mod in exma_packages:
-
     if mod == "exma": continue
     mod = mod.replace("exma.","")
     common = "exma/" + mod + "/" 
@@ -36,7 +35,7 @@ for mod in exma_packages:
                                extra_compile_args=CFLAGS))
 
 
-#### setup
+""" setup """
 setup(
     name='exma',
     version='0.1.0',
