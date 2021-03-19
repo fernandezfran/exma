@@ -12,7 +12,7 @@ liben = os.path.abspath(os.path.join(en_dir, en_name))
 lib_en = ct.CDLL(liben)
 
 
-class effective_neighbors:
+class hoppe:
     """
     the empirical effective coordination model, used to calculate the effective
     neighbors, assumes that the interact atoms donate more of its electron to

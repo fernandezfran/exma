@@ -11,12 +11,12 @@ rdf_name = "lib_rdf" + suffix
 librdf = os.path.abspath(os.path.join(rdf_dir, rdf_name))
 lib_rdf = ct.CDLL(librdf)
 
-class rdf:
+class gofr:
     """
-    radial distribution function
+    radial distribution function, g(r)
     """
 
-class monoatomic(rdf):
+class monoatomic(gofr):
     """
     rdf of a monoatomic system 
     
@@ -117,7 +117,7 @@ class monoatomic(rdf):
         return r, self.gr 
 
 
-class diatomic(rdf):
+class diatomic(gofr):
     """
     rdf of diatomic systems
     

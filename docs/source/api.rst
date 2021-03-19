@@ -33,10 +33,10 @@ exma API
    :undoc-members:
    :show-inheritance:
 
-``exma.EN.en`` module
----------------------
+``exma.en.effective_neighbors`` module
+--------------------------------------
 
-.. automodule:: exma.EN.en
+.. automodule:: exma.en.effective_neighbors
    :members:
    :undoc-members:
    :show-inheritance:
@@ -49,10 +49,10 @@ exma API
    :undoc-members:
    :show-inheritance:
 
-``exma.RDF.rdf`` module
------------------------
+``exma.rdf.gofr`` module
+------------------------
 
-.. automodule:: exma.RDF.rdf
+.. automodule:: exma.rdf.gofr
    :members:
    :undoc-members:
    :show-inheritance:

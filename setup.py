@@ -38,17 +38,17 @@ cn_mod = Extension('exma/cn/lib_cn',
                    depends=['exma/cn/cn.h'],
                    extra_compile_args=CFLAGS)
 
-EN_mod = Extension('exma/EN/lib_en',
-                   sources=['exma/EN/en.c'],
-                   depends=['exma/EN/en.h'],
+en_mod = Extension('exma/en/lib_en',
+                   sources=['exma/en/en.c'],
+                   depends=['exma/en/en.h'],
                    extra_compile_args=CFLAGS)
 
-RDF_mod = Extension('exma/RDF/lib_rdf',
-                    sources=['exma/RDF/rdf.c'],
-                    depends=['exma/RDF/rdf.h'],
+rdf_mod = Extension('exma/rdf/lib_rdf',
+                    sources=['exma/rdf/rdf.c'],
+                    depends=['exma/rdf/rdf.h'],
                     extra_compile_args=CFLAGS)
 
-C_modules = [boundary_mod, cluster_mod, cn_mod, EN_mod, RDF_mod]
+C_modules = [boundary_mod, cluster_mod, cn_mod, en_mod, rdf_mod]
 
 
 #### setup
