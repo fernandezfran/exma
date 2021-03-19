@@ -7,7 +7,7 @@ from exma.atoms import positions
 from exma.BOUNDARY.boundary import condition
 from exma.CLUSTER.cluster import clusterization
 from exma.CN.cn import monoatomic, diatomic
-from exma.en import effective_neighbors
+from exma.EN.en import effective_neighbors
 from exma.msd import monoatomic, diatomic
 from exma.RDF.rdf import monoatomic, diatomic
 from exma.reader import xyz, lammpstrj

@@ -33,10 +33,10 @@ exma API
    :undoc-members:
    :show-inheritance:
 
-``exma.en`` module
-------------------
+``exma.EN.en`` module
+---------------------
 
-.. automodule:: exma.en
+.. automodule:: exma.EN.en
    :members:
    :undoc-members:
    :show-inheritance:

@@ -14,7 +14,7 @@ Welcome to exma's documentation!
 
    exma
    installation
-   exma_api
+   api
    tutorial
    license
    contributing
