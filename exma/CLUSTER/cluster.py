@@ -38,6 +38,10 @@ class clusterization(cluster):
         self.eps = eps
         self.min_samples = min_samples
 
+        self.distance_matrix_c = lib_cluster.distance_matrix
+        self.distance_matrix_c.argtypes = [ct.c_int, ct.c_void_p, ct.c_void_p,
+                                           ct.c_void_p]
+
 
     def dbscan(self, box_size, atom_type, positions, atom_type_c):
         """
@@ -90,11 +94,7 @@ class clusterization(cluster):
 
         distrix_C = distrix.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
-        distance_matrix_c = lib_cluster.distance_matrix
-        distance_matrix_c.argtypes = [ct.c_int, ct.c_void_p, ct.c_void_p,
-                                      ct.c_void_p]
-
-        distance_matrix_c(natoms_c, box_C, x_C, distrix_C)
+        self.distance_matrix_c(natoms_c, box_C, x_C, distrix_C)
         # a void function that modifies the values of distrix
 
         distrix = distrix.reshape((natoms_c, natoms_c))

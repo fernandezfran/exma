@@ -24,7 +24,7 @@ With _exma_ you can:
 
 ## Requirements
 
-_exma_ requires Python 3.8 and gcc 9.3.0 to run, the others specific requirements are provided during installation. 
+_exma_ requires Python 3.8 to run, the others specific requirements are provided during installation. gcc 9.3 is necesary to compile the shared libreries if you are going to run `tox`.
 
 
 ## Installation
