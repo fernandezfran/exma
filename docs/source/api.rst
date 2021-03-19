@@ -25,10 +25,10 @@ exma API
    :undoc-members:
    :show-inheritance:
 
-``exma.CN.cn`` module
----------------------
+``exma.cn.coordination_number`` module
+--------------------------------------
 
-.. automodule:: exma.CN.cn
+.. automodule:: exma.cn.coordination_number
    :members:
    :undoc-members:
    :show-inheritance:

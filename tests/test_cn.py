@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 from exma import atoms
 
-from exma.CN import cn
+from exma.cn.coordination_number import monoatomic, diatomic
 
 
 class test_cn(unittest.TestCase):
@@ -20,7 +20,7 @@ class test_cn(unittest.TestCase):
         particles = atoms.positions(N, size[0])
         x = particles.sc()
 
-        mono = cn.monoatomic(N, rcut)
+        mono = monoatomic(N, rcut)
         mono.accumulate(size, x)
         result = mono.end(0, x, writes=False)
 
@@ -42,7 +42,7 @@ class test_cn(unittest.TestCase):
         particles = atoms.positions(N, size[0])
         x = particles.bcc()
         
-        di = cn.diatomic(N, types, 1, 2, rcut)
+        di = diatomic(N, types, 1, 2, rcut)
         di.accumulate(size, types, x)
         result = di.end(types, x, writes=False)
         

@@ -11,12 +11,8 @@ cn_name = "lib_cn" + suffix
 libcn = os.path.abspath(os.path.join(cn_dir, cn_name))
 lib_cn = ct.CDLL(libcn)
 
-class cn:
-    """
-    coordination number
-    """
 
-class monoatomic(cn):
+class monoatomic:
     """
     cn of a monoatomic system
     
@@ -109,7 +105,7 @@ class monoatomic(cn):
         return self.cn
 
 
-class diatomic(cn):
+class diatomic:
     """
     cn of a diatomic system
     

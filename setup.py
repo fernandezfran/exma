@@ -33,9 +33,9 @@ cluster_mod = Extension('exma/cluster/lib_cluster',
                         depends=['exma/cluster/cluster.h'],
                         extra_compile_args=CFLAGS)
 
-CN_mod = Extension('exma/CN/lib_cn',
-                   sources=['exma/CN/cn.c'],
-                   depends=['exma/CN/cn.h'],
+cn_mod = Extension('exma/cn/lib_cn',
+                   sources=['exma/cn/cn.c'],
+                   depends=['exma/cn/cn.h'],
                    extra_compile_args=CFLAGS)
 
 EN_mod = Extension('exma/EN/lib_en',
@@ -48,7 +48,7 @@ RDF_mod = Extension('exma/RDF/lib_rdf',
                     depends=['exma/RDF/rdf.h'],
                     extra_compile_args=CFLAGS)
 
-C_modules = [boundary_mod, cluster_mod, CN_mod, EN_mod, RDF_mod]
+C_modules = [boundary_mod, cluster_mod, cn_mod, EN_mod, RDF_mod]
 
 
 #### setup

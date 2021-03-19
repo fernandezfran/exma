@@ -1,6 +1,6 @@
 exma
 exma.boundary
 exma.cluster
-exma.CN
+exma.cn
 exma.EN
 exma.RDF
