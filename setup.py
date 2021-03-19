@@ -14,41 +14,26 @@ with open('README.md') as file_readme:
 with open('requirements.rst') as file_requirements:
     requirements = file_requirements.read().splitlines()
 
-
 #### modules of exma that are written in C
-CFLAGS = sysconfig.get_config_var('CFLAGS').split()
-CFLAGS += ["-O3", "-ffast-math", "-fPIC", "-ftree-vectorize", "-march=native"]
-
 with open('exma_packages.rst') as file_exma_packages:
     exma_packages = file_exma_packages.read().splitlines()
 
+CFLAGS = sysconfig.get_config_var('CFLAGS').split()
+CFLAGS += ["-O3", "-ffast-math", "-fPIC", "-ftree-vectorize", "-march=native"]
 
-BOUNDARY_mod = Extension('exma/BOUNDARY/lib_boundary',
-                         sources=['exma/BOUNDARY/boundary.c'],
-                         depends=['exma/BOUNDARY/boundary.h'],
-                         extra_compile_args=CFLAGS)
+C_modules = []
+for mod in exma_packages:
 
-CLUSTER_mod = Extension('exma/CLUSTER/lib_cluster',
-                        sources=['exma/CLUSTER/cluster.c'],
-                        depends=['exma/CLUSTER/cluster.h'],
-                        extra_compile_args=CFLAGS)
+    if mod == "exma": continue
+    mod = mod.replace("exma.","")
+    common = "exma/" + mod + "/" 
 
-CN_mod = Extension('exma/CN/lib_cn',
-                   sources=['exma/CN/cn.c'],
-                   depends=['exma/CN/cn.h'],
-                   extra_compile_args=CFLAGS)
+    library = common + "lib_" + mod
+    src     = common + mod + ".c"
+    depend  = common + mod + ".h"
 
-EN_mod = Extension('exma/EN/lib_en',
-                   sources=['exma/EN/en.c'],
-                   depends=['exma/EN/en.h'],
-                   extra_compile_args=CFLAGS)
-
-RDF_mod = Extension('exma/RDF/lib_rdf',
-                    sources=['exma/RDF/rdf.c'],
-                    depends=['exma/RDF/rdf.h'],
-                    extra_compile_args=CFLAGS)
-
-C_modules = [BOUNDARY_mod, CLUSTER_mod, CN_mod, EN_mod, RDF_mod]
+    C_modules.append(Extension(library, sources=[src], depends=[depend],
+                               extra_compile_args=CFLAGS))
 
 
 #### setup

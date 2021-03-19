@@ -12,19 +12,18 @@ cluster_name = "lib_cluster" + suffix
 libcluster = os.path.abspath(os.path.join(cluster_dir, cluster_name))
 lib_cluster = ct.CDLL(libcluster)
 
-class cluster:
-    """
-    cluster identification using scikit-learn lib
-    """
 
-class clusterization(cluster):
+class dbscan:
     """
     the main objetive of this module is to accomodate data (calculate the
-    distance matrix taking account of the PBC) before using sklearn.cluster 
+    distance matrix taking account of the PBC) before using sklearn.cluster.DBSCAN
+    (density-based spatial clustering of applications with noise)
+
+    see: https://scikit-learn.org/stable/modules/clustering.html
+    and https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html#sklearn.cluster.DBSCAN
 
     Parameters
     ----------
-
     eps : float
         like an rcut where an atoms stop to be considered part of a cluster
 
@@ -43,12 +42,9 @@ class clusterization(cluster):
                                            ct.c_void_p]
 
 
-    def dbscan(self, box_size, atom_type, positions, atom_type_c):
+    def of_this_frame(self, box_size, atom_type, positions, atom_type_c):
         """
-        DBSCAN (density-based spatial clusterin of applications with noise)
-
-        see: https://scikit-learn.org/stable/modules/clustering.html
-        and https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html#sklearn.cluster.DBSCAN
+        obtain the dbscan clusterization of the actual frame
 
         Parameters
         ----------

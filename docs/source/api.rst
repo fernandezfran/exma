@@ -9,34 +9,34 @@ exma API
    :undoc-members:
    :show-inheritance:
 
-``exma.BOUDNARY.boundary`` module
----------------------------------
+``exma.boundary.condition`` module
+----------------------------------
 
-.. automodule:: exma.BOUNDARY.boundary
+.. automodule:: exma.boundary.condition
    :members:
    :undoc-members:
    :show-inheritance:
 
-``exma.CLUSTER.cluster`` module
--------------------------------
+``exma.cluster.clusterization`` module
+--------------------------------------
 
-.. automodule:: exma.CLUSTER.cluster
+.. automodule:: exma.cluster.clusterization
    :members:
    :undoc-members:
    :show-inheritance:
 
-``exma.CN.cn`` module
----------------------
+``exma.cn.coordination_number`` module
+--------------------------------------
 
-.. automodule:: exma.CN.cn
+.. automodule:: exma.cn.coordination_number
    :members:
    :undoc-members:
    :show-inheritance:
 
-``exma.EN.en`` module
----------------------
+``exma.en.effective_neighbors`` module
+--------------------------------------
 
-.. automodule:: exma.EN.en
+.. automodule:: exma.en.effective_neighbors
    :members:
    :undoc-members:
    :show-inheritance:
@@ -49,10 +49,10 @@ exma API
    :undoc-members:
    :show-inheritance:
 
-``exma.RDF.rdf`` module
------------------------
+``exma.rdf.gofr`` module
+------------------------
 
-.. automodule:: exma.RDF.rdf
+.. automodule:: exma.rdf.gofr
    :members:
    :undoc-members:
    :show-inheritance:

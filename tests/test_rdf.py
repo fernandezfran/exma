@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 from exma import atoms
 
-from exma.RDF import rdf
+from exma.rdf.gofr import monoatomic, diatomic
 
 class test_rdf(unittest.TestCase):
 
@@ -22,7 +22,7 @@ class test_rdf(unittest.TestCase):
         particles = atoms.positions(N, size[0])
         x = particles.fcc()
 
-        gofr = rdf.monoatomic(N, size, 10)
+        gofr = monoatomic(N, size, 10)
         gofr.accumulate(size, x)
         result = gofr.end(False)
         
@@ -47,7 +47,7 @@ class test_rdf(unittest.TestCase):
         particles = atoms.positions(N, size[0])
         x = particles.bcc()
 
-        gofr = rdf.diatomic(N, size, 10, 1, 2)
+        gofr = diatomic(N, size, 10, 1, 2)
         gofr.accumulate(size, types, x)
         result = gofr.end(types, False)
 

@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 
-from exma.BOUNDARY import boundary
+from exma.boundary.condition import periodic, minimum_image
 
 
 class test_apply(unittest.TestCase):
@@ -14,7 +14,7 @@ class test_apply(unittest.TestCase):
                               1.0, 1.0, 0.0,
                               0.2, 0.8, 0.5], dtype=np.float32)
   
-        PBC = boundary.condition(np.array([1.0, 1.0, 1.0], dtype=np.float32))
+        PBC = periodic(np.array([1.0, 1.0, 1.0], dtype=np.float32))
 
         result = PBC.pbc(3, np.array([-0.5, 0.5, 0.0, 
                                       1.0, 3.0, -1.0,
@@ -29,7 +29,7 @@ class test_apply(unittest.TestCase):
         """
         reference = np.array([0.4, 0.0, -0.2], dtype=np.float32)
 
-        minimg = boundary.condition(np.array([1.0, 1.0, 1.0], dtype=np.float32))
+        minimg = minimum_image(np.array([1.0, 1.0, 1.0], dtype=np.float32))
         
         x = np.array([0.3, 0.5, 0.1])
         y = np.array([0.7, 0.5, 0.9])

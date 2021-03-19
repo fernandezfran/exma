@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 
-from exma.EN import en
+from exma.en.effective_neighbors import hoppe
 
 
 class test_en(unittest.TestCase):
@@ -24,7 +24,7 @@ class test_en(unittest.TestCase):
                       0.5, 0.5, 0.4, 0.6, 0.5])
         types = np.array([1, 1, 2, 2, 2])
 
-        effnei = en.effective_neighbors(N, 1, 2)
+        effnei = hoppe(N, 1, 2)
         result = effnei.of_this_frame(size, types, x)
 
         np.testing.assert_array_almost_equal(result, reference, 5)
