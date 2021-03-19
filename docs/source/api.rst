@@ -65,14 +65,6 @@ exma API
    :undoc-members:
    :show-inheritance:
 
-``exma.sro`` module
--------------------
-
-.. automodule:: exma.sro
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 ``exma.statistics`` module
 --------------------------
 
