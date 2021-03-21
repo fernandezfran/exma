@@ -225,25 +225,33 @@ class lammpstrj(reader):
             return natoms, box_size, atom_id, atom_type, positions
 
         elif (self.ftype == 'charge'):
-            
-            atom_q = np.zeros(natoms, dtype=np.float32)
+
+            q, x, y, z = [], [], [], []
 
             for i in range(0, natoms):
-
+              
                 idtqxyz = self.file_lammps.readline().split()
                 
                 atom_id.append(idtqxyz[0])
                 atom_type.append(idtqxyz[1])
 
-                positions[           i] = np.float32(idtqxyz[3])
-                positions[  natoms + i] = np.float32(idtqxyz[4])
-                positions[2*natoms + i] = np.float32(idtqxyz[5])
-                
-                atom_q[i] = np.float32(idtqxyz[2])
-       
+                q.append(idtqxyz[2])
+               
+                x.append(idtqxyz[3])
+                y.append(idtqxyz[4])
+                z.append(idtqxyz[5])
+
             atom_id = np.array(atom_id, dtype=np.intc)
             atom_type = np.array(atom_type, dtype=np.intc)
             
+            atom_q = np.asarray(q, dtype=np.float32)
+            
+            x = np.asarray(x, dtype=np.float32)
+            y = np.asarray(y, dtype=np.float32)
+            z = np.asarray(z, dtype=np.float32)
+
+            positions = np.concatenate((x,y,z))
+
             return natoms, box_size, atom_id, atom_type, positions, atom_q
 
         elif (self.ftype == 'image'):
