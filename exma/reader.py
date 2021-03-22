@@ -63,57 +63,81 @@ class xyz(reader):
         self.file_xyz.readline() # usually a comment in .xyz files
         
         atom_type = [] 
-        positions = np.zeros(3*natoms, dtype=np.float32)
 
         if (self.ftype == 'typical'):
-    
+            
+            x, y, z = [], [], []
             for i in range(0, natoms):
 
                 txyz = self.file_xyz.readline().split()
                 
                 atom_type.append(txyz[0])
 
-                positions[           i] = np.float32(txyz[1])
-                positions[  natoms + i] = np.float32(txyz[2])
-                positions[2*natoms + i] = np.float32(txyz[3])
+                x.append(txyz[1])
+                y.append(txyz[2])
+                z.append(txyz[3])
+
+            x = np.asarray(x, dtype=np.float32)
+            y = np.asarray(y, dtype=np.float32)
+            z = np.asarray(z, dtype=np.float32)
+
+            positions = np.concatenate((x,y,z))
        
             return natoms, atom_type, positions
 
         elif (self.ftype == 'property'):
 
-            prop = np.zeros(natoms)
-
+            x, y, z, prop = [], [], [], []
             for i in range(0, natoms):
                 
                 txyzp = self.file_xyz.readline().split()
                 
                 atom_type.append(txyzp[0])
                 
-                positions[           i] = np.float32(txyzp[1])
-                positions[  natoms + i] = np.float32(txyzp[2])
-                positions[2*natoms + i] = np.float32(txyzp[3])
-                
-                prop[i] = txyzp[4]
+                x.append(txyzp[1])
+                y.append(txyzp[2])
+                z.append(txyzp[3])
+
+                prop.append(txyzp[4])
+
+            x = np.asarray(x, dtype=np.float32)
+            y = np.asarray(y, dtype=np.float32)
+            z = np.asarray(z, dtype=np.float32)
+            
+            positions = np.concatenate((x,y,z))
+            
+            prop = np.asarray(prop, dtype=np.float32)
 
             return natoms, atom_type, positions, prop
         
         elif (self.ftype == 'image'):
-            
-            image = np.zeros(3*natoms, dtype=np.intc)
 
+            x, y, z = [], [], []
+            ix, iy, iz = [], [], []
             for i in range(0, natoms):
                 
-                txyzp = self.file_xyz.readline().split()
+                txyzi = self.file_xyz.readline().split()
                 
-                atom_type.append(txyzp[0])
+                atom_type.append(txyzi[0])
                 
-                positions[           i] = np.float32(txyzp[1])
-                positions[  natoms + i] = np.float32(txyzp[2])
-                positions[2*natoms + i] = np.float32(txyzp[3])
+                x.append(txyzi[1])
+                y.append(txyzi[2])
+                z.append(txyzi[3])
                 
-                image[           i] = np.intc(txyzp[4])
-                image[  natoms + i] = np.intc(txyzp[5])
-                image[2*natoms + i] = np.intc(txyzp[6])
+                ix.append(txyzi[4])
+                iy.append(txyzi[5])
+                iz.append(txyzi[6])
+
+            x = np.asarray(x, dtype=np.float32)
+            y = np.asarray(y, dtype=np.float32)
+            z = np.asarray(z, dtype=np.float32)
+
+            ix = np.asarray(ix, dtype=np.intc)
+            iy = np.asarray(iy, dtype=np.intc)
+            iz = np.asarray(iz, dtype=np.intc)
+                
+            positions = np.concatenate((x,y,z))
+            image = np.concatenate((ix,iy,iz))
 
             return natoms, atom_type, positions, image
 
