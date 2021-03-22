@@ -55,6 +55,7 @@ class xyz(reader):
         image : numpy array with integer data
             same as positions, if ftype = 'image' was selected 
         """
+        
         N = self.file_xyz.readline()
         if not N: raise EOFError("There is no more frames to read")
 
@@ -183,6 +184,7 @@ class lammpstrj(reader):
         image : numpy array with integer data
             same as positions, if ftype = 'image' was selected 
         """
+
         comment = self.file_lammps.readline()
         if not comment: raise EOFError("There is no more frames to read")
         self.file_lammps.readline()
@@ -204,10 +206,10 @@ class lammpstrj(reader):
 
         atom_id = []
         atom_type = [] 
-        positions = np.zeros(3*natoms, dtype=np.float32)
 
         if (self.ftype == 'custom'):
-    
+            
+            x, y, z = [], [], []
             for i in range(0, natoms):
 
                 idtxyz = self.file_lammps.readline().split()
@@ -215,12 +217,18 @@ class lammpstrj(reader):
                 atom_id.append(idtxyz[0])
                 atom_type.append(idtxyz[1])
 
-                positions[           i] = np.float32(idtxyz[2])
-                positions[  natoms + i] = np.float32(idtxyz[3])
-                positions[2*natoms + i] = np.float32(idtxyz[4])
+                x.append(idtxyz[2])
+                y.append(idtxyz[3])
+                z.append(idtxyz[4])
             
             atom_id = np.array(atom_id, dtype=np.intc)
             atom_type = np.array(atom_type, dtype=np.intc)
+            
+            x = np.asarray(x, dtype=np.float32)
+            y = np.asarray(y, dtype=np.float32)
+            z = np.asarray(z, dtype=np.float32)
+
+            positions = np.concatenate((x,y,z))
 
             return natoms, box_size, atom_id, atom_type, positions
 
@@ -256,26 +264,37 @@ class lammpstrj(reader):
 
         elif (self.ftype == 'image'):
 
-            image = np.zeros(3*natoms, dtype=np.intc)
-
+            x, y, z = [], [], []
+            ix, iy, iz = [], [], []
             for i in range(0, natoms):
 
                 idtxyzi = self.file_lammps.readline().split()
                 
                 atom_id.append(idtxyzi[0])
                 atom_type.append(idtxyzi[1])
-
-                positions[           i] = np.float32(idtxyzi[2])
-                positions[  natoms + i] = np.float32(idtxyzi[3])
-                positions[2*natoms + i] = np.float32(idtxyzi[4])
-
-                image[         + i] = np.float32(idtxyzi[5])
-                image[  natoms + i] = np.float32(idtxyzi[6])
-                image[2*natoms + i] = np.float32(idtxyzi[7])
+                
+                x.append(idtxyzi[2])
+                y.append(idtxyzi[3])
+                z.append(idtxyzi[4])
+                
+                ix.append(idtxyzi[5])
+                iy.append(idtxyzi[6])
+                iz.append(idtxyzi[7])
        
             atom_id = np.array(atom_id, dtype=np.intc)
             atom_type = np.array(atom_type, dtype=np.intc)
             
+            x = np.asarray(x, dtype=np.float32)
+            y = np.asarray(y, dtype=np.float32)
+            z = np.asarray(z, dtype=np.float32)
+            
+            ix = np.asarray(ix, dtype=np.intc)
+            iy = np.asarray(iy, dtype=np.intc)
+            iz = np.asarray(iz, dtype=np.intc)
+
+            positions = np.concatenate((x,y,z))
+            image = np.concatenate((ix,iy,iz))
+
             return natoms, box_size, atom_id, atom_type, positions, image
         
         elif (self.ftype == 'charge_image'):
@@ -283,25 +302,39 @@ class lammpstrj(reader):
             atom_q = np.zeros(natoms, dtype=np.float32)
             image = np.zeros(3*natoms, dtype=np.intc)
 
+            q, x, y, z = [], [], [], []
+            ix, iy, iz = [], [], []
             for i in range(0, natoms):
 
                 idtqxyzi = self.file_lammps.readline().split()
                 
                 atom_id.append(idtqxyzi[0])
                 atom_type.append(idtqxyzi[1])
-
-                positions[           i] = np.float32(idtqxyzi[3])
-                positions[  natoms + i] = np.float32(idtqxyzi[4])
-                positions[2*natoms + i] = np.float32(idtqxyzi[5])
+                q.append(idtqxyzi[2])
+               
+                x.append(idtqxyzi[3])
+                y.append(idtqxyzi[4])
+                z.append(idtqxyzi[5])
                 
-                atom_q[i] = np.float32(idtqxyzi[2])
-       
-                image[         + i] = np.float32(idtqxyzi[6])
-                image[  natoms + i] = np.float32(idtqxyzi[7])
-                image[2*natoms + i] = np.float32(idtqxyzi[8])
+                ix.append(idtqxyzi[6])
+                iy.append(idtqxyzi[7])
+                iz.append(idtqxyzi[8])
+
 
             atom_id = np.array(atom_id, dtype=np.intc)
             atom_type = np.array(atom_type, dtype=np.intc)
+            atom_q = np.asarray(q, dtype=np.float32)
+            
+            x = np.asarray(x, dtype=np.float32)
+            y = np.asarray(y, dtype=np.float32)
+            z = np.asarray(z, dtype=np.float32)
+            
+            ix = np.asarray(ix, dtype=np.intc)
+            iy = np.asarray(iy, dtype=np.intc)
+            iz = np.asarray(iz, dtype=np.intc)
+
+            positions = np.concatenate((x,y,z))
+            image = np.concatenate((ix,iy,iz))
             
             return natoms, box_size, atom_id, atom_type, positions, atom_q, image
 
