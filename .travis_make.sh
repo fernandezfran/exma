@@ -1,4 +1,4 @@
-cd boundary/
+cd exma/boundary/
 make
 cd ../cluster
 make
