@@ -8,4 +8,15 @@ install:
     - pip3 install tox
 
 script:
+    - cd exma/boundary
+      make clean && make
+      cd ../cluster
+      make clean && make
+      cd ../cn
+      make clean && make
+      cd ../en
+      make clean && make
+      cd ../rdf
+      make clean && make
+      cd ../../
     - tox
