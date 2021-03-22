@@ -40,7 +40,7 @@ class monoatomic(gofr):
         self.nbin = nbin
         
         minbox = np.min(box_size)
-        self.volume = np.prod(box_size)
+        self.volume = 0.0
         self.dg = 0.5 * minbox / self.nbin
         self.gr = np.zeros(self.nbin, dtype=np.float32)
         self.ngr = 0
@@ -68,6 +68,7 @@ class monoatomic(gofr):
         # got to be sure that the box_size and positions type is np.float32 
         # because that is the pointer type in C
         box_size = box_size.astype(np.float32)
+        self.volume += np.prod(box_size)
         box_size = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
         
         positions = positions.astype(np.float32)
@@ -96,7 +97,7 @@ class monoatomic(gofr):
         self.gr : numpy array
             y of the histogram 
         """
-        rho = self.natoms / self.volume
+        rho = self.natoms / (self.volume / self.ngr)
 
         r = np.zeros(self.nbin)
         gofr = np.asarray(np.frombuffer(self.gr_C,dtype=np.intc,count=self.nbin))
@@ -147,7 +148,7 @@ class diatomic(gofr):
         self.atom_type_b = atom_type_b
 
         minbox = np.min(box_size)
-        self.volume = np.prod(box_size)
+        self.volume = 0.0
         self.gr = np.zeros(self.nbin, dtype=np.float32)
         self.dg = 0.5 * minbox / self.nbin
         self.ngr = 0
@@ -180,6 +181,7 @@ class diatomic(gofr):
         # and atom_type is an array of np.intc because those are the pointers 
         # types in C
         box_size = box_size.astype(np.float32)
+        self.volume += np.prod(box_size)
         box_size = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
         
         atom_type = atom_type.astype(np.intc)
@@ -215,7 +217,7 @@ class diatomic(gofr):
         
         N_a = np.count_nonzero(atom_type == self.atom_type_a)
         N_b = np.count_nonzero(atom_type == self.atom_type_b)
-        rho = N_a * N_b / self.volume
+        rho = N_a * N_b / (self.volume / self.ngr)
 
         gofr = np.asarray(np.frombuffer(self.gr_C,dtype=np.intc,count=self.nbin))
         r = np.zeros(self.nbin)
