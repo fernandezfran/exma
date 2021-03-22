@@ -6,7 +6,7 @@ install:
     - pip3 install -r requirements.rst
     - pip3 install .
     - pip3 install tox
-    - bash .travis_make.sh
 
 script:
+    - bash .travis_make.sh
     - tox
