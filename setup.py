@@ -41,6 +41,7 @@ setup(
     version='0.1.0',
     description='extendable molecular dynamics analyzer',
     long_description=readme,
+    long_description_content_type = 'text/markdown',
     packages=find_packages(include=exma_packages),
     author='Francisco Fernandez',
     author_email='fernandezfrancisco2195@gmail.com',
@@ -56,7 +57,7 @@ setup(
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: C'
+        'Programming Language :: C',
         'Topic :: Scientific/Engineering'
     ],
     ext_modules = C_modules
