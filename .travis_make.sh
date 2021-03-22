@@ -1,3 +1,4 @@
+#!/bin/bash
 cd exma/boundary/
 make
 cd ../cluster
