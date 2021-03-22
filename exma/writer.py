@@ -61,9 +61,10 @@ class xyz(writer):
         if (self.ftype == 'typical'):
 
             for i in range(0, natoms):
-
-                self.file_xyz.write("%s\t%g\t%g\t%g\n" % (atom_type[i], \
-                    positions[i], positions[natoms + i], positions[2*natoms + i]))
+            
+                self.file_xyz.write("{:s}\t{:.6e}\t{:.6e}\t{:.6e}\n".format(
+                    atom_type[i], positions[i], positions[natoms + i], 
+                    positions[2*natoms + i]))
 
             return
 
@@ -71,9 +72,9 @@ class xyz(writer):
 
             for i in range(0, natoms):
 
-                self.file_xyz.write("%s\t%g\t%g\t%g\t%g\n" % (atom_type[i], \
-                    positions[i], positions[natoms + i], positions[2*natoms + i], \
-                    prop[i]))
+                self.file_xyz.write("{:s}\t{:.6e}\t{:.6e}\t{:.6e}\t{}\n".format(
+                    atom_type[i], positions[i], positions[natoms + i], 
+                    positions[2*natoms + i], prop[i]))
 
             return
         
@@ -81,8 +82,9 @@ class xyz(writer):
             
             for i in range(0, natoms):
 
-                self.file_xyz.write("%s\t%g\t%g\t%g\t%d  %d  %d\n"%(atom_type[i], \
-                    positions[i], positions[natoms + i], positions[2*natoms + i], \
+                self.file_xyz.write("{:s}\t{:.6e}\t{:.6e}\t{:.6e}\t{:d}\t{:d}\t"
+                    "{:d}\n".format(atom_type[i], positions[i], 
+                    positions[natoms + i], positions[2*natoms + i],
                     image[i], image[natoms + i], image[2*natoms + i]))
 
             return
@@ -157,11 +159,12 @@ class lammpstrj(writer):
             same as positions, if ftype = 'image' was selected 
         """
         self.file_lammps.write("ITEM: TIMESTEP\n")
-        self.file_lammps.write("%d\n" % self.timestep)
+        self.file_lammps.write("{:d}\n".format(self.timestep))
         self.file_lammps.write("ITEM: NUMBER OF ATOMS\n")
-        self.file_lammps.write("%d\n" % natoms)
+        self.file_lammps.write("{:d}\n".format(natoms))
         self.file_lammps.write("ITEM: BOX BOUNDS pp pp pp\n")
-        for i in range(0,3): self.file_lammps.write("0.0\t%g\n" % box_size[i])
+        for i in range(0,3): self.file_lammps.write("0.0\t{:.6e}\n".format(
+                                                                    box_size[i]))
         
         self.timestep += 1
 
@@ -171,9 +174,9 @@ class lammpstrj(writer):
 
             for i in range(0, natoms):
 
-                self.file_lammps.write("%d %d %g %g %g\n" % (atom_id[i], \
-                    atom_type[i], positions[i], positions[natoms + i], \
-                    positions[2*natoms + i]))
+                self.file_lammps.write("{:d}\t{:d}\t{:.6e}\t{:.6e}\t{:.6e}"
+                    "\n".format(atom_id[i], atom_type[i], positions[i],
+                    positions[natoms + i], positions[2*natoms + i]))
        
             return
 
@@ -183,9 +186,9 @@ class lammpstrj(writer):
 
             for i in range(0, natoms):
                 
-                self.file_lammps.write("%d %d %g %g %g %g\n" % (atom_id[i], \
-                    atom_type[i], atom_q[i], positions[i], positions[natoms + i], \
-                    positions[2*natoms + i]))
+                self.file_lammps.write("{:d}\t{:d}\t{:.6e}\t{:.6e}\t{:.6e}\t"
+                    "{:.6e}\n".format(atom_id[i], atom_type[i], atom_q[i],
+                    positions[i], positions[natoms + i], positions[2*natoms + i]))
 
             return
 
@@ -195,10 +198,10 @@ class lammpstrj(writer):
 
             for i in range(0, natoms):
                 
-                self.file_lammps.write("%d %d %g %g %g %d %d %d\n" % (atom_id[i], \
-                    atom_type[i], positions[i], positions[natoms + i], \
-                    positions[2*natoms + i], image[i], image[natoms + i], \
-                    image[2*natoms + i]))
+                self.file_lammps.write("{:d}\t{:d}\t{:.6e}\t{:.6e}\t{:.6e}\t{:d}"
+                    "\t{:d}\t{:d}\n".format(atom_id[i], atom_type[i], positions[i],
+                    positions[natoms + i], positions[2*natoms + i],
+                    image[i], image[natoms + i], image[2*natoms + i]))
        
             return
         
@@ -208,9 +211,10 @@ class lammpstrj(writer):
 
             for i in range(0, natoms):
 
-                self.file_lammps.write("%d %d %g %g %g %g %d %d %d\n"%(atom_id[i],\
-                    atom_type[i], atom_q[i], positions[i], positions[natoms + i], \
-                    positions[2*natoms + i], image[i], image[natoms + i], \
+                self.file_lammps.write("{:d}\t{:d}\t{:.6e}\t{:.6e}\t{:.6e}\t"
+                    "{:.6e}\t{:d}\t{:d}\t{:d}\n".format(atom_id[i], atom_type[i],
+                    atom_q[i], positions[i], positions[natoms + i], 
+                    positions[2*natoms + i], image[i], image[natoms + i], 
                     image[2*natoms + i]))
 
             return

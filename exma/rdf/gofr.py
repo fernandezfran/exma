@@ -111,7 +111,7 @@ class monoatomic(gofr):
             file_rdf = open(file_rdf, 'w')
             file_rdf.write("# r, g(r)\n")
             for i in range(0, self.nbin):
-                file_rdf.write("%g %g\n" % (r[i], self.gr[i]))
+                file_rdf.write('{:.4e}\t{:.6e}\n'.format(r[i], self.gr[i]))
             file_rdf.close()
 
         return r, self.gr 
@@ -230,7 +230,7 @@ class diatomic(gofr):
             file_rdf = open(file_rdf, 'w')
             file_rdf.write("# r, g(r)\n")
             for i in range(0, self.nbin):
-                file_rdf.write("%g %g\n" % (r[i], self.gr[i]))
+                file_rdf.write('{:.4e}\t{:.6e}\n'.format(r[i], self.gr[i]))
             file_rdf.close()
 
         return r, self.gr 
