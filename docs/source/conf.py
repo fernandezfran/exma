@@ -12,7 +12,15 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('./../../'))
+
+# See http://blog.rtwilson.com/how-to-make-your-sphinx-documentation-compile-with-readthedocs-when-youre-using-numpy-and-scipy/
+import mock
+
+MOCK_MODULES = ['numpy', 'sklearn', 'sklearn.cluster', 'pandas', 'more-itertools']
+for mod_name in MOCK_MODULES:
+    sys.modules[mod_name] = mock.Mock()
+
+sys.path.insert(0, os.path.abspath('../..'))
 
 
 # -- Project information -----------------------------------------------------
