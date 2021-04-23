@@ -7,3 +7,5 @@ python:
   version: 3.8
   install:
     - requirements: requirements.rst
+    - pip3 install -r requirements.rst
+    - pip3 install .
