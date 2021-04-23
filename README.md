@@ -14,6 +14,7 @@ This project is mainly developed with the objective of analyzing molecular dynam
 With _exma_ you can:
 
 * Read and write MD trajectory frames in .xyz and .lammpstrj format (including charges, image of the particles or some other property).
+* Write input file for LAMMPS.
 * Estimate errors with the block average method.
 * Initializate positions of atoms in SC, BCC or FCC crystals.
 * Apply PBC.

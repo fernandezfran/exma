@@ -11,8 +11,8 @@ class xyz(reader):
  
     Parameters
     ----------
-    file_xyz : file
-        where the trajectories in xyz format are
+    file_xyz : filename
+        name of the file where the trajectories in xyz format are
 
     ftype : typical, property or image
 
@@ -155,8 +155,8 @@ class lammpstrj(reader):
     
     Parameters
     ----------
-    file_lammps : file
-        where the trajectories of lammps are
+    file_lammps : filename
+        name of the file where the trajectories of lammps are
 
     ftype : custom, charge, image, charge_image
         
