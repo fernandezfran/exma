@@ -63,50 +63,13 @@ python3 setup.py install
 
 ## Usage
 
+To use the extendable molecular analyzer in a project:
+
 ```python
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-#
-# in this script the coordination numbers of sc, bcc and fcc crystals are 
-#   calculated, the steps are following for each system:
-#
-#       1. with exma.atoms.positions generate the positions of the atoms
-#           the first argument is the number of atoms and the second the box size
-#       2. with exma.cn.monoatomic initializate the CN calculation
-#           the first argument is the number of atoms, the second the box size
-#           in each direction and the third is a cutoff distance
-#       3. with CN.accumulate calculate de CN of this "frame"
-#           the argument is the positions of the atoms
-#       4. with CN.end return the CN of each atom
-#           the first argument is the atom type to be written (not interested here)
-#           the second are the positions and the third is False to not write an
-#           output file
-#
-import numpy as np
 import exma
-
-sc = exma.atoms.positions(8, 4.0).sc()
-cn_sc = exma.cn.coordination_number.monoatomic(8, 3.0)
-cn_sc.accumulate(np.full(3,4.0), sc)
-cn_sc = np.mean(cn_sc.end(0, sc, False))
-
-bcc = exma.atoms.positions(16, 4.0).bcc()
-cn_bcc = exma.cn.coordination_number.monoatomic(16, 1.8)
-cn_bcc.accumulate(np.full(3,4.0), bcc)
-cn_bcc = np.mean(cn_bcc.end(0, bcc, False))
-
-fcc = exma.atoms.positions(32, 4.0).fcc()
-cn_fcc = exma.cn.coordination_number.monoatomic(32, 1.5)
-cn_fcc.accumulate(np.full(3,4.0), fcc)
-cn_fcc = np.mean(cn_fcc.end(0, fcc, False))
-
-print("#  %d is the coordination number of a sc crystal" % cn_sc)
-print("#  %d is the coordination number of a bcc crystal" % cn_bcc)
-print("# %d is the coordination number of a fcc crystal" % cn_fcc)
 ```
 
-There are more examples in the Documentation.
-
+There are different examples in the documentation [tutorials](https://exma.readthedocs.io/en/latest/tutorial.html).
 
 ## Release History
 
