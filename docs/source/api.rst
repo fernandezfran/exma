@@ -8,6 +8,7 @@ exma API
    :members:
    :undoc-members:
    :show-inheritance:
+   :member-order: bysource
 
 ``exma.boundary.condition`` module
 ----------------------------------
@@ -16,6 +17,7 @@ exma API
    :members:
    :undoc-members:
    :show-inheritance:
+   :member-order: bysource
 
 ``exma.cluster.clusterization`` module
 --------------------------------------
@@ -24,6 +26,7 @@ exma API
    :members:
    :undoc-members:
    :show-inheritance:
+   :member-order: bysource
 
 ``exma.cn.coordination_number`` module
 --------------------------------------
@@ -32,6 +35,7 @@ exma API
    :members:
    :undoc-members:
    :show-inheritance:
+   :member-order: bysource
 
 ``exma.en.effective_neighbors`` module
 --------------------------------------
@@ -40,6 +44,7 @@ exma API
    :members:
    :undoc-members:
    :show-inheritance:
+   :member-order: bysource
 
 ``exma.msd`` module
 -------------------
@@ -48,6 +53,7 @@ exma API
    :members:
    :undoc-members:
    :show-inheritance:
+   :member-order: bysource
 
 ``exma.rdf.gofr`` module
 ------------------------
@@ -56,6 +62,7 @@ exma API
    :members:
    :undoc-members:
    :show-inheritance:
+   :member-order: bysource
 
 ``exma.reader`` module
 ----------------------
@@ -64,6 +71,7 @@ exma API
    :members:
    :undoc-members:
    :show-inheritance:
+   :member-order: bysource
 
 ``exma.statistics`` module
 --------------------------
@@ -72,6 +80,7 @@ exma API
    :members:
    :undoc-members:
    :show-inheritance:
+   :member-order: bysource
 
 ``exma.writer`` module
 ----------------------
@@ -80,3 +89,4 @@ exma API
    :members:
    :undoc-members:
    :show-inheritance:
+   :member-order: bysource
