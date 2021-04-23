@@ -1,6 +1,16 @@
 exma API
 ========
 
+The temporary way to view the API is by cloning the github repo and following the steps below in the root directory
+
+.. code-block:: bash
+
+    $ cd docs/
+    $ make html
+    $ xdg-open build/html/api.html
+
+The main modules are:
+
 ``exma.atoms`` module
 ---------------------
 
