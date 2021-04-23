@@ -13,6 +13,9 @@
 import os
 import sys
 
+# Minimum version, enforced by sphinx (NumPy)
+needs_sphinx = '3.2.0'
+
 # See http://blog.rtwilson.com/how-to-make-your-sphinx-documentation-compile-with-readthedocs-when-youre-using-numpy-and-scipy/
 import mock
 
@@ -50,10 +53,6 @@ extensions = [
     'sphinx.ext.githubpages',
     'sphinx.ext.napoleon',
 ]
-
-#extensions = [
-#    'sphinx.ext.autodoc', 'sphinx.ext.napoleon'
-#]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
