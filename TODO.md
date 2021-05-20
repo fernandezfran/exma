@@ -4,3 +4,6 @@
 
 - [ ] agregar el parámetro amorfo, extensión de WCP (después de que se publique el
       paper).
+
+- [ ] en lugar de listas vacias como argumentos de funciones, usar `None` y 
+      `if not lista: lista=[]`
