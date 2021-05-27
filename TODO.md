@@ -1,4 +1,7 @@
 # TODO
+- [ ] en `atoms.py`, agregar una nueva función: armado de nanoparticula que está en
+      /home/ffernandez/Fisica/doctorado/2021/20210526-DFTB/np_of_Si_gen
+
 - [ ] sacarle la introducción de `pandas` a exma.statistics.block_average y sacar
       pandas de los requirements.
 
