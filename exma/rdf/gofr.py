@@ -107,9 +107,9 @@ class monoatomic(gofr):
         self.gr : numpy array
             y of the histogram 
         """
-        vol = self.volume / self.ngr
-        if r_mean is not None: vol = 4.0 * np.pi * np.power(r_mean, 3) / 3.0
-        rho = self.natoms / vol
+        V = self.volume / self.ngr
+        if r_mean is not None: V = 4.0 * np.pi * np.power(r_mean, 3) / 3.0
+        rho = self.natoms / V
 
         r = np.zeros(self.nbin)
         gofr = np.asarray(np.frombuffer(self.gr_C,dtype=np.intc,count=self.nbin))
@@ -150,14 +150,20 @@ class diatomic(gofr):
 
     atom_type_a : integer (or char)
         type of interacting atoms
+    
+    pbc : boolean
+        True if pbc must be considered
+        False if not
     """
     
-    def __init__(self, natoms, box_size, nbin, atom_type_a, atom_type_b):
+    def __init__(self, natoms, box_size, nbin, atom_type_a, atom_type_b,
+                 pbc=True):
     
         self.natoms = natoms
         self.nbin = nbin
         self.atom_type_a = atom_type_a
         self.atom_type_b = atom_type_b
+        self.pbc = 1 if pbc else 0
 
         minbox = np.min(box_size)
         self.volume = 0.0
@@ -167,7 +173,7 @@ class diatomic(gofr):
 
         self.rdf_c = lib_rdf.diatomic
         self.rdf_c.argtypes = [ct.c_int, ct.c_void_p, ct.c_void_p,
-                               ct.c_int, ct.c_int, ct.c_void_p,
+                               ct.c_int, ct.c_int, ct.c_void_p, ct.c_int,
                                ct.c_float, ct.c_int, ct.c_void_p]
         self.gr_C = (ct.c_int * nbin)()
     
@@ -203,15 +209,22 @@ class diatomic(gofr):
         x_C = positions.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
         self.rdf_c(self.natoms, box_size, atom_C, self.atom_type_a, 
-                   self.atom_type_b, x_C, self.dg, self.nbin, self.gr_C)
+                   self.atom_type_b, x_C, self.pbc, self.dg, self.nbin, self.gr_C)
         
         self.ngr += 1
 
 
-    def end(self, atom_type, writes=True, file_rdf='rdf.dat'):
+    def end(self, atom_type, r_mean=None, writes=True, file_rdf='rdf.dat'):
         """
         Parameters
         ----------
+        atom_type : numpy array with integers (could be char)
+            type of atoms
+        
+        r_mean : float
+            the mean radius of the simulated cluster (mainly oriented to spherical
+            nanoparticles)
+        
         writes : True (or False)
             if you want (or don't want) to write an output
 
@@ -229,7 +242,9 @@ class diatomic(gofr):
         
         N_a = np.count_nonzero(atom_type == self.atom_type_a)
         N_b = np.count_nonzero(atom_type == self.atom_type_b)
-        rho = N_a * N_b / (self.volume / self.ngr)
+        V = self.volume / self.ngr
+        if r_mean is not None: vol = 4.0 * np.pi * np.power(r_mean, 3) / 3.0
+        rho = N_a * N_b / V
 
         gofr = np.asarray(np.frombuffer(self.gr_C,dtype=np.intc,count=self.nbin))
         r = np.zeros(self.nbin)
