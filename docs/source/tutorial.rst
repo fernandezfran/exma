@@ -35,17 +35,17 @@ The coordination number(CN), also called ligancy, of a given atom in a chemical 
     sc = exma.atoms.positions(8, 4.0).sc()
     cn_sc = exma.cn.coordination_number.monoatomic(8, 3.0)
     cn_sc.accumulate(np.full(3,4.0), sc)
-    cn_sc = np.mean(cn_sc.end(0, sc, False))
+    cn_sc = np.mean(cn_sc.end(0, sc, writes=False))
 
     bcc = exma.atoms.positions(16, 4.0).bcc()
     cn_bcc = exma.cn.coordination_number.monoatomic(16, 1.8)
     cn_bcc.accumulate(np.full(3,4.0), bcc)
-    cn_bcc = np.mean(cn_bcc.end(0, bcc, False))
+    cn_bcc = np.mean(cn_bcc.end(0, bcc, writes=False))
 
     fcc = exma.atoms.positions(32, 4.0).fcc()
     cn_fcc = exma.cn.coordination_number.monoatomic(32, 1.5)
     cn_fcc.accumulate(np.full(3,4.0), fcc)
-    cn_fcc = np.mean(cn_fcc.end(0, fcc, False))
+    cn_fcc = np.mean(cn_fcc.end(0, fcc, writes=False))
 
     print("#  %d is the coordination number of a sc crystal" % cn_sc)
     print("#  %d is the coordination number of a bcc crystal" % cn_bcc)
@@ -112,11 +112,11 @@ Now we can iterate along the frames that we have in our trajectory file, reading
 
 ``solid.read_frame()`` returns us the number of particles *sN*, the type of atoms *styp* and the positions *sx*, that are the parameter that we need to use ``srdf.accumulate(sx)``.
 
-When the ``for`` loop finishes, we must close the file where the trajectories are ``solid.file_close()`` and get the information of the histogram *g(r)* with ``sr, sgofr = srdf.end(False)``, a ``False`` value is passed because the default ``True`` will write the information in an output file.
+When the ``for`` loop finishes, we must close the file where the trajectories are ``solid.file_close()`` and get the information of the histogram *g(r)* with ``sr, sgofr = srdf.end(writes=False)``, a ``False`` value is passed because the default ``True`` will write the information in an output file.
 
 .. code-block:: python
 
-    sr, sgofr = srdf.end(False)
+    sr, sgofr = srdf.end(writes=False)
     solid.file_close()
 
 Now we have the *x* of the histogram in *sr* and the *y* in *sgofr*.
@@ -134,7 +134,7 @@ Following the same steps we can do the same for the liquid phase.
         lN, ltyp, lx = liquid.read_frame()
         lrdf.accumulate(lx)
 
-    lr, lgofr = lrdf.end(False)
+    lr, lgofr = lrdf.end(writes=False)
     liquid.file_close()
     
 With ``matplotlib.pyplot`` we can configure some options 

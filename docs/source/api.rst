@@ -23,7 +23,7 @@ The main modules are:
 ``exma.boundary.condition`` module
 ----------------------------------
 
-.. automodule:: exma.boundary.condition
+.. automodule:: exma.boundary
    :members:
    :undoc-members:
    :show-inheritance:
@@ -32,7 +32,7 @@ The main modules are:
 ``exma.cluster.clusterization`` module
 --------------------------------------
 
-.. automodule:: exma.cluster.clusterization
+.. automodule:: exma.cluster
    :members:
    :undoc-members:
    :show-inheritance:
@@ -41,7 +41,7 @@ The main modules are:
 ``exma.cn.coordination_number`` module
 --------------------------------------
 
-.. automodule:: exma.cn.coordination_number
+.. automodule:: exma.cn
    :members:
    :undoc-members:
    :show-inheritance:
@@ -50,7 +50,7 @@ The main modules are:
 ``exma.en.effective_neighbors`` module
 --------------------------------------
 
-.. automodule:: exma.en.effective_neighbors
+.. automodule:: exma.en
    :members:
    :undoc-members:
    :show-inheritance:
@@ -68,7 +68,7 @@ The main modules are:
 ``exma.rdf.gofr`` module
 ------------------------
 
-.. automodule:: exma.rdf.gofr
+.. automodule:: exma.rdf
    :members:
    :undoc-members:
    :show-inheritance:
