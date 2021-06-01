@@ -142,3 +142,57 @@ class positions(atoms):
         positions = np.transpose(positions) * (self.box_size / nside)
 
         return np.ravel(positions)
+
+
+class nanoparticle(atoms):
+    """
+    define a nanoparticle 
+    
+    Parameters
+    ----------
+    positions : array
+        the positions of the atoms in a lattice that wants to be replicated
+
+    box_size : array
+        box size in each direction x, y, z
+    """
+
+    def __init__(self, positions, box_size):
+        self.positions = positions
+        self.box_size  = box_size
+
+
+    def spherical(self, rcut):
+        """
+        spherical nanoparticle
+
+        Parameters
+        ----------
+        rcut : float
+            the radius of the nanoparticle
+        
+        Returns
+        -------
+        positions : numpy array
+            of the atoms in the nanoparticle
+        """
+        x, y, z = np.split(self.positions, 3)
+
+        n = np.intc(np.ceil(rcut / np.max(self.box_size)))
+        boxes = list(it.product(range(-n,n+1), repeat=3))
+
+        npx, npy, npz = [], [], []
+        for box in boxes:
+            for i in range(len(x)):
+                xx = self.box_size[0] * (x[i] + box[0])
+                yy = self.box_size[1] * (y[i] + box[1])
+                zz = self.box_size[2] * (z[i] + box[2])
+
+                if (np.linalg.norm([xx, yy, zz]) <= rcut):
+                    npx.append(xx)
+                    npy.append(yy)
+                    npz.append(zz)
+
+        positions = np.concatenate((npx, npy, npz))
+
+        return positions

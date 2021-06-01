@@ -113,10 +113,23 @@ class test_positions(unittest.TestCase):
         """
         test error of the diamond cubic crystal (when number of atoms is invalid)
         """
-        particles = atoms.positions(7, 1.0)
+        particles = atoms.positions(9, 1.0)
         with self.assertRaises(ValueError):
             result = particles.dcc()
 
+
+    def test_snp(self):
+        """
+        test the spherical nanoparticle
+        """
+        reference = np.array([-0.5,  0.0,  0.0,  0.0,  0.0,  0.0,  0.5, 
+                               0.0, -0.5,  0.0,  0.0,  0.0,  0.5,  0.0, 
+                               0.0,  0.0, -0.5,  0.0,  0.5,  0.0,  0.0])
+
+        NP = atoms.nanoparticle(atoms.positions(8, 1.0).sc(), np.full(3, 1.0))
+        result = NP.spherical(0.6)
+
+        np.testing.assert_array_equal(result, reference)
 
 if __name__ == '__main__':
     unittest.main()
