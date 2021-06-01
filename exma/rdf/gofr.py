@@ -30,14 +30,19 @@ class monoatomic(gofr):
 
     nbin : integer
         number of bins in the histogram
+
+    pbc : boolean
+        True if pbc must be considered
+        False if not
     """
 
-    def __init__(self, natoms, box_size, nbin):
+    def __init__(self, natoms, box_size, nbin, pbc=True):
 
         box_size = box_size.astype(np.float32)
 
         self.natoms = natoms
         self.nbin = nbin
+        self.pbc = 1 if pbc else 0
         
         minbox = np.min(box_size)
         self.volume = 0.0
@@ -46,7 +51,7 @@ class monoatomic(gofr):
         self.ngr = 0
         
         self.rdf_c = lib_rdf.monoatomic
-        self.rdf_c.argtypes = [ct.c_int, ct.c_void_p, ct.c_void_p,
+        self.rdf_c.argtypes = [ct.c_int, ct.c_void_p, ct.c_void_p, ct.c_int,
                                ct.c_float, ct.c_int, ct.c_void_p]
         self.gr_C = (ct.c_int * nbin)()
 
@@ -74,15 +79,20 @@ class monoatomic(gofr):
         positions = positions.astype(np.float32)
         x_C = positions.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
-        self.rdf_c(self.natoms, box_size, x_C, self.dg, self.nbin, self.gr_C)
+        self.rdf_c(self.natoms, box_size, x_C, self.pbc, self.dg, self.nbin,
+                   self.gr_C)
 
         self.ngr += 1
 
 
-    def end(self, writes=True, file_rdf='rdf.dat'):
+    def end(self, r_mean=None, writes=True, file_rdf='rdf.dat'):
         """
         Parameters
         ----------
+        r_mean : float
+            the mean radius of the simulated cluster (mainly oriented to spherical
+            nanoparticles)
+
         writes : True (or False)
             if you want (or don't want) to write an output
 
@@ -97,7 +107,9 @@ class monoatomic(gofr):
         self.gr : numpy array
             y of the histogram 
         """
-        rho = self.natoms / (self.volume / self.ngr)
+        vol = self.volume / self.ngr
+        if r_mean is not None: vol = 4.0 * np.pi * np.power(r_mean, 3) / 3.0
+        rho = self.natoms / vol
 
         r = np.zeros(self.nbin)
         gofr = np.asarray(np.frombuffer(self.gr_C,dtype=np.intc,count=self.nbin))

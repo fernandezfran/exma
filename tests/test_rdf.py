@@ -24,7 +24,7 @@ class test_rdf(unittest.TestCase):
 
         gofr = monoatomic(N, size, 10)
         gofr.accumulate(size, x)
-        result = gofr.end(False)
+        result = gofr.end(writes=False)
         
         np.testing.assert_array_almost_equal(result, reference)
 
@@ -49,7 +49,7 @@ class test_rdf(unittest.TestCase):
 
         gofr = diatomic(N, size, 10, 1, 2)
         gofr.accumulate(size, types, x)
-        result = gofr.end(types, False)
+        result = gofr.end(types, writes=False)
 
         np.testing.assert_array_almost_equal(result, reference)
 
