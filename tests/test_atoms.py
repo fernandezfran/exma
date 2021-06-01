@@ -64,7 +64,21 @@ class test_positions(unittest.TestCase):
         
         np.testing.assert_array_equal(result, reference)
     
+    
+    def test_dcc(self):
+        """
+        test that the atoms are placed in a diamond cubic crystal
+        """
+        reference = np.array([ 0.25, 0.00, 0.25, 0.00, 0.75, 0.50, 0.75, 0.50,
+                               0.75, 0.00, 0.25, 0.50, 0.75, 0.00, 0.25, 0.50,
+                               0.25, 0.50, 0.75, 0.00, 0.75, 0.00, 0.25, 0.50 ])
 
+        particles = atoms.positions(8, 1.0)
+        result = particles.dcc()
+        
+        np.testing.assert_array_equal(result, reference)
+
+    
     def test_error_sc(self):
         """
         test error of the simple cubic crystal (when number of atoms is not a 
@@ -82,7 +96,7 @@ class test_positions(unittest.TestCase):
         """
         particles = atoms.positions(19, 1.0)
         with self.assertRaises(ValueError):
-            result = particles.sc()
+            result = particles.bcc()
 
 
     def test_error_fcc(self):
@@ -92,7 +106,16 @@ class test_positions(unittest.TestCase):
         """
         particles = atoms.positions(37, 1.0)
         with self.assertRaises(ValueError):
-            result = particles.sc()
+            result = particles.fcc()
+
+
+    def test_error_fcc(self):
+        """
+        test error of the diamond cubic crystal (when number of atoms is invalid)
+        """
+        particles = atoms.positions(7, 1.0)
+        with self.assertRaises(ValueError):
+            result = particles.dcc()
 
 
 if __name__ == '__main__':

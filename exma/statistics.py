@@ -16,31 +16,12 @@ class block_average(statistics):
 
     Parameters
     ----------
-    x : array (default = 0.0)
+    x : array
         where the time series is
-
-    file_data : file (default = None)
-        where the time series is if not x
-
-    column : integer (default = 0)
-        number of the column for which you want to calculate the error
-
-    comment : str (default = '#')
-        how are the comments denoted in the file
-
-    dtype : str (default = np.float32)
-        type of data
     """
 
-    def __init__(self, x=0.0, file_data=None, column=0, comment='#',
-                 dtype=np.float32):
-
+    def __init__(self, x):
         self.x = x
-        self.file_data = file_data
-        self.column = column
-        self.comment = comment
-        self.dtype = dtype
-
     
     def estimate_error(self):
         """
@@ -62,12 +43,6 @@ class block_average(statistics):
             error of the variance
         """
         
-        if self.file_data is not None:
-            self.x = pd.read_table(self.file_data, delim_whitespace=True, \
-                                   comment=self.comment, dtype=self.dtype)
-            self.x = pd.DataFrame.to_numpy(self.x)
-            self.x = self.x[:, self.column]
-
         x = self.x
 
         ds     = []

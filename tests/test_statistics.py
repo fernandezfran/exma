@@ -12,7 +12,8 @@ class test_statistics(unittest.TestCase):
         """
         reference = 0
 
-        BA = statistics.block_average(file_data="tests/data/test_block_average.dat")
+        x = [3.14, 3.15, 3.13, 3.13, 3.15, 3.15, 3.16, 3.12]
+        BA = statistics.block_average(x)
         result = BA.estimate_error()
 
         np.testing.assert_array_equal(result[0], np.array([0, 1]))
