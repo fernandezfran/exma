@@ -88,8 +88,7 @@ There are different examples in the documentation [tutorials](https://exma.readt
 
 ## TODO
 
-- [ ] triclinic (non-orthogonal) boxes for the different modules.
-
+[TODO List](https://github.com/fernandezfran/exma/TODO.md)
 
 ## Contributing
 
