@@ -75,7 +75,7 @@ There are different examples in the documentation [tutorials](https://exma.readt
 
 ## Release History
 
-[HISTORY](https://github.com/fernandezfran/exma/HISTORY.md)
+[HISTORY](https://github.com/fernandezfran/exma/blob/master/HISTORY.md)
 
 
 ## License
@@ -85,9 +85,9 @@ There are different examples in the documentation [tutorials](https://exma.readt
 
 ## TODO
 
-[TODO List](https://github.com/fernandezfran/exma/TODO.md)
+[TODO List](https://github.com/fernandezfran/exma/blob/master/TODO.md)
 
 
 ## Contributing
 
-[Contributing](https://github.com/fernandezfran/exma/CONTRIBUTING.md)
+[Contributing](https://github.com/fernandezfran/exma/blob/master/CONTRIBUTING.md)
