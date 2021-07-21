@@ -94,7 +94,7 @@ class monoatomic:
             file_cn = open(file_cn, 'w')
             file_cn.write("%d\n\n" % self.natoms)
 
-            for i in range(0, self.natoms):
+            for i in range(self.natoms):
             
                 file_cn.write("{:d}\t{:.6e}\t{:.6e}\t{:.6e}\t{:.6e}\n".format(
                     atom_type[i], positions[i], positions[self.natoms + i], 
@@ -210,7 +210,7 @@ class diatomic:
             file_cn.write("%d\n\n" % len(self.cn))
 
             idx = 0
-            for i in range(0, self.natoms):
+            for i in range(self.natoms):
             
                 if (atom_type[i] != self.atom_type_a): continue
                 

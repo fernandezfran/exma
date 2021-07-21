@@ -105,7 +105,7 @@ class hoppe:
         # split the weight matrix to obtain an interact atom in every row and
         #   normalize the weigths
         weitrix = np.split(weitrix, N_interact)
-        for i in range(0, N_interact):
+        for i in range(N_interact):
             weitrix[i] = weitrix[i] / np.sum(weitrix[i])
         
         # the matrix is transpose so now we have central atoms in each row and
@@ -113,7 +113,7 @@ class hoppe:
         #   effective (interact) neighbor
         weitrix = np.transpose(weitrix)
         effnei = np.zeros(N_central, dtype=np.float32)
-        for i in range(0, N_central):
+        for i in range(N_central):
             effnei[i] = np.sum(weitrix[i])
 
         return effnei

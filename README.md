@@ -19,13 +19,15 @@ With _exma_ you can:
 * Initializate positions of atoms in:
     - SC, BCC, FCC, DCC crystals,
     - spherical nanoparticles.
+    - replicate crystal structures.
 * Apply PBC.
 * Calculate:
     - clusterization (dbscan),
     - the coordination number (CN), the ligancy or in a shell, for monoatomic or diatomic systems,
     - effective neighbors (EN),
     - mean square displacement (MSD),
-    - the radial distribution function (RDF) of monoatomic or diatomic systems,
+    - short range order, an amorphous parameter (https://doi.org/10.1039/D1CP02216D),
+    - the radial distribution function (RDF) of monoatomic or diatomic systems.
 
 
 ## Requirements

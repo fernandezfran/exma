@@ -73,7 +73,7 @@ class monoatomic(msd):
         positions = np.split(positions,3)
         image = np.split(image,3)
         MSD = np.zeros(self.natoms, dtype=np.float32)
-        for i in range(0,3):
+        for i in range(3):
             xx = positions[i] + image[i]*box_size[i] - self.ref[i]
             MSD += xx * xx
         msd = np.sum(MSD) / self.natoms
@@ -103,7 +103,7 @@ class monoatomic(msd):
         msd = 0.0
         positions = np.split(positions,3)
         MSD = np.zeros(self.natoms, dtype=np.float32)
-        for i in range(0,3):
+        for i in range(3):
             xx = positions[i] - self.ref[i]
             MSD += xx * xx
         msd = np.sum(MSD) / self.natoms
@@ -198,7 +198,7 @@ class diatomic(msd):
         positions = np.split(positions,3)
         image = np.split(image,3)
         MSD = np.zeros(self.natoms, dtype=np.float32)
-        for i in range(0,3):
+        for i in range(3):
             xx = positions[i] + image[i]*box_size[i] - self.ref[i]
             MSD += xx * xx
         
@@ -236,7 +236,7 @@ class diatomic(msd):
 
         positions = np.split(positions,3)
         MSD = np.zeros(self.natoms, dtype=np.float32)
-        for i in range(0,3):
+        for i in range(3):
             xx = positions[i] - self.ref[i]
             MSD += xx * xx
         

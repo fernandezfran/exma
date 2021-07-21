@@ -83,6 +83,15 @@ The main modules are:
    :show-inheritance:
    :member-order: bysource
 
+``exma.sro`` module
+-------------------
+
+.. automodule:: exma.sro
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :member-order: bysource
+
 ``exma.statistics`` module
 --------------------------
 

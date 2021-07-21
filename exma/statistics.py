@@ -59,7 +59,7 @@ class block_average(statistics):
         while (np.intc(len(oldx)/2) > 2):
             newx = np.zeros(np.intc(len(oldx)/2))
 
-            for k in range(0, len(newx)):
+            for k in range(len(newx)):
                 newx[k] = 0.5 * (oldx[2*k - 1] + oldx[2*k])
 
             idx += 1

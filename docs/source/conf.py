@@ -19,7 +19,7 @@ needs_sphinx = '3.2.0'
 # See http://blog.rtwilson.com/how-to-make-your-sphinx-documentation-compile-with-readthedocs-when-youre-using-numpy-and-scipy/
 import mock
 
-MOCK_MODULES = ['numpy', 'sklearn', 'sklearn.cluster', 'pandas', 'more-itertools']
+MOCK_MODULES = ['numpy', 'sklearn', 'sklearn.cluster', 'scipy', 'scipy.integrate', 'more-itertools']
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = mock.Mock()
 
