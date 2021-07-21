@@ -26,7 +26,7 @@ With _exma_ you can:
     - the coordination number (CN), the ligancy or in a shell, for monoatomic or diatomic systems,
     - effective neighbors (EN),
     - mean square displacement (MSD),
-    - short range order, an amorphous parameter (https://doi.org/10.1039/D1CP02216D),
+    - short range order, an amorphous parameter, defined [here](https://doi.org/10.1039/D1CP02216D),
     - the radial distribution function (RDF) of monoatomic or diatomic systems.
 
 

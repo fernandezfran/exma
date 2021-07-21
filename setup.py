@@ -38,7 +38,7 @@ for mod in exma_packages:
 """ setup """
 setup(
     name='exma',
-    version='0.1.0',
+    version='0.2.0',
     description='extendable molecular dynamics analyzer',
     long_description=readme,
     long_description_content_type = 'text/markdown',
