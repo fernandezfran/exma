@@ -14,7 +14,7 @@ class test_msd(unittest.TestCase):
         size = np.array([2.0, 2.0, 2.0])
         xi = np.array([0.0, 0.0, 0.0])
 
-        MSD = msd.monoatomic(N, xi)
+        MSD = msd.monoatomic(N, size, xi)
       
 
         reference = np.array([1.0, 12.0])
@@ -43,7 +43,7 @@ class test_msd(unittest.TestCase):
         xi = np.array([0.0, 1.0, 0.0, 1.0, 0.0, 1.0])
         types = np.array([1, 2]) 
         
-        MSD = msd.diatomic(N, types, xi, 1, 2)
+        MSD = msd.diatomic(N, size, types, xi, 1, 2)
 
         
         reference = np.array([1.0, 3.0, 3.0, 3.0])

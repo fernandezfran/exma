@@ -18,16 +18,30 @@ class monoatomic(msd):
     natoms : integer
         the number of atoms in the frame
     
+    box_size : numpy array
+        with the box lenght in x, y, z
+    
     x_ref : numpy array with float32 data
         the reference positions in the SoA convention
         i.e. first all the x, then y and then z
+        
+    image_ref : numpy array with integer data
+        reference image, same as positions
     """
     
-    def __init__(self, natoms, x_ref):
+    def __init__(self, natoms, box_size, x_ref, image_ref=None):
 
         self.natoms = natoms
-        self.ref = np.split(x_ref,3)
+
+        if image_ref is not None:
+            x, y, z = np.split(x_ref, 3)
+            ix, iy, iz = np.split(image_ref, 3)
+            x += box_size[0] * ix
+            y += box_size[1] * iy
+            z += box_size[2] * iz
+            x_ref = np.concatenate((x, y, z))
         
+        self.ref = np.split(x_ref,3)
         self.frame = 0
 
     
@@ -108,6 +122,9 @@ class diatomic(msd):
     natoms : integer
         the number of atoms in the frame
    
+    box_size : numpy array
+        with the box lenght in x, y, z
+    
     atom_type : list of integers
         the type of the atoms
     
@@ -120,11 +137,24 @@ class diatomic(msd):
 
     atom_type_a : integer
         another type of atom
+    
+    image_ref : numpy array with integer data
+        reference image, same as positions
     """
 
-    def __init__(self, natoms, atom_type, x_ref, atom_type_a, atom_type_b):
+    def __init__(self, natoms, box_size, atom_type, x_ref, atom_type_a, 
+                 atom_type_b, image_ref=None):
   
         self.natoms = natoms
+        
+        if image_ref is not None:
+            x, y, z = np.split(x_ref, 3)
+            ix, iy, iz = np.split(image_ref, 3)
+            x += box_size[0] * ix
+            y += box_size[1] * iy
+            z += box_size[2] * iz
+            x_ref = np.concatenate((x, y, z))
+        
         self.ref = np.split(x_ref,3)
         self.atom_type_a = atom_type_a
         self.atom_type_b = atom_type_b
