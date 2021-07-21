@@ -196,3 +196,55 @@ class nanoparticle(atoms):
         positions = np.concatenate((npx, npy, npz))
 
         return positions
+
+
+class replicate(atoms):
+    """
+    replicate a crystalline system in each direction
+
+    Parameters
+    ----------
+    natoms : integer
+        the number of atoms in the crystalographic structure
+    
+    box_size : numpy array
+        with the box lenght in x, y, z
+
+    atom_type : list of integers
+        the type of the atoms
+
+    positions : numpy array with float32 data
+        the positions in the SoA convention (i.e. first all the x, then y and 
+        then z) and in fractions of the box_size (i.e. numbers between 0 and 1)
+    """
+
+    def __init__(self, natoms, box_size, atom_type, positions):
+        self.natoms = natoms
+        self.atom_type = atom_type
+        self.box_size = box_size
+        self.positions = positions
+
+    def crystal(self, nx, ny, nz):
+        """
+        n_i : integer >= 1
+            replication factor in the i direction.
+            n_i = 1 means that only the actual box is consired. 
+        """
+        x, y, z = np.split(self.positions, 3)
+        boxes = list(it.product(range(np.max([nx, ny, nz])), repeat=3))
+        newx, newy, newz = [], [], []
+        for box in boxes:
+            if (box[0] >= nx) or (box[1] >= ny) or (box[2] >= nz): continue
+
+            for i in range(self.natoms):
+                newx.append(self.box_size[0] * (x[i] + box[0]))
+                newy.append(self.box_size[1] * (y[i] + box[1]))
+                newz.append(self.box_size[2] * (z[i] + box[2]))
+
+        N = len(newx)
+        box_size = np.array([nx * self.box_size[0], ny * self.box_size[1],
+                             nz * self.box_size[2]])
+        atom_type = self.atom_type * nx * ny * nz
+        positions = np.concatenate((newx, newy, newz))
+
+        return N, box_size, atom_type, positions
