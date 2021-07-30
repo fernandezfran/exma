@@ -226,9 +226,25 @@ class replicate(atoms):
 
     def crystal(self, nx, ny, nz):
         """
+        Parameters
+        ----------
         n_i : integer >= 1
             replication factor in the i direction.
             n_i = 1 means that only the actual box is consired. 
+
+        Returns
+        -------
+        natoms : integer
+            the number of atoms in the crystalographic structure
+        
+        box_size : numpy array
+            with the box lenght in x, y, z
+        
+        atom_type : list of integers
+            the type of the atoms
+
+        positions : numpy array
+            of the atoms in an fcc crystal
         """
         x, y, z = np.split(self.positions, 3)
         boxes = list(it.product(range(np.max([nx, ny, nz])), repeat=3))
@@ -241,10 +257,10 @@ class replicate(atoms):
                 newy.append(self.box_size[1] * (y[i] + box[1]))
                 newz.append(self.box_size[2] * (z[i] + box[2]))
 
-        N = len(newx)
+        natoms = len(newx)
         box_size = np.array([nx * self.box_size[0], ny * self.box_size[1],
                              nz * self.box_size[2]])
         atom_type = self.atom_type * nx * ny * nz
         positions = np.concatenate((newx, newy, newz))
 
-        return N, box_size, atom_type, positions
+        return natoms, box_size, atom_type, positions
