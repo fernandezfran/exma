@@ -9,4 +9,9 @@
       los modulos de C en carpetas separadas (puede ser una sola `src/`). Tener
       cuidado con el setup.py
 
+- [ ] juntar monoatomic y diatomic en una sola función (total cuando se la llama
+      se le pasa que ambos son el mismo tipo de átomo, como en VMD).
+
+- [ ] agregar opción de cluster a los distintos analisis, como en rdf.
+
 - [ ] triclinic (non-orthogonal) boxes for the different modules.
