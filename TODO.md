@@ -14,4 +14,7 @@
 
 - [ ] agregar opción de cluster a los distintos analisis, como en rdf.
 
+- [ ] agregar _ al final de las variables que son dependientes en el __init__, por
+      ejemplo N_a_ es el nro de particulas de tipo A. (Viene de sklearn)
+
 - [ ] triclinic (non-orthogonal) boxes for the different modules.
