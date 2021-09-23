@@ -1,10 +1,11 @@
 import unittest
+
 import numpy as np
 
 from exma.cluster import clusterization
 
-class test_clusterization(unittest.TestCase):
 
+class TestClusterization(unittest.TestCase):
     def test_dbscan(self):
         """
         test the dbscan cluster analyzer
@@ -14,9 +15,7 @@ class test_clusterization(unittest.TestCase):
         size = np.array([1.0, 1.0, 1.0])
         rcut = 0.2
         typ = np.array([1, 1, 1])
-        x = np.array([0.0, 0.0, 0.5,
-                      0.0, 0.0, 0.0,
-                      0.45, 0.55, 0.0 ])
+        x = np.array([0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.45, 0.55, 0.0])
 
         result = clusterization.dbscan(rcut).of_this_frame(size, typ, x, 1)
 
@@ -24,5 +23,5 @@ class test_clusterization(unittest.TestCase):
         np.testing.assert_array_equal(result[1], reference)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

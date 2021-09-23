@@ -1,10 +1,12 @@
+import ctypes as ct
 import os
 import sysconfig
-import ctypes as ct
+
 import numpy as np
 
-suffix = sysconfig.get_config_var('EXT_SUFFIX')
-if suffix is None: suffix = ".so"
+suffix = sysconfig.get_config_var("EXT_SUFFIX")
+if suffix is None:
+    suffix = ".so"
 
 boundary_dir = os.path.dirname(__file__)
 boundary_name = "lib_boundary" + suffix
@@ -21,9 +23,9 @@ class condition:
     box_size : numpy array of three floats
         box size in x, y, z
     """
-    
+
     def __init__(self, box_size):
-        
+
         self.box_size = box_size
 
 
@@ -36,7 +38,7 @@ class periodic(condition):
         """
         applies periodic boundary conditions to the particles and returns the
         positions in [0, box_size)
-        
+
         Parameters
         ----------
         natoms : integer
@@ -55,17 +57,17 @@ class periodic(condition):
         box_size = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
         positions = positions.astype(np.float32)
-        x_C = positions.ctypes.data_as(ct.POINTER(ct.c_void_p))
-        
+        x_c = positions.ctypes.data_as(ct.POINTER(ct.c_void_p))
+
         pbc_c = lib_boundary.pbc
         pbc_c.argtypes = [ct.c_int, ct.c_void_p, ct.c_void_p]
 
-        pbc_c(natoms, box_size, x_C)
-        # pbc_c operates over the object x_C that has the positions, they are
+        pbc_c(natoms, box_size, x_c)
+        # pbc_c operates over the object x_c that has the positions, they are
         # modificated in a void function so there is not a returned value
         # or some to read from buffer because the information needed is in
         # positions
-        
+
         return positions
 
 
@@ -94,24 +96,29 @@ class minimum_image(condition):
         """
 
         box_size = self.box_size.astype(np.float32)
-        box_C = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
-        
+        box_c = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
+
         x_central = np.array(x_central, dtype=np.float32)
-        central_C = x_central.ctypes.data_as(ct.POINTER(ct.c_void_p))
-        
+        central_c = x_central.ctypes.data_as(ct.POINTER(ct.c_void_p))
+
         x_interact = np.array(x_interact, dtype=np.float32)
-        interact_C = x_interact.ctypes.data_as(ct.POINTER(ct.c_void_p))
+        interact_c = x_interact.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
         x_ci = np.zeros(3, dtype=np.float32)
-        ci_C = x_ci.ctypes.data_as(ct.POINTER(ct.c_void_p))
-        
-        minimum_image_c = lib_boundary.minimum_image
-        minimum_image_c.argtypes = [ct.c_void_p, ct.c_void_p, ct.c_void_p,
-                                    ct.c_void_p]
+        ci_c = x_ci.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
-        minimum_image_c(box_C, central_C, interact_C, ci_C)
-        # minimum_image_c operates over the object ci_C that has the distance, 
-        # that is modificated in a void function so there is not a returned value
-        # or some to read from buffer because the information needed is in x_ci
+        minimum_image_c = lib_boundary.minimum_image
+        minimum_image_c.argtypes = [
+            ct.c_void_p,
+            ct.c_void_p,
+            ct.c_void_p,
+            ct.c_void_p,
+        ]
+
+        minimum_image_c(box_c, central_c, interact_c, ci_c)
+        # minimum_image_c operates over the object ci_c that has the distance,
+        # that is modificated in a void function so there is not a returned
+        # value or some to read from buffer because the information needed is
+        # in x_ci
 
         return x_ci

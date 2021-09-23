@@ -1,6 +1,10 @@
 include LICENSE
+include README.md
 include requirements.rst
 include exma_packages.rst
-global-include exma/*/*.h
+recursive-include exma *.h
 
-recursive-exclude * __pycache__
+exclude tox.ini
+exclude pyproject.toml
+recursive-exclude tests *
+recursive-exclude docs *

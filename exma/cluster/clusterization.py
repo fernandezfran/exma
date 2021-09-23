@@ -1,11 +1,13 @@
+import ctypes as ct
 import os
 import sysconfig
-import ctypes as ct
+
 import numpy as np
 from sklearn.cluster import DBSCAN
 
-suffix = sysconfig.get_config_var('EXT_SUFFIX')
-if suffix is None: suffix = ".so"
+suffix = sysconfig.get_config_var("EXT_SUFFIX")
+if suffix is None:
+    suffix = ".so"
 
 cluster_dir = os.path.dirname(__file__)
 cluster_name = "lib_cluster" + suffix
@@ -16,11 +18,11 @@ lib_cluster = ct.CDLL(libcluster)
 class dbscan:
     """
     the main objetive of this module is to accomodate data (calculate the
-    distance matrix taking account of the PBC) before using sklearn.cluster.DBSCAN
+    distance matrix taking account of the PBC) before using
+    sklearn.cluster.DBSCAN
     (density-based spatial clustering of applications with noise)
 
-    see: https://scikit-learn.org/stable/modules/clustering.html
-    and https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html#sklearn.cluster.DBSCAN
+    see: scikit learn documentation
 
     Parameters
     ----------
@@ -38,9 +40,12 @@ class dbscan:
         self.min_samples = min_samples
 
         self.distance_matrix_c = lib_cluster.distance_matrix
-        self.distance_matrix_c.argtypes = [ct.c_int, ct.c_void_p, ct.c_void_p,
-                                           ct.c_void_p]
-
+        self.distance_matrix_c.argtypes = [
+            ct.c_int,
+            ct.c_void_p,
+            ct.c_void_p,
+            ct.c_void_p,
+        ]
 
     def of_this_frame(self, box_size, atom_type, positions, atom_type_c):
         """
@@ -50,14 +55,14 @@ class dbscan:
         ----------
         box_size : numpy array with three floats
             the box size in x, y, z
-        
+
         atom_type : numpy array with integers (could be char)
             type of atoms
-        
+
         positions : numpy array with float32 data
             the positions in the SoA convention
             i.e. first all the x, then y and then z
-        
+
         atom_type_c : integer (or char)
             type of atom to which you want to perform the cluster analysis
 
@@ -75,8 +80,11 @@ class dbscan:
 
         xyz = np.split(positions, 3)
         x, y, z = xyz[0], xyz[1], xyz[2]
-        x, y, z = x[atom_type == atom_type_c], y[atom_type == atom_type_c], \
-                  z[atom_type == atom_type_c]
+        x, y, z = (
+            x[atom_type == atom_type_c],
+            y[atom_type == atom_type_c],
+            z[atom_type == atom_type_c],
+        )
 
         positions_c = np.concatenate((x, y, z)).astype(np.float32)
         natoms_c = np.intc(len(x))
@@ -84,19 +92,20 @@ class dbscan:
 
         # prepare data to C function
         box_size = box_size.astype(np.float32)
-        box_C = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
+        box_c = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
-        x_C = positions_c.ctypes.data_as(ct.POINTER(ct.c_void_p))
+        x_c = positions_c.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
-        distrix_C = distrix.ctypes.data_as(ct.POINTER(ct.c_void_p))
+        distrix_c = distrix.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
-        self.distance_matrix_c(natoms_c, box_C, x_C, distrix_C)
+        self.distance_matrix_c(natoms_c, box_c, x_c, distrix_c)
         # a void function that modifies the values of distrix
 
         distrix = distrix.reshape((natoms_c, natoms_c))
-        db = DBSCAN(eps=self.eps, min_samples=self.min_samples, \
-                metric='precomputed').fit(distrix)
-        
+        db = DBSCAN(
+            eps=self.eps, min_samples=self.min_samples, metric="precomputed"
+        ).fit(distrix)
+
         id_cluster = np.asarray(db.labels_)
 
         return positions_c, id_cluster

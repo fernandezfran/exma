@@ -29,8 +29,8 @@ The coordination number(CN), also called ligancy, of a given atom in a chemical 
     #           the second are the positions and the third is False to not write an
     #           output file
     #
-    import numpy as np
     import exma
+    import numpy as np
 
     sc = exma.atoms.positions(8, 4.0).sc()
     cn_sc = exma.cn.coordination_number.monoatomic(8, 3.0)
@@ -82,10 +82,9 @@ First of all, we must import the necessary libraries at the beggining of the scr
     # Python script to calculate the RDF of a LJ fluid in a solid and in a liquid 
     #   phase
     #
-    import numpy as np
-    import matplotlib.pyplot as plt
-
     import exma
+    import matplotlib.pyplot as plt
+    import numpy as np
 
 Before starting we need some infomation: the number of particles, the number of frames and the box size. Except for the number of particle, the rest of the information is not in a typical ``.xyz`` file. We define those variables in our python script.
 
@@ -107,10 +106,10 @@ Now we can iterate along the frames that we have in our trajectory file, reading
 .. code-block:: python
 
     for i in range(0, frames):
-        sN, styp, sx = solid.read_frame()
+        snatoms, styp, sx = solid.read_frame()
         srdf.accumulate(sx)
 
-``solid.read_frame()`` returns us the number of particles *sN*, the type of atoms *styp* and the positions *sx*, that are the parameter that we need to use ``srdf.accumulate(sx)``.
+``solid.read_frame()`` returns us the number of particles *snatoms*, the type of atoms *styp* and the positions *sx*, that are the parameter that we need to use ``srdf.accumulate(sx)``.
 
 When the ``for`` loop finishes, we must close the file where the trajectories are ``solid.file_close()`` and get the information of the histogram *g(r)* with ``sr, sgofr = srdf.end(writes=False)``, a ``False`` value is passed because the default ``True`` will write the information in an output file.
 
@@ -125,18 +124,18 @@ Following the same steps we can do the same for the liquid phase.
 
 .. code-block:: python
     
-    lsize = np.full(3, 8.54988) 
+    lsize = np.full(3, 8.54988)
 
     liquid = exma.reader.xyz("../_static/lj-liquid.xyz")
     lrdf = exma.rdf.gofr.monoatomic(N, lsize, 75)
 
     for i in range(0, frames):
-        lN, ltyp, lx = liquid.read_frame()
+        lnatoms, ltyp, lx = liquid.read_frame()
         lrdf.accumulate(lx)
 
     lr, lgofr = lrdf.end(writes=False)
     liquid.file_close()
-    
+
 With ``matplotlib.pyplot`` we can configure some options 
 
 .. code-block:: python
@@ -185,11 +184,9 @@ As in the RDF example, we first import the necessary libraries and define the in
     # Python script to calculate the MSD of a LJ fluid in a solid and in a liquid 
     #   phase
     #
-    import numpy as np
-    import matplotlib.pyplot as plt
-
     import exma
-
+    import matplotlib.pyplot as plt
+    import numpy as np
 
     N = 500
     frames = 201
@@ -198,21 +195,21 @@ We must read the ``.xyz`` file but taking into account that now we need the imag
 
 .. code-block:: python
     
-    ssize = np.full(3, 7.46901) 
+    ssize = np.full(3, 7.46901)
 
     solid = exma.reader.xyz("../_static/lj-fcc.xyz", 'image')
 
-    sN, styp, sx, simg = solid.read_frame()
-    sMSD = exma.msd.monoatomic(N, ssize, sx)
+    snatoms, styp, sx, simg = solid.read_frame()
+    smsd = exma.msd.monoatomic(N, ssize, sx)
 
-We also initializate the object ``sMSD`` by reading the first frame and passing the number of particles in the system, the box size and the positions that will be used as reference positions. Then, we will have to iterate along frames but without considering the first one. So the ``for`` loop goes till ``frames - 1``.
+We also initializate the object ``smsd`` by reading the first frame and passing the number of particles in the system, the box size and the positions that will be used as reference positions. Then, we will have to iterate along frames but without considering the first one. So the ``for`` loop goes till ``frames - 1``.
 
 .. code-block:: python
     
     st, smsd = [], []
     for i in range(0, frames - 1):
-        sN, styp, sx, simg = solid.read_frame()
-        t, msd = sMSD.wrapped(sx, simg)
+        snatoms, styp, sx, simg = solid.read_frame()
+        t, msd = smsd.wrapped(sx, simg)
 
         st.append(t)
         smsd.append(msd)
@@ -231,17 +228,17 @@ The same can be done to the liquid phase.
 
 .. code-block:: python
 
-    lsize = np.full(3, 8.54988) 
+    lsize = np.full(3, 8.54988)
 
     liquid = exma.reader.xyz("../_static/lj-liquid.xyz", 'image')
 
-    lN, ltyp, lx, limg = liquid.read_frame()
-    lMSD = exma.msd.monoatomic(N, lsize, lx)
+    lnatoms, ltyp, lx, limg = liquid.read_frame()
+    lmsd = exma.msd.monoatomic(N, lsize, lx)
 
     lt, lmsd = [], []
     for i in range(0, frames - 1):
-        lN, ltyp, lx, limg = liquid.read_frame()
-        t, msd = lMSD.wrapped(lx, limg)
+        lnatoms, ltyp, lx, limg = liquid.read_frame()
+        t, msd = lmsd.wrapped(lx, limg)
 
         lt.append(t)
         lmsd.append(msd)
