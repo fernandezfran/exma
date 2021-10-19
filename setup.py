@@ -9,21 +9,14 @@ from distutils.core import Extension, setup
 with open("README.md") as file_readme:
     readme = file_readme.read()
 
-
-with open("requirements.rst") as file_requirements:
-    requirements = file_requirements.read().splitlines()
-
-
-with open("exma_packages.rst") as file_exma_packages:
-    exma_packages = file_exma_packages.read().splitlines()
+REQUIREMENTS = ["scikit-learn", "scipy", "more-itertools", "numpy"]
 
 CFLAGS = sysconfig.get_config_var("CFLAGS").split()
 CFLAGS += ["-O3", "-ffast-math", "-fPIC", "-ftree-vectorize", "-march=native"]
 
 C_modules = []
-for mod in exma_packages:
-    if mod == "exma":
-        continue
+EXMA_PACKAGES = ["exma.boundary", "exma.cluster", "exma.cn", "exma.en", "exma.rdf"]
+for mod in EXMA_PACKAGES:
     mod = mod.replace("exma.", "")
     common = "exma/" + mod + "/"
 
@@ -44,13 +37,13 @@ setup(
     description="extendable molecular dynamics analyzer",
     long_description=readme,
     long_description_content_type="text/markdown",
-    packages=find_packages(include=exma_packages),
+    packages=find_packages(include=["exma"] + EXMA_PACKAGES),
     author="Francisco Fernandez",
     author_email="fernandezfrancisco2195@gmail.com",
     url="https://github.com/fernandezfran/exma",
     license="MIT",
-    install_requires=requirements,
-    setup_requires=requirements,
+    install_requires=REQUIREMENTS,
+    setup_requires=REQUIREMENTS,
     keywords=["exma", "molecular-dynamics", "data-analysis"],
     classifiers=[
         "Development Status :: 4 - Beta",

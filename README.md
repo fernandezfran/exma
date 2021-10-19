@@ -56,13 +56,13 @@ git clone https://github.com/fernandezfran/exma.git
 and inside your local directory install it in the following way 
 
 ```bash
-pip3 install .
+pip install -e .
 ```
 
 or
 
 ```bash
-python3 setup.py install
+python setup.py install
 ```
 
 ## Usage
