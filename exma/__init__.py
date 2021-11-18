@@ -4,7 +4,6 @@ __version__ = "0.2.0"
 
 
 from exma.positions import Positions
-from exma.boundary.condition import periodic, minimum_image
 from exma.cluster.clusterization import dbscan
 from exma.cn.coordination_number import monoatomic, diatomic
 from exma.en.effective_neighbors import hoppe

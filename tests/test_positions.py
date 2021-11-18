@@ -286,9 +286,7 @@ def test_spherical_nanoparticle():
     z = np.array([0.0, 0.5, 0.0, 0.5, 0.0, 0.5, 0.0, 0.5])
     xyz = np.concatenate((x, y, z))
 
-    result = exma.positions.Positions(8, 1.0).spherical_nanoparticle(
-        np.full(3, 1.0), xyz, 0.6
-    )
+    result = exma.positions.spherical_nanoparticle(np.full(3, 1.0), xyz, 0.6)
 
     assert result["natoms"] == 7
     np.testing.assert_array_equal(result["x"], xref)
@@ -511,8 +509,8 @@ def test_replicate():
     z = np.array([0.25, 0.5, 0.75, 0.0, 0.75, 0.0, 0.25, 0.5])
     xyz = np.concatenate((x, y, z))
 
-    result = exma.positions.Positions(8, 5468728).replicate(
-        np.full(3, 5.468728), ["Si"] * 8, xyz, [2, 2, 2]
+    result = exma.positions.replicate(
+        8, np.full(3, 5.468728), ["Si"] * 8, xyz, [2, 2, 2]
     )
 
     assert result["natoms"] == natomsref

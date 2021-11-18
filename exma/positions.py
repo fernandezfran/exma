@@ -189,115 +189,112 @@ class Positions:
             "z": positions[2],
         }
 
-    def spherical_nanoparticle(self, box_size, positions, rcut):
-        """Cut a defined structure to give a spherical nanoparticle.
 
-        If rcut is greater than half the cell length, the cell will be
-        replicated to give a nanoparticle of the desired radius.
+def spherical_nanoparticle(box_size, positions, rcut):
+    """Cut a defined structure to give a spherical nanoparticle.
 
-        Parameters
-        ----------
-        box_size : np.array
-            box size in each direction x, y, z.
+    If rcut is greater than half the cell length, the cell will be
+    replicated to give a nanoparticle of the desired radius.
 
-        positions : np.array
-            the positions of the atoms in a lattice that wants to be
-            replicated. It must first have all the x's of the atoms, then the
-            y's and then the z's concatenated.
+    Parameters
+    ----------
+    box_size : np.array
+        box size in each direction x, y, z.
 
-        rcut : float
-            the radius of the nanoparticle.
+    positions : np.array
+        the positions of the atoms in a lattice that wants to be
+        replicated. It must first have all the x's of the atoms, then the
+        y's and then the z's concatenated.
 
-        Returns
-        -------
-        dict :
-            with the keys `natoms`, `x`, `y`, `z`, the number of atoms and
-            the xyz of the atoms, respectively.
-        """
-        self.box_size = box_size
-        x, y, z = np.split(positions, 3)
+    rcut : float
+        the radius of the nanoparticle.
 
-        n = np.intc(np.ceil(rcut / np.max(self.box_size)))
-        boxes = list(it.product(range(-n, n + 1), repeat=3))
+    Returns
+    -------
+    dict :
+        with the keys `natoms`, `x`, `y`, `z`, the number of atoms and
+        the xyz of the atoms, respectively.
+    """
+    x, y, z = np.split(positions, 3)
 
-        npx, npy, npz = [], [], []
-        for box in boxes:
-            for i in range(len(x)):
-                xx = self.box_size[0] * (x[i] + box[0])
-                yy = self.box_size[1] * (y[i] + box[1])
-                zz = self.box_size[2] * (z[i] + box[2])
+    n = np.intc(np.ceil(rcut / np.max(box_size)))
+    boxes = list(it.product(range(-n, n + 1), repeat=3))
 
-                if np.linalg.norm([xx, yy, zz]) <= rcut:
-                    npx.append(xx)
-                    npy.append(yy)
-                    npz.append(zz)
+    npx, npy, npz = [], [], []
+    for box in boxes:
+        for i in range(len(x)):
+            xx = box_size[0] * (x[i] + box[0])
+            yy = box_size[1] * (y[i] + box[1])
+            zz = box_size[2] * (z[i] + box[2])
 
-        return {
-            "natoms": len(npx),
-            "x": np.asarray(npx, dtype=np.float32),
-            "y": np.asarray(npy, dtype=np.float32),
-            "z": np.asarray(npz, dtype=np.float32),
-        }
+            if np.linalg.norm([xx, yy, zz]) <= rcut:
+                npx.append(xx)
+                npy.append(yy)
+                npz.append(zz)
 
-    def replicate(self, box_size, atom_type, positions, nrf):
-        """Replicate a crystalline system in each direction.
+    return {
+        "natoms": len(npx),
+        "x": np.asarray(npx, dtype=np.float32),
+        "y": np.asarray(npy, dtype=np.float32),
+        "z": np.asarray(npz, dtype=np.float32),
+    }
 
-        Parameters
-        ----------
-        box_size : np.array
-            box size in each direction x, y, z.
 
-        atom_type : list of integers
-            the type of the atoms.
+def replicate(natoms, box_size, atom_type, positions, nrf):
+    """Replicate a crystalline system in each direction.
 
-        positions : np.array
-            the positions of the atoms in a lattice that wants to be
-            replicated. It must first have all the x's of the atoms, then the
-            y's and then the z's concatenated.
+    Parameters
+    ----------
+    natoms : int
+        number of atoms
 
-        nrf : list of integers.
-            the integers must be greater than or equal to 1 and indicate the
-            replication factor in each x, y, z direction, respectively. Value
-            equal to 1 means that only the current cell in that direction is
-            considered.
+    box_size : np.array
+        box size in each direction x, y, z.
 
-        Returns
-        -------
-        dict :
-            with the keys `natoms`, `box`, types`, x`, `y`, `z`, the number of
-            atoms, the box size, the types of the atoms and the xyz of the
-            atoms, respectively.
-        """
-        self.atom_type = atom_type
-        self.box_size = box_size
+    atom_type : list of integers
+        the type of the atoms.
 
-        x, y, z = np.split(positions, 3)
-        boxes = list(it.product(range(np.max(nrf)), repeat=3))
-        newx, newy, newz = [], [], []
-        for box in boxes:
-            if (box[0] >= nrf[0]) or (box[1] >= nrf[1]) or (box[2] >= nrf[2]):
-                continue
+    positions : np.array
+        the positions of the atoms in a lattice that wants to be
+        replicated. It must first have all the x's of the atoms, then the
+        y's and then the z's concatenated.
 
-            for i in range(self.natoms):
-                newx.append(self.box_size[0] * (x[i] + box[0]))
-                newy.append(self.box_size[1] * (y[i] + box[1]))
-                newz.append(self.box_size[2] * (z[i] + box[2]))
+    nrf : list of integers.
+        the integers must be greater than or equal to 1 and indicate the
+        replication factor in each x, y, z direction, respectively. Value
+        equal to 1 means that only the current cell in that direction is
+        considered.
 
-        self.natoms = len(newx)
-        self.box_size = np.array(
-            [
-                nrf[0] * self.box_size[0],
-                nrf[1] * self.box_size[1],
-                nrf[2] * self.box_size[2],
-            ]
-        )
-        self.atom_type = self.atom_type * np.prod(nrf)
+    Returns
+    -------
+    dict :
+        with the keys `natoms`, `box`, types`, x`, `y`, `z`, the number of
+        atoms, the box size, the types of the atoms and the xyz of the
+        atoms, respectively.
+    """
+    x, y, z = np.split(positions, 3)
+    boxes = list(it.product(range(np.max(nrf)), repeat=3))
+    newx, newy, newz = [], [], []
+    for box in boxes:
+        if (box[0] >= nrf[0]) or (box[1] >= nrf[1]) or (box[2] >= nrf[2]):
+            continue
 
-        return {
-            "natoms": self.natoms,
-            "box": self.box_size,
-            "types": self.atom_type,
-            "x": np.asarray(newx, dtype=np.float32),
-            "y": np.asarray(newy, dtype=np.float32),
-            "z": np.asarray(newz, dtype=np.float32),
-        }
+        for i in range(natoms):
+            newx.append(box_size[0] * (x[i] + box[0]))
+            newy.append(box_size[1] * (y[i] + box[1]))
+            newz.append(box_size[2] * (z[i] + box[2]))
+
+    natoms = len(newx)
+    box_size = np.array(
+        [nrf[0] * box_size[0], nrf[1] * box_size[1], nrf[2] * box_size[2]]
+    )
+    atom_type *= np.prod(nrf)
+
+    return {
+        "natoms": natoms,
+        "box": box_size,
+        "types": atom_type,
+        "x": np.asarray(newx, dtype=np.float32),
+        "y": np.asarray(newy, dtype=np.float32),
+        "z": np.asarray(newz, dtype=np.float32),
+    }
