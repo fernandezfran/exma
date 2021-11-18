@@ -48,7 +48,7 @@ class monoatomic:
             ct.c_float,
             ct.c_void_p,
         ]
-        self.cn_c = (ct.c_int * natoms)()
+        self.cn_res = (ct.c_int * natoms)()
 
     def accumulate(self, box_size, positions):
         """
@@ -69,7 +69,7 @@ class monoatomic:
         x_c = positions.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
         self.cn_c(
-            self.natoms, box_size, x_c, self.rcut_i, self.rcut_e, self.cn_c
+            self.natoms, box_size, x_c, self.rcut_i, self.rcut_e, self.cn_res
         )
 
         self.ncn_ += 1
@@ -95,7 +95,7 @@ class monoatomic:
         """
 
         cn_ = np.asarray(
-            np.frombuffer(self.cn_c, dtype=np.intc, count=self.natoms)
+            np.frombuffer(self.cn_res, dtype=np.intc, count=self.natoms)
         )
         self.cn_ = np.array(cn_ / self.ncn_, dtype=np.float32)
 
@@ -172,7 +172,7 @@ class diatomic:
             ct.c_float,
             ct.c_void_p,
         ]
-        self.cn_c = (ct.c_int * self.n_a_)()
+        self.cn_res = (ct.c_int * self.n_a_)()
 
     def accumulate(self, box_size, atom_type, positions):
         """
@@ -207,7 +207,7 @@ class diatomic:
             x_c,
             self.rcut_i,
             self.rcut_e,
-            self.cn_c,
+            self.cn_res,
         )
 
         self.ncn_ += 1
@@ -233,7 +233,7 @@ class diatomic:
         """
 
         cn_ = np.asarray(
-            np.frombuffer(self.cn_c, dtype=np.intc, count=self.n_a_)
+            np.frombuffer(self.cn_res, dtype=np.intc, count=self.n_a_)
         )
         self.cn_ = np.array(cn_ / self.ncn_, dtype=np.float32)
 

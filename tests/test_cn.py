@@ -1,53 +1,59 @@
-import unittest
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This file is part of exma (https://github.com/fernandezfran/exma/).
+# Copyright (c) 2021, Francisco Fernandez
+# License: MIT
+#   Full Text: https://github.com/fernandezfran/exma/blob/master/LICENSE
+
+# ======================================================================
+# IMPORTS
+# ======================================================================
+
+import exma.positions
+import exma.cn.coordination_number
 
 import numpy as np
 
-from exma import atoms
-from exma.cn.coordination_number import diatomic, monoatomic
+# ======================================================================
+# TESTS
+# ======================================================================
 
 
-class TestCN(unittest.TestCase):
-    def test_monoatomic(self):
-        """
-        test the coordination number of a monoatomic simple cubic crystal
-        """
-        natoms = 27
-        size = np.array([1.0, 1.0, 1.0])
-        rcut = 0.4
+def test_monoatomic():
+    """Test the coordination number of a monoatomic simple cubic crystal."""
+    natoms = 27
+    size = np.array([1.0, 1.0, 1.0])
+    rcut = 0.4
 
-        reference = np.full(natoms, 6.0)
+    particles = exma.positions.Positions(natoms, size[0]).sc()
+    xyz = np.concatenate((particles["x"], particles["y"], particles["z"]))
 
-        particles = atoms.positions(natoms, size[0])
-        x = particles.sc()
+    mono = exma.cn.coordination_number.monoatomic(natoms, rcut)
+    mono.accumulate(size, xyz)
+    result = mono.end(0, xyz, writes=False)
 
-        mono = monoatomic(natoms, rcut)
-        mono.accumulate(size, x)
-        result = mono.end(0, x, writes=False)
+    cnref = np.full(natoms, 6.0)
 
-        np.testing.assert_array_equal(result, reference)
-
-    def test_diatomic(self):
-        """
-        test the coordination number of diatomic body-centered cubic crystal
-        """
-        natoms = 54
-        size = np.array([1.0, 1.0, 1.0])
-        rcut = 0.3
-
-        reference = np.full(np.intc(natoms / 2), 8.0)
-
-        type1 = np.full(np.intc(natoms / 2), 1)
-        type2 = np.full(np.intc(natoms / 2), 2)
-        types = np.concatenate((type1, type2))
-        particles = atoms.positions(natoms, size[0])
-        x = particles.bcc()
-
-        di = diatomic(natoms, types, 1, 2, rcut)
-        di.accumulate(size, types, x)
-        result = di.end(types, x, writes=False)
-
-        np.testing.assert_array_equal(result, reference)
+    np.testing.assert_array_equal(result, cnref)
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_diatomic():
+    """Test the coordination number of diatomic body-centered cubic crystal."""
+    natoms = 54
+    size = np.array([1.0, 1.0, 1.0])
+    rcut = 0.3
+
+    type1 = np.full(np.intc(natoms / 2), 1)
+    type2 = np.full(np.intc(natoms / 2), 2)
+    types = np.concatenate((type1, type2))
+    particles = exma.positions.Positions(natoms, size[0]).bcc()
+    xyz = np.concatenate((particles["x"], particles["y"], particles["z"]))
+
+    di = exma.cn.coordination_number.diatomic(natoms, types, 1, 2, rcut)
+    di.accumulate(size, types, xyz)
+    result = di.end(types, xyz, writes=False)
+
+    cnref = np.full(np.intc(natoms / 2), 8.0)
+
+    np.testing.assert_array_equal(result, cnref)

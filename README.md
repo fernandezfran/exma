@@ -87,9 +87,4 @@ There are different examples in the documentation [tutorials](https://exma.readt
 
 ## TODO
 
-[TODO List](https://github.com/fernandezfran/exma/blob/master/TODO.md)
-
-
-## Contributing
-
-[Contributing](https://github.com/fernandezfran/exma/blob/master/CONTRIBUTING.md)
+- [ ] triclinic (non-orthogonal) boxes for the different modules.

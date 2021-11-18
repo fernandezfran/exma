@@ -1,27 +1,35 @@
-import unittest
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This file is part of exma (https://github.com/fernandezfran/exma/).
+# Copyright (c) 2021, Francisco Fernandez
+# License: MIT
+#   Full Text: https://github.com/fernandezfran/exma/blob/master/LICENSE
+
+# ======================================================================
+# IMPORTS
+# ======================================================================
+
+import exma.cluster
 
 import numpy as np
 
-from exma.cluster import clusterization
+# ======================================================================
+# TESTS
+# ======================================================================
 
+def test_dbscan():
+    """Test the dbscan cluster analyzer."""
+    idref = np.array([0, 0, -1])
 
-class TestClusterization(unittest.TestCase):
-    def test_dbscan(self):
-        """
-        test the dbscan cluster analyzer
-        """
-        reference = np.array([0, 0, -1])
+    box = np.array([1.0, 1.0, 1.0])
+    rcut = 0.2
+    types = np.array([1, 1, 1])
+    xyz = np.array([0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.45, 0.55, 0.0])
 
-        size = np.array([1.0, 1.0, 1.0])
-        rcut = 0.2
-        typ = np.array([1, 1, 1])
-        x = np.array([0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.45, 0.55, 0.0])
+    result = exma.cluster.clusterization.dbscan(rcut).of_this_frame(
+        box, types, xyz, 1
+    )
 
-        result = clusterization.dbscan(rcut).of_this_frame(size, typ, x, 1)
-
-        np.testing.assert_array_almost_equal(result[0], x)
-        np.testing.assert_array_equal(result[1], reference)
-
-
-if __name__ == "__main__":
-    unittest.main()
+    np.testing.assert_array_almost_equal(result[0], xyz)
+    np.testing.assert_array_equal(result[1], idref)

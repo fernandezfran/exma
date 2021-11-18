@@ -50,7 +50,7 @@ class monoatomic(gofr):
 
         minbox = np.min(box_size)
         self.volume_ = 0.0
-        self.dg_ = 0 * minbox / self.nbin
+        self.dg_ = 0.5 * minbox / self.nbin
         self.gr_ = np.zeros(self.nbin, dtype=np.float32)
         self.ngr_ = 0
 

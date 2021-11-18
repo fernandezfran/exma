@@ -1,72 +1,76 @@
-import unittest
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This file is part of exma (https://github.com/fernandezfran/exma/).
+# Copyright (c) 2021, Francisco Fernandez
+# License: MIT
+#   Full Text: https://github.com/fernandezfran/exma/blob/master/LICENSE
+
+# ======================================================================
+# IMPORTS
+# ======================================================================
+
+import exma.positions
+import exma.rdf.gofr
 
 import numpy as np
 
-from exma import atoms
-from exma.rdf.gofr import diatomic, monoatomic
+# ======================================================================
+# TESTS
+# ======================================================================
+
+def test_monoatomic():
+    """Test the RDF of a monoatomic fcc crystal."""
+    rdfref_x = np.arange(0.025, 0.5, 0.05)
+    rdfref_y = np.array(
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            3.478797,
+            0.0,
+            0.835459,
+            0.0,
+            1.955821,
+            0.78305,
+        ]
+    )
+    rdfref = np.split(np.concatenate((rdfref_x, rdfref_y)), 2)
+
+    natoms = 108
+    box = np.array([1.0, 1.0, 1.0])
+
+    particles = exma.positions.Positions(natoms, box[0]).fcc()
+    xyz = np.concatenate((particles["x"], particles["y"], particles["z"]))
+
+    gofr = exma.rdf.gofr.monoatomic(natoms, box, 10)
+    gofr.accumulate(box, xyz)
+    result = gofr.end(writes=False)
+
+    np.testing.assert_array_almost_equal(result, rdfref)
 
 
-class TestRDF(unittest.TestCase):
-    def test_monoatomic(self):
-        """
-        test the radial distribution function of a monoatomic face-centered
-        cubic crystal
-        """
-        reference_x = np.arange(0.025, 0.5, 0.05)
-        reference_y = np.array(
-            [
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                3.478797,
-                0.0,
-                0.835459,
-                0.0,
-                1.955821,
-                0.78305,
-            ]
-        )
-        reference = np.split(np.concatenate((reference_x, reference_y)), 2)
+def test_diatomic():
+    """Test the RDF of a diatomic bcc crystal."""
+    rdfref_x = np.arange(0.025, 0.5, 0.05)
+    rdfref_y = np.array(
+        [0.0, 0.0, 0.0, 0.0, 0.0, 6.218508, 0.0, 0.0, 0.0, 0.0]
+    )
+    rdfref = np.split(np.concatenate((rdfref_x, rdfref_y)), 2)
 
-        natoms = 108
-        size = np.array([1.0, 1.0, 1.0])
+    natoms = 54
+    box = np.array([1.0, 1.0, 1.0])
 
-        particles = atoms.positions(natoms, size[0])
-        x = particles.fcc()
+    type1 = np.full(np.intc(natoms / 2), 1)
+    type2 = np.full(np.intc(natoms / 2), 2)
+    types = np.concatenate((type1, type2))
 
-        gofr = monoatomic(natoms, size, 10)
-        gofr.accumulate(size, x)
-        result = gofr.end(writes=False)
+    particles = exma.positions.Positions(natoms, box[0]).bcc()
+    xyz = np.concatenate((particles["x"], particles["y"], particles["z"]))
 
-        np.testing.assert_array_almost_equal(result, reference)
+    gofr = exma.rdf.gofr.diatomic(natoms, box, 10, 1, 2)
+    gofr.accumulate(box, types, xyz)
+    result = gofr.end(types, writes=False)
 
-    def test_diatomic(self):
-        """
-        test the radial distribution function of a diatomic body-centered
-        cubic crystal
-        """
-        reference_x = np.arange(0.025, 0.5, 0.05)
-        reference_y = np.array(
-            [0.0, 0.0, 0.0, 0.0, 0.0, 6.218508, 0.0, 0.0, 0.0, 0.0]
-        )
-        reference = np.split(np.concatenate((reference_x, reference_y)), 2)
-
-        natoms = 54
-        size = np.array([1.0, 1.0, 1.0])
-
-        type1 = np.full(np.intc(natoms / 2), 1)
-        type2 = np.full(np.intc(natoms / 2), 2)
-        types = np.concatenate((type1, type2))
-        particles = atoms.positions(natoms, size[0])
-        x = particles.bcc()
-
-        gofr = diatomic(natoms, size, 10, 1, 2)
-        gofr.accumulate(size, types, x)
-        result = gofr.end(types, writes=False)
-
-        np.testing.assert_array_almost_equal(result, reference)
-
-
-if __name__ == "__main__":
-    unittest.main()
+    np.testing.assert_array_almost_equal(result, rdfref)
