@@ -20,7 +20,7 @@ import itertools as it
 import numpy as np
 
 
-class Positions():
+class Positions:
     """Define the positions of the atoms in an orthogonal lattice.
 
     Note that the density is defined by the input parameters as follow:
@@ -34,6 +34,7 @@ class Positions():
     box_size : float
         box size in each direction (cubic)
     """
+
     def __init__(self, natoms, box_size):
 
         self.natoms = natoms
@@ -66,7 +67,7 @@ class Positions():
             "box": np.full(3, self.box_size, dtype=np.float32),
             "x": positions[0],
             "y": positions[1],
-            "z": positions[2]
+            "z": positions[2],
         }
 
     def bcc(self):
@@ -103,7 +104,7 @@ class Positions():
             "box": np.full(3, self.box_size, dtype=np.float32),
             "x": positions[0],
             "y": positions[1],
-            "z": positions[2]
+            "z": positions[2],
         }
 
     def fcc(self):
@@ -143,7 +144,7 @@ class Positions():
             "box": np.full(3, self.box_size, dtype=np.float32),
             "x": positions[0],
             "y": positions[1],
-            "z": positions[2]
+            "z": positions[2],
         }
 
     def dc(self):
@@ -185,7 +186,7 @@ class Positions():
             "box": np.full(3, self.box_size, dtype=np.float32),
             "x": positions[0],
             "y": positions[1],
-            "z": positions[2]
+            "z": positions[2],
         }
 
     def spherical_nanoparticle(self, box_size, positions, rcut):
@@ -264,8 +265,8 @@ class Positions():
         -------
         dict :
             with the keys `natoms`, `box`, types`, x`, `y`, `z`, the number of
-            atoms, the box size, the types of the atoms and the xyz of the atoms,
-            respectively.
+            atoms, the box size, the types of the atoms and the xyz of the
+            atoms, respectively.
         """
         self.atom_type = atom_type
         self.box_size = box_size

@@ -15,7 +15,7 @@ CFLAGS = sysconfig.get_config_var("CFLAGS").split()
 CFLAGS += ["-O3", "-ffast-math", "-fPIC", "-ftree-vectorize", "-march=native"]
 
 C_modules = []
-EXMA_PACKAGES = ["exma.boundary", "exma.cluster", "exma.cn", "exma.en", "exma.rdf"]
+EXMA_PACKAGES = ["exma.cluster", "exma.cn", "exma.en", "exma.rdf"]
 for mod in EXMA_PACKAGES:
     mod = mod.replace("exma.", "")
     common = "exma/" + mod + "/"
