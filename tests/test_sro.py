@@ -42,4 +42,4 @@ def test_amorphous():
 
     result = exma.sro.amorphous(rdf_x, rdf_y).parameter(rcut)
 
-    .assertAlmostEqual(result, sroref)
+    np.testing.assert_almost_equal(result, sroref)

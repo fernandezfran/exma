@@ -19,6 +19,7 @@ import numpy as np
 # TESTS
 # ======================================================================
 
+
 def test_monoatomic():
     """Test the RDF of a monoatomic fcc crystal."""
     rdfref_x = np.arange(0.025, 0.5, 0.05)

@@ -18,6 +18,7 @@ import numpy as np
 # TESTS
 # ======================================================================
 
+
 def test_dbscan():
     """Test the dbscan cluster analyzer."""
     idref = np.array([0, 0, -1])

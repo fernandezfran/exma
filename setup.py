@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-""" setup script """
+"""Installation of exma."""
 
 import sysconfig
 from setuptools import find_packages

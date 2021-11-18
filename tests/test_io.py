@@ -321,11 +321,15 @@ def test_lammpstrj_charge_image():
     charges = np.array([-0.3356, -0.32636, -0.34256, 0.54365, 0.46463])
     img = np.array([0, 0, 1, -1, 0, 2, 3, 0, 0, 1, -2, -1, 0, 0, 1])
 
-    wlmp = exma.writer.lammpstrj(TEST_DATA_PATH / "test.lammpstrj", "charge_image")
+    wlmp = exma.writer.lammpstrj(
+        TEST_DATA_PATH / "test.lammpstrj", "charge_image"
+    )
     wlmp.write_frame(natoms, box, idx, types, xyz, charges, img)
     wlmp.file_close()
 
-    rlmp = exma.reader.lammpstrj(TEST_DATA_PATH / "test.lammpstrj", "charge_image")
+    rlmp = exma.reader.lammpstrj(
+        TEST_DATA_PATH / "test.lammpstrj", "charge_image"
+    )
     result = rlmp.read_frame()
     rlmp.file_close()
 
@@ -336,6 +340,7 @@ def test_lammpstrj_charge_image():
     np.testing.assert_array_almost_equal(result[4], xyz)
     np.testing.assert_array_almost_equal(result[5], charges)
     np.testing.assert_array_equal(result[6], img)
+
 
 def test_lammpstrj_raises():
     """Test the raises of write and read .lammpstrj file."""
