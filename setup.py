@@ -51,7 +51,7 @@ with open("README.md") as file_readme:
 
 setup(
     name="exma",
-    version="0.2.0",
+    version="0.3.0",
     description="extendable molecular dynamics analyzer",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
