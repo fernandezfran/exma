@@ -10,14 +10,6 @@ Module contents
    :show-inheritance:
    :member-order: bysource
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   exma.lib
-
 Submodules
 ----------
 
@@ -110,3 +102,11 @@ exma.writer module
    :undoc-members:
    :show-inheritance:
    :member-order: bysource
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   exma.lib
