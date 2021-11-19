@@ -3,6 +3,7 @@ include README.md
 
 exclude tox.ini
 exclude pyproject.toml
+exclude .clang-format
 recursive-exclude tests *
 recursive-exclude docs *
 
