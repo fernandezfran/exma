@@ -27,7 +27,7 @@ from distutils.core import Extension, setup
 # CONSTANTS
 # =============================================================================
 
-REQUIREMENTS = ["scikit-learn", "scipy", "more-itertools", "numpy"]
+REQUIREMENTS = ["more-itertools", "numpy", "pandas", "scikit-learn", "scipy"]
 
 COMMON = "exma/lib/"
 CFLAGS = sysconfig.get_config_var("CFLAGS").split()

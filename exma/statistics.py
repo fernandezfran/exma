@@ -18,85 +18,60 @@
 
 import numpy as np
 
+import pandas as pd
+
 # ============================================================================
-# CLASSES
+# FUNCTIONS
 # ============================================================================
 
 
-class statistics:
-    """
-    class with statistical calculations of interest
-    """
+def block_average(x):
+    """A method for estimating errors when data are correlated.
 
-
-class block_average(statistics):
-    """
-    a method to find an estimation of the error when the data of a time series
-    are correlated
-
-    (H. Flyvbjerg and H. G. Petersen: Averages of correlated data (1989))
+    See: H. Flyvbjerg and H. G. Petersen: Averages of correlated data (1989)
 
     Parameters
     ----------
     x : array
         where the time series is
+
+    Returns
+    -------
+    ``pd.DataFrame``
+        with `idx`, `data_size`, `mean`, `var` and `varerr` as columns that gives
+        information about the number of times that the block sums were applied,
+        the data size changes, the mean value of each block, the corresponding
+        variance and the error of that variance, respectively.
     """
+    data_size, mean, var, varerr = [], [], [], []
 
-    def __init__(self, x):
-        self.x = x
+    idx = 0
+    data_size.append(len(x))
+    mean.append(np.mean(x))
+    var.append(np.var(x) / (data_size[idx] - 1))
+    varerr.append(np.sqrt(2.0 / (data_size[idx] - 1)) * var[idx])
 
-    def estimate_error(self):
-        """
-        Returns
-        -------
-        idx : numpy array of integers
-            number of times that block sums where applied
+    oldx = x
+    while np.intc(len(oldx) / 2) > 2:
+        newx = np.zeros(np.intc(len(oldx) / 2))
 
-        ds : numpy array of integers
-            data size
+        for k in range(len(newx)):
+            newx[k] = 0.5 * (oldx[2 * k - 1] + oldx[2 * k])
 
-        mean : numpy array of floats
-            with the mean value of the data considered
+        idx += 1
+        data_size.append(len(newx))
+        mean.append(np.mean(newx))
+        var.append(np.var(newx) / (data_size[idx] - 1))
+        varerr.append(np.sqrt(2.0 / (data_size[idx] - 1)) * var[idx])
 
-        var : numpy array of floats
-            variance of the data considered
+        oldx = newx
 
-        varerr : numpy array of floats
-            error of the variance
-        """
-
-        x = self.x
-
-        ds = []
-        mean = []
-        var = []
-        varerr = []
-
-        idx = 0
-        ds.append(len(x))
-        mean.append(np.mean(x))
-        var.append(np.var(x) / (ds[idx] - 1))
-        varerr.append(np.sqrt(2.0 / (ds[idx] - 1)) * var[idx])
-
-        oldx = x
-        while np.intc(len(oldx) / 2) > 2:
-            newx = np.zeros(np.intc(len(oldx) / 2))
-
-            for k in range(len(newx)):
-                newx[k] = 0.5 * (oldx[2 * k - 1] + oldx[2 * k])
-
-            idx += 1
-            ds.append(len(newx))
-            mean.append(np.mean(newx))
-            var.append(np.var(newx) / (ds[idx] - 1))
-            varerr.append(np.sqrt(2.0 / (ds[idx] - 1)) * var[idx])
-
-            oldx = newx
-
-        idx = np.array(list(range(0, idx + 1)))
-        ds = np.array(ds)
-        mean = np.array(mean)
-        var = np.array(var)
-        varerr = np.array(varerr)
-
-        return idx, ds, mean, var, varerr
+    return pd.DataFrame(
+        data={
+            "idx": np.arange(idx + 1),
+            "data_size": np.array(data_size),
+            "mean": np.array(mean),
+            "var": np.array(var),
+            "varerr": np.array(varerr),
+        }
+    )
