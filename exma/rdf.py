@@ -83,7 +83,7 @@ class monoatomic:
         self.gr_c = (ct.c_int * nbin)()
 
     def accumulate(self, box_size, positions):
-        """Accumulates the information of each frame in self.gr_.
+        """Accumulates the information of each frame.
 
         Parameters
         ----------
@@ -217,7 +217,7 @@ class diatomic:
         self.gr_c = (ct.c_int * nbin)()
 
     def accumulate(self, box_size, atom_type, positions):
-        """Accumulates the information of each frame in self.gr_.
+        """Accumulates the information of each frame.
 
         Parameters
         ----------
