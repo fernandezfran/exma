@@ -10,7 +10,7 @@
 # DOCS
 # ============================================================================
 
-"""This module includes classes and functions to read MD trayectories."""
+"""Classes and functions to read MD trayectories."""
 
 # =============================================================================
 # IMPORTS
@@ -23,33 +23,22 @@ import numpy as np
 # ============================================================================
 
 
-class reader(object):
-    """
-    used to read molecular dynamics trajectory files
-    """
-
-
-class xyz(reader):
-    """
-    subclass of reader that reads xyz file
+class xyz:
+    """Class to read xyz files.
 
     Parameters
     ----------
-    file_xyz : filename
+    file_xyz : str
         name of the file where the trajectories in xyz format are
 
-    ftype : typical, property or image
-
-        typical if is the usual xyz file
-
-        property if in the last column there is a property
-
-        image if in the last three columns there are the image box of the
-        corresponding atom
+    ftype : str (default=typical)
+        the possible values are `typical`, `property` and `image`. `typical`
+        if is the usual xyz file. `property` if in the last column there is
+        a property. `image` if in the last three columns there are the image
+        box of the corresponding atom.
     """
 
     def __init__(self, file_xyz, ftype="typical"):
-
         if ftype not in ["typical", "property", "image"]:
             raise ValueError("ftype must be 'typical', 'property' or 'image'")
 
@@ -57,28 +46,26 @@ class xyz(reader):
         self.ftype = ftype
 
     def read_frame(self):
-        """
-        reads the actual frame of an .xyz file
+        """Read the actual frame of an .xyz file.
 
         Returns
         -------
-        natoms : integer
+        natoms : int
             the number of atoms in the frame
 
-        atom_type : list of chars
+        atom_type : list of str
             the type of the atoms
 
-        positions : numpy array with float32 data
-            the positions in the SoA convention
-            i.e. first all the x, then y and then z
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x, then y
+            and then z)
 
-        property : numpy array (could be integer, float, char, etc)
-            if ftype = 'property' was selected
+        property : np.array
+            if ftype='property' was selected
 
-        image : numpy array with integer data
-            same as positions, if ftype = 'image' was selected
+        image : np.array
+            same as positions, if ftype='image' was selected
         """
-
         natoms = self.file_xyz.readline()
         if not natoms:
             raise EOFError("There is no more frames to read")
@@ -166,34 +153,27 @@ class xyz(reader):
             return natoms, atom_type, positions, image
 
     def file_close(self):
-        """
-        close the file where the trajectories of the dynamics are
-        """
+        """Close the trayectory file."""
         self.file_xyz.close()
 
 
-class lammpstrj(reader):
-    """
-    subclass of reader that reads lammpstrj file
+class lammpstrj:
+    """Class to read lammpstrj files.
 
     Parameters
     ----------
-    file_lammps : filename
+    file_lammps : str
         name of the file where the trajectories of lammps are
 
-    ftype : custom, charge, image, charge_image
-
+    ftype : str (defualt="custom")
+        the possible values are custom, charge, image and charge_image.
         custom = dump ... custom ... id type x y z
-
         charge = dump ... custom ... id type q x y z
-
         image = dump ... custom ... id type x y z ix iy iz
-
         charge_image = dump ... custom ... id type q x y z ix iy iz
     """
 
     def __init__(self, file_lammps, ftype="custom"):
-
         if ftype not in ["custom", "charge", "image", "charge_image"]:
             raise ValueError(
                 "ftype must be 'custom', 'charge', 'image' or" "'charge_image'"
@@ -203,34 +183,32 @@ class lammpstrj(reader):
         self.ftype = ftype
 
     def read_frame(self):
-        """
-        reads the actual frame of a .lammpstrj file
+        """Read the actual frame of an .lammpstrj file.
 
         Returns
         -------
-        natoms : integer
+        natoms : int
             the number of atoms in the frame
 
-        box_size : numpy array
+        box_size : np.array
             with the box lenght in x, y, z
 
-        atom_id : list of integers
+        atom_id : list of ints
             the id of the respective atom
 
-        atom_type : list of integers
+        atom_type : list of ints
             the type of the atoms
 
-        positions : numpy array with float32 data
-            the positions in the SoA convention
-            i.e. first all the x, then y and then z
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x, then y
+            and then z)
 
-        atom_q : numpy array with float32 data
-            the charge of the respective atom, if ftype = 'charge' was selected
+        atom_q : np.array
+            the charge of the respective atom, if ftype='charge' was selected
 
-        image : numpy array with integer data
-            same as positions, if ftype = 'image' was selected
+        image : np.array
+            same as positions, if ftype='image' was selected
         """
-
         comment = self.file_lammps.readline()
         if not comment:
             raise EOFError("There is no more frames to read")
@@ -393,7 +371,5 @@ class lammpstrj(reader):
             )
 
     def file_close(self):
-        """
-        close the file where the trajectories of the dynamics are
-        """
+        """Close the trayectory file."""
         self.file_lammps.close()

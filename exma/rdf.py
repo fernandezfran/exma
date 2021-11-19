@@ -38,30 +38,22 @@ lib_rdf = ct.CDLL(
 # ============================================================================
 
 
-class gofr:
-    """
-    radial distribution function, g(r)
-    """
-
-
-class monoatomic(gofr):
-    """
-    rdf of a monoatomic system
+class monoatomic:
+    """RDF of a monoatomic system.
 
     Parameters
     ----------
-    natoms : integer
+    natoms : int
         number of atoms
 
-    box_size : numpy array with three floats
+    box_size : np.array
         the box size in x, y, z
 
-    nbin : integer
+    nbin : int
         number of bins in the histogram
 
-    pbc : boolean
-        True if pbc must be considered
-        False if not
+    pbc : bool (default=True)
+        True if pbc must be considered, False if not
     """
 
     def __init__(self, natoms, box_size, nbin, pbc=True):
@@ -91,19 +83,17 @@ class monoatomic(gofr):
         self.gr_c = (ct.c_int * nbin)()
 
     def accumulate(self, box_size, positions):
-        """
-        accumulates the information of each frame in self.gr_
+        """Accumulates the information of each frame in self.gr_.
 
         Parameters
         ----------
-        box_size : numpy array with three floats
+        box_size : np.array
             the box size in x, y, z
 
-        positions : numpy array with float32 data
-            the positions in the SoA convention
-            i.e. first all the x, then y and then z
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x, then y
+            and then z)
         """
-
         # got to be sure that the box_size and positions type is np.float32
         # because that is the pointer type in C
         box_size = box_size.astype(np.float32)
@@ -125,27 +115,26 @@ class monoatomic(gofr):
 
         self.ngr_ += 1
 
-    def end(self, r_mean=None, writes=True, file_rdf="rdf.dat"):
-        """
+    def end(self, r_mean=None, writes=False, file_rdf="rdf.dat"):
+        """Normalize the accumulated data.
+
         Parameters
         ----------
-        r_mean : float
-            the mean radius of the simulated cluster (mainly oriented to
-            spherical nanoparticles)
+        r_mean : float (default=None)
+            the mean radius of the simulated cluster, only usefull when pbc
+            was passed with a False value.
 
-        writes : True (or False)
+        writes : bool (default=False)
             if you want (or don't want) to write an output
 
-        file_rdf : filname
+        file_rdf : str
             the file were the g(r) is going to be written
 
         Returns
         -------
-        r : numpy array
-            x of the histogram
-
-        self.gr_ : numpy array
-            y of the histogram
+        tuple of np.array
+            the first np.array is the x of the histogram and the second the
+            g(r)
         """
         volume = self.volume_ / self.ngr_
         if r_mean is not None:
@@ -173,36 +162,33 @@ class monoatomic(gofr):
         return r, self.gr_
 
 
-class diatomic(gofr):
-    """
-    rdf of diatomic systems
+class diatomic:
+    """RDF of diatomic systems.
 
     Parameters
     ----------
-    natoms : integer
+    natoms : int
         number of atoms
 
-    box_size : numpy array with three floats
+    box_size : np.array
         the box size in x, y, z
 
-    nbin : integer
+    nbin : int
         number of bins in the histogram
 
-    atom_type_a : integer (or char)
+    atom_type_a : int (or str)
         type of central atoms
 
-    atom_type_a : integer (or char)
+    atom_type_a : int (or str)
         type of interacting atoms
 
-    pbc : boolean
-        True if pbc must be considered
-        False if not
+    pbc : bool (default=True)
+        True if pbc must be considered, False if not
     """
 
     def __init__(
         self, natoms, box_size, nbin, atom_type_a, atom_type_b, pbc=True
     ):
-
         self.natoms = natoms
         self.nbin = nbin
         self.atom_type_a = atom_type_a
@@ -231,22 +217,20 @@ class diatomic(gofr):
         self.gr_c = (ct.c_int * nbin)()
 
     def accumulate(self, box_size, atom_type, positions):
-        """
-        accumulates the information of each frame in self.gr_
+        """Accumulates the information of each frame in self.gr_.
 
         Parameters
         ----------
-        box_size : numpy array with three floats
+        box_size : np.array
             the box size in x, y, z
 
-        atom_type : numpy array with integers (could be char)
+        atom_type : np.array
             type of atoms
 
-        positions : numpy array with float32 data
-            the positions in the SoA convention
-            i.e. first all the x, then y and then z
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x, then y
+            and then z)
         """
-
         # got to be sure that the box_size and the positions types are
         # np.float32 and atom_type is an array of np.intc because those are
         # the pointers types in C
@@ -276,31 +260,29 @@ class diatomic(gofr):
         self.ngr_ += 1
 
     def end(self, atom_type, r_mean=None, writes=True, file_rdf="rdf.dat"):
-        """
+        """Normalize the accumulated data.
+
         Parameters
         ----------
-        atom_type : numpy array with integers (could be char)
+        atom_type : np.array with ints (could be str)
             type of atoms
 
-        r_mean : float
-            the mean radius of the simulated cluster (mainly oriented to
-            spherical nanoparticles)
+        r_mean : float (default=None)
+            the mean radius of the simulated cluster, only usefull when pbc
+            was passed with a False value.
 
-        writes : True (or False)
+        writes : bool (default=False)
             if you want (or don't want) to write an output
 
-        file_rdf : filname
+        file_rdf : str
             the file were the g(r) is going to be written
 
         Returns
         -------
-        r : numpy array
-            x of the histogram
-
-        self.gr_ : numpy array
-            y of the histogram
+        tuple of np.array
+            the first np.array is the x of the histogram and the second the
+            g(r)
         """
-
         n_a = np.count_nonzero(atom_type == self.atom_type_a)
         n_b = np.count_nonzero(atom_type == self.atom_type_b)
         volume = self.volume_ / self.ngr_

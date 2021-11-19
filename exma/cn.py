@@ -39,23 +39,21 @@ lib_cn = ct.CDLL(
 
 
 class monoatomic:
-    """
-    cn of a monoatomic system
+    """CN of a monoatomic system.
 
     Parameters
     ----------
-    natoms : integer
+    natoms : int
         number of atoms
 
     rcut_e : float
         external of the shell
 
-    rcut_i : float
+    rcut_i : float (default=0.0)
         internal of the shell
     """
 
     def __init__(self, natoms, rcut_e, rcut_i=0.0):
-
         self.natoms = natoms
         self.rcut_e = rcut_e
         self.rcut_i = rcut_i
@@ -75,17 +73,17 @@ class monoatomic:
         self.cn_res = (ct.c_int * natoms)()
 
     def accumulate(self, box_size, positions):
-        """
+        """Accumulate information of the actual frame.
+
         Parameters
         ----------
-        box_size : numpy array with three floats
+        box_size : np.array
             the box size in x, y, z
 
-        positions : numpy array with float32 data
-            the positions in the SoA convention
-            i.e. first all the x, then y and then z
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x, then y
+            and then z)
         """
-
         box_size = box_size.astype(np.float32)
         box_size = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
@@ -98,26 +96,27 @@ class monoatomic:
 
         self.ncn_ += 1
 
-    def end(self, atom_type, positions, writes=True, file_cn="cn.dat"):
-        """
+    def end(self, atom_type, positions, writes=False, file_cn="cn.dat"):
+        """Normalize the accumulated data.
+
         Parameters
         ----------
-        writes : True (or False)
+        writes : bool (default=False)
             if you want (or don't want) to write an output
 
-        file_cn : filname
+        file_cn : str (default="cn.dat")
             the file were the cn is going to be written
 
-        positions : numpy array with float32 data
-            the positions in the SoA convention
-            i.e. first all the x, then y and then z
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x, then y
+            and then z)
 
         Returns
         -------
-        self.cn_ : numpy array
-            an array with the coordination number of each atom selected
+        np.array
+            with the coordination number of each atom selected sorted by the
+            same order
         """
-
         cn_ = np.asarray(
             np.frombuffer(self.cn_res, dtype=np.intc, count=self.natoms)
         )
@@ -145,34 +144,32 @@ class monoatomic:
 
 
 class diatomic:
-    """
-    cn of a diatomic system
+    """CN of a diatomic system.
 
     Parameters
     ----------
-    natoms : integer
+    natoms : int
         number of atoms
 
-    atom_type : numpy array with integers (could be char)
+    atom_type : np.array
         type of atoms
 
-    atom_type_a : integer (or char)
+    atom_type_a : int (or str)
         type of central atoms
 
-    atom_type_a : integer (or char)
+    atom_type_a : int (or str)
         type of interacting atoms
 
     rcut_e : float
         external of the shell
 
-    rcut_i : float
+    rcut_i : float (default=0.0)
         internal of the shell
     """
 
     def __init__(
         self, natoms, atom_type, atom_type_a, atom_type_b, rcut_e, rcut_i=0.0
     ):
-
         self.natoms = natoms
         self.atom_type_a = atom_type_a
         self.atom_type_b = atom_type_b
@@ -199,20 +196,20 @@ class diatomic:
         self.cn_res = (ct.c_int * self.n_a_)()
 
     def accumulate(self, box_size, atom_type, positions):
-        """
+        """Accumulate information of the actual frame.
+
         Parameters
         ----------
-        box_size : numpy array with three floats
+        box_size : np.array
             the box size in x, y, z
 
-        atom_type : numpy array with integers (could be char)
+        atom_type : np.array
             type of atoms
 
-        positions : numpy array with float32 data
-            the positions in the SoA convention
-            i.e. first all the x, then y and then z
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x, then y
+            and then z)
         """
-
         box_size = box_size.astype(np.float32)
         box_size = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
@@ -237,25 +234,26 @@ class diatomic:
         self.ncn_ += 1
 
     def end(self, atom_type, positions, writes=True, file_cn="cn.dat"):
-        """
+        """Normalize the accumulated data.
+
         Parameters
         ----------
-        writes : True (or False)
+        writes : bool (default=False)
             if you want (or don't want) to write an output
 
-        file_cn : filname
+        file_cn : str (default="cn.dat")
             the file were the cn is going to be written
 
-        positions : numpy array with float32 data
-            the positions in the SoA convention
-            i.e. first all the x, then y and then z
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x, then y
+            and then z)
 
         Returns
         -------
-        self.cn_ : numpy array
-            an array with the coordination number of each atom selected
+        np.array
+            with the coordination number of each atom selected sorted by the
+            same order
         """
-
         cn_ = np.asarray(
             np.frombuffer(self.cn_res, dtype=np.intc, count=self.n_a_)
         )

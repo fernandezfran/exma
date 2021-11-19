@@ -39,24 +39,26 @@ lib_en = ct.CDLL(
 
 
 class EffectiveNeighbors:
-    """
-    the empirical effective coordination model, used to calculate the effective
+    """Emipirical way to describe charge transfer and coordination in solids.
+
+    The empirical effective coordination model, used to calculate the effective
     neighbors, assumes that the interact atoms donate more of its electron to
     the closest central atoms. Then, fractions of the interact atom can be
     assigned to the various central neighbors atoms
 
-    (V. L. Chevrier and J. R. Dahn 2010 J. Electrochem. Soc. 157 A392)
-    (R. Hoppe et al., J. Less Common Met., 156, 105 (1989))
+    See:
+        V. L. Chevrier and J. R. Dahn 2010 J. Electrochem. Soc. 157 A392
+        R. Hoppe et al., J. Less Common Met., 156, 105 (1989)
 
     Parameters
     ----------
-    natoms : integer
+    natoms : int
         number of atoms
 
-    atom_type_central : integer
+    atom_type_central : int
         type of central atoms
 
-    atom_type_interact : integer
+    atom_type_interact : int
         type of interacting atoms
     """
 
@@ -77,28 +79,26 @@ class EffectiveNeighbors:
         ]
 
     def of_this_frame(self, box_size, atom_type, positions):
-        """
-        obtain the efective (interact) neighbors of the actual frame
+        """Obtain the efective (interact) neighbors of the actual frame.
 
         Parameters
         ----------
-        box_size : numpy array with three floats
+        box_size : np.array
             the box size in x, y, z
 
-        atom_type : numpy array with integers
-            type of atoms
+        atom_type : np.array
+            types of atoms
 
-        positions : numpy array with float32 data
-            the positions in the SoA convention
-            i.e. first all the x, then y and then z
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x, then y
+            and then z)
 
         Returns
         -------
-        effnei : numpy array of float32
+        effnei : np.array
             effective (interact) neighbor of the central atoms in the same
             order that are in the positions vector
         """
-
         # calculates the distance matrix between interact and central atoms
         positions = np.split(positions, 3)
         x_c = positions[0][atom_type == self.atom_type_central]
@@ -139,15 +139,13 @@ class EffectiveNeighbors:
         # split the weight matrix to obtain an interact atom in every row and
         #   normalize the weigths
         weitrix = np.split(weitrix, n_interact)
-        for i in range(n_interact):
-            weitrix[i] = weitrix[i] / np.sum(weitrix[i])
+        weitrix = [weitrix[i] / np.sum(weitrix[i]) for i in range(n_interact)]
 
         # the matrix is transpose so now we have central atoms in each row and
         #   each fraction of every interact neighbor is added to obtain the
         #   effective (interact) neighbor
         weitrix = np.transpose(weitrix)
-        effnei = np.zeros(n_central, dtype=np.float32)
-        for i in range(n_central):
-            effnei[i] = np.sum(weitrix[i])
+        effnei = [np.sum(weitrix[i]) for i in range(n_central)]
+        effnei = np.array(effnei, dtype=np.float32)
 
         return effnei

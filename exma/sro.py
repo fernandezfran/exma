@@ -53,8 +53,8 @@ def sro(rdf_x, rdf_y, rcut, **kwargs):
 
     Returns
     -------
-    sro : float
-        short range order, amorphous parameter
+    float
+        amorphous short range order parameter
     """
     vol = (4.0 / 3.0) * np.pi * np.power(rcut, 3)
 

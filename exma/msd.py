@@ -24,32 +24,30 @@ import numpy as np
 
 
 class msd:
-    """
-    mean square displacement
+    """Mean Square Displacement.
 
-    remember that trajectories must be sorted with the same order as reference
+    Remember that trajectories must be sorted with the same order as reference
     positions (no problem with .xyz files, but with .lammpstrj file a np.sort /
-    np.argsort must be used before the calculation)
+    np.argsort must be used before the calculation).
     """
 
 
 class monoatomic(msd):
-    """
-    msd of a monoatomic system
+    """MSD of a monoatomic system.
 
     Parameters
     ----------
-    natoms : integer
-        the number of atoms in the frame
+    natoms : int
+        the number of atoms
 
-    box_size : numpy array
+    box_size : np.array
         with the box lenght in x, y, z
 
-    x_ref : numpy array with float32 data
-        the reference positions in the SoA convention
-        i.e. first all the x, then y and then z
+    x_ref : np.array
+        the reference positions in the SoA convention (i.e. first all the x,
+        then y and then z)
 
-    image_ref : numpy array with integer data
+    image_ref : np.array (default=None)
         reference image, same as positions
     """
 
@@ -69,29 +67,25 @@ class monoatomic(msd):
         self.frame_ = 0
 
     def wrapped(self, box_size, positions, image):
-        """
-        to use if the trajectory is wrapped inside the simulation box and you
-        have the image of each particle in the different directions
+        """If trajectory is wrapped inside the simulation box.
 
         Parameters
         ----------
-        box_size : numpy array
+        box_size : np.array
             with the box lenght in x, y, z
 
-        positions : numpy array with float32 data
-            the positions in the SoA convention
-            i.e. first all the x, then y and then z
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x, then y
+            and then z)
 
-        image : numpy array with integer data
+        image : np.array
             same as positions
 
         Returns
         -------
-        numpy array : floats
-            [0]: frame
-            [1]: msd
+        np.array
+            with the frame in the first value and the msd in the second
         """
-
         msd = 0.0
         positions = np.split(positions, 3)
         image = np.split(image, 3)
@@ -106,22 +100,19 @@ class monoatomic(msd):
         return np.array([self.frame_, msd], dtype=np.float32)
 
     def unwrapped(self, positions):
-        """
-        to use if the trajectory is unwrapped outside of the simulation box
+        """If the trajectory is unwrapped outside of the simulation box.
 
         Parameters
         ----------
-        positions : numpy array with float32 data
-            the positions in the SoA convention
-            i.e. first all the x, then y and then z
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x, then y
+            and then z)
 
         Returns
         -------
-        numpy array : floats
-            [0]: frame
-            [1]: msd
+        np.array
+            with the frame in the first value and the msd in the second
         """
-
         msd = 0.0
         positions = np.split(positions, 3)
         meansd = np.zeros(self.natoms, dtype=np.float32)
@@ -136,31 +127,30 @@ class monoatomic(msd):
 
 
 class diatomic(msd):
-    """
-    msd of a diatomic system
+    """MSD of a diatomic system.
 
     Parameters
     ----------
-    natoms : integer
+    natoms : int
         the number of atoms in the frame
 
-    box_size : numpy array
+    box_size : np.array
         with the box lenght in x, y, z
 
-    atom_type : list of integers
+    atom_type : list type
         the type of the atoms
 
-    x_ref : numpy array with float32 data
-        the reference positions in the SoA convention
-        i.e. first all the x, then y and then z
+    x_ref : np.array
+        the reference positions in the SoA convention (i.e. first all the x,
+        then y and then z)
 
-    atom_type_a : integer
+    atom_type_a : int
         one type of atom
 
-    atom_type_a : integer
+    atom_type_a : int
         another type of atom
 
-    image_ref : numpy array with integer data
+    image_ref : np.array (default=None)
         reference image, same as positions
     """
 
@@ -174,7 +164,6 @@ class diatomic(msd):
         atom_type_b,
         image_ref=None,
     ):
-
         self.natoms = natoms
 
         if image_ref is not None:
@@ -194,9 +183,7 @@ class diatomic(msd):
         self.n_b_ = np.count_nonzero(atom_type == atom_type_b)
 
     def wrapped(self, box_size, atom_type, positions, image):
-        """
-        to use if the trajectory is wrapped inside the simulation box and you
-        have the image of each particle in the different directions
+        """If trajectory is wrapped inside the simulation box.
 
         Parameters
         ----------
@@ -215,13 +202,11 @@ class diatomic(msd):
 
         Returns
         -------
-        numpy array : floats
-            [0]: frame
-            [1]: msd of atom type a
-            [2]: msd of atom type b
-            [3]: total msd
+        np.array
+            with the frame in the first value, the msd of atom type a in the
+            second, the msd of atom type b in the third and the total msd in
+            the fourth.
         """
-
         msd_a, msd_b, msd_t = 0.0, 0.0, 0.0
 
         positions = np.split(positions, 3)
@@ -239,27 +224,24 @@ class diatomic(msd):
         return np.array([self.frame_, msd_a, msd_b, msd_t], dtype=np.float32)
 
     def unwrapped(self, atom_type, positions):
-        """
-        to use if the trajectory is unwrapped outside of the simulation box
+        """If the trajectory is unwrapped outside of the simulation box.
 
         Parameters
         ----------
-        atom_type : list of integers
+        atom_type : list type
             the type of the atoms
 
-        positions : numpy array with float32 data
-            the positions in the SoA convention
-            i.e. first all the x, then y and then z
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x, then y
+            and then z)
 
         Returns
         -------
-        numpy array : floats
-            [0]: frame
-            [1]: msd of atom type a
-            [2]: msd of atom type b
-            [3]: total msd
+        np.array
+            with the frame in the first value, the msd of atom type a in the
+            second, the msd of atom type b in the third and the total msd in
+            the fourth.
         """
-
         msd_a, msd_b, msd_t = 0.0, 0.0, 0.0
 
         positions = np.split(positions, 3)

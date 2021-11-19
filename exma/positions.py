@@ -46,7 +46,7 @@ class Positions:
         self.box_size = box_size
 
     def sc(self):
-        """Simple cubic.
+        """Simple-cubic crystal.
 
         This cell is characterized by having an atom in each of its vertices.
 
@@ -76,7 +76,7 @@ class Positions:
         }
 
     def bcc(self):
-        """Body-centered cubic.
+        """Body-centered cubic crystal.
 
         This cell is characterized by having one atom in each of its vertices
         and an additional atom in the center of the cube.
@@ -113,7 +113,7 @@ class Positions:
         }
 
     def fcc(self):
-        """Face-centered cubic.
+        """Face-centered cubic crystal.
 
         This cell is characterized by having one atom in each of its vertices
         and an additional atom in each of its faces.
@@ -153,7 +153,7 @@ class Positions:
         }
 
     def dc(self):
-        """Diamond cubic.
+        """Diamond cubic crystal.
 
         The typical structure of a diamond, defined by eight sites.
 

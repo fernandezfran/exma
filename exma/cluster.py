@@ -10,7 +10,7 @@
 # DOCS
 # ======================================================================
 
-"""Implementation of classification through DBSCAN"""
+"""Implementation of classification through DBSCAN."""
 
 # ======================================================================
 # IMPORTS
@@ -54,10 +54,10 @@ class DBSCAN:
 
     min_samples : int (default=2)
         the number of atoms that can be a core point
+
     """
 
     def __init__(self, eps, min_samples=2):
-
         self.eps = eps
         self.min_samples = min_samples
 

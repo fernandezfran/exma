@@ -26,7 +26,7 @@ import pandas as pd
 
 
 def block_average(x):
-    """A method for estimating errors when data are correlated.
+    """Estimating error method when data are correlated.
 
     See: H. Flyvbjerg and H. G. Petersen: Averages of correlated data (1989)
 

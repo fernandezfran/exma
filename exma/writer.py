@@ -10,7 +10,7 @@
 # DOCS
 # ============================================================================
 
-"""This module includes classes and functions to write MD trayectories."""
+"""Classes and functions to write MD trayectories."""
 
 # =============================================================================
 # IMPORTS
@@ -23,34 +23,23 @@ import numpy as np
 # ============================================================================
 
 
-class writer(object):
-    """
-    used to write molecular dynamics trajectory files
-    """
-
-
-class xyz(writer):
-    """
-    subclass of writer that writes xyz file
+class xyz:
+    """Class to write xyz files.
 
     Parameters
     ----------
-    file_xyz : filename
+    file_xyz : str
         name of the file where the trajectories in xyz format are going to be
         written
 
-    ftype : typical, property or image
-
-        typical if is the usual xyz file
-
-        property if in the last column there is a property
-
-        image if in the last three columns there are the image box of the
-        corresponding atom
+    ftype : str (default=typical)
+        the possible values are `typical`, `property` and `image`. `typical`
+        if is the usual xyz file. `property` if in the last column there is
+        a property. `image` if in the last three columns there are the image
+        box of the corresponding atom.
     """
 
     def __init__(self, file_xyz, ftype="typical"):
-
         if ftype not in ["typical", "property", "image"]:
             raise ValueError("ftype must be 'typical', 'property' or 'image'")
 
@@ -58,28 +47,26 @@ class xyz(writer):
         self.ftype = ftype
 
     def write_frame(self, natoms, atom_type, positions, prop=[], image=[]):
-        """
-        writes the actual frame in an .xyz file
+        """Write the actual frame in an .xyz file.
 
         Parameters
         ----------
-        natoms : integer
+        natoms : int
             the number of atoms in the frame
 
-        atom_type : list of chars
+        atom_type : list of str
             the type of the atoms
 
-        positions : numpy array with float32 data
-            the positions in the SoA convention
-            i.e. first all the x, then y and then z
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x, then y
+            and then z)
 
-        prop : numpy array (could be integer, float, char, etc)
-            if ftype = 'property' was selected
+        prop : np.array
+            if ftype='property' was selected
 
-        image : numpy array with integer data
-            same as positions, if ftype = 'image' was selected
+        image : np.array
+            same as positions, if ftype='image' was selected
         """
-
         self.file_xyz.write("%d\n\n" % natoms)
 
         if self.ftype == "typical":
@@ -133,34 +120,28 @@ class xyz(writer):
             return
 
     def file_close(self):
-        """
-        close the file where the trajectories of the dynamics were written
-        """
+        """Close the trayectory file."""
         self.file_xyz.close()
 
 
-class lammpstrj(writer):
-    """
-    subclass of writer that writes lammpstrj file
+class lammpstrj:
+    """Class to write lammpstrj files.
 
     Parameters
     ----------
-    file_lammps : filename
-        name of the file where the trajectories of lammps are
+    file_lammps : str
+        name of the file where the trajectories of lammps are going to be
+        written
 
-    ftype : custom, charge, image, charge_image
-
+    ftype : str (defualt="custom")
+        the possible values are custom, charge, image and charge_image.
         custom = dump ... custom ... id type x y z
-
         charge = dump ... custom ... id type q x y z
-
         image = dump ... custom ... id type x y z ix iy iz
-
         charge_image = dump ... custom ... id type q x y z ix iy iz
     """
 
     def __init__(self, file_lammps, ftype="custom"):
-
         if ftype not in ["custom", "charge", "image", "charge_image"]:
             raise ValueError(
                 "ftype must be 'custom', 'charge', 'image' or" "'charge_image'"
@@ -177,35 +158,34 @@ class lammpstrj(writer):
         atom_id,
         atom_type,
         positions,
-        atom_q=[],
-        image=[],
+        atom_q=None,
+        image=None,
     ):
-        """
-        writes the actual frame in a .lammpstrj file
+        """Write the actual frame in a .lammpstrj file.
 
         Parameters
         ----------
-        natoms : integer
+        natoms : int
             the number of atoms in the frame
 
-        box_size : numpy array
+        box_size : np.array
             with the box lenght in x, y, z
 
-        atom_id : list of integers
+        atom_id : list of ints
             the id of the respective atom
 
-        atom_type : list of integers
+        atom_type : list of ints
             the type of the atoms
 
-        positions : numpy array with float32 data
-            the positions in the SoA convention
-            i.e. first all the x, then y and then z
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x, then y
+            and then z)
 
-        atom_q : numpy array with float32 data
-            the charge of the respective atom, if ftype = 'charge' was selected
+        atom_q : np.array (default=None)
+            the charge of the respective atom, if ftype='charge' was selected
 
-        image : numpy array with integer data
-            same as positions, if ftype = 'image' was selected
+        image : np.array (default=None)
+            same as positions, if ftype='image' was selected
         """
         self.file_lammps.write("ITEM: TIMESTEP\n")
         self.file_lammps.write("{:d}\n".format(self.timestep))
@@ -302,27 +282,27 @@ class lammpstrj(writer):
             return
 
     def file_close(self):
-        """
-        close the file where the trajectories of the dynamics are
-        """
+        """Close the trayectory file."""
         self.file_lammps.close()
 
 
-class in_lammps(writer):
-    """
-    subclass of writer that writes a type of input file for lammps containing
-    the info of the atoms
+class in_lammps:
+    """Class to write a type of input file for lammps.
 
     Parameters
     ----------
-    file_in : file name
+    file_in : str
         name of the file where you want to write the input info
 
-    ftype : custom (default), charge, image, charge_image
+    ftype : str (defualt="custom")
+        the possible values are custom, charge, image and charge_image.
+        custom = dump ... custom ... id type x y z
+        charge = dump ... custom ... id type q x y z
+        image = dump ... custom ... id type x y z ix iy iz
+        charge_image = dump ... custom ... id type q x y z ix iy iz
     """
 
     def __init__(self, file_in, ftype="custom"):
-
         if ftype not in ["custom", "charge", "image", "charge_image"]:
             raise ValueError(
                 "ftype must be 'custom', 'charge', 'image' or" "'charge_image'"
@@ -338,37 +318,35 @@ class in_lammps(writer):
         atom_id,
         atom_type,
         positions,
-        atom_q=[],
-        image=[],
+        atom_q=None,
+        image=None,
     ):
-        """
-        writes the actual frame in an input file in.
+        """Write the actual frame as an input file.
 
         Parameters
         ----------
-        natoms : integer
+        natoms : int
             the number of atoms in the frame
 
-        box_size : numpy array
+        box_size : np.array
             with the box lenght in x, y, z
 
-        atom_id : list of integers
+        atom_id : list of ints
             the id of the respective atom
 
-        atom_type : list of integers
+        atom_type : list of ints
             the type of the atoms
 
-        positions : numpy array with float32 data
-            the positions in the SoA convention
-            i.e. first all the x, then y and then z
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x, then y
+            and then z)
 
-        atom_q : numpy array with float32 data
-            the charge of the respective atom, if ftype = 'charge' was selected
+        atom_q : np.array (default=None)
+            the charge of the respective atom, if ftype='charge' was selected
 
-        image : numpy array with integer data
-            same as positions, if ftype = 'image' was selected
+        image : np.array (default=None)
+            same as positions, if ftype='image' was selected
         """
-
         self.file_in.write("# the first three lines are comments...\n")
         self.file_in.write("# \n")
         self.file_in.write("# input file for LAMMPS generated by exma\n")
