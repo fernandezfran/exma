@@ -25,12 +25,11 @@ void monoatomic(const int N, const float *box_size, const float *positions,
                 rij2 += rij * rij;
             }
             rij = sqrt(rij2);
-
-            if (rij <= rcut_i || rij > rcut_e)
-                continue;
-
-            cn[i] += 1;
-            cn[j] += 1;
+            
+            if (rij > rcut_i && rij <= rcut_e){
+                cn[i] += 1;
+                cn[j] += 1;
+            }
         }
     }
 }
@@ -47,38 +46,36 @@ void diatomic(const int N, const float *box_size, const int *atom_type,
     idx = 0;
     for (int i = 0; i < N; i++) {
 
-        if (atom_type[i] != atype_a)
-            continue;
+        if (atom_type[i] == atype_a){
 
-        for (int k = 0; k < 3; k++)
-            ri[k] = positions[k * N + i];
+            for (int k = 0; k < 3; k++)
+                ri[k] = positions[k * N + i];
 
-        for (int j = 0; j < N; j++) {
+            for (int j = 0; j < N; j++) {
 
-            if (j == i)
-                continue;
+                if (j != i){
 
-            if (atom_type[j] != atype_b)
-                continue;
+                    if (atom_type[j] == atype_b){
 
-            rij2 = 0.0f;
-            for (int k = 0; k < 3; k++) {
-                rj[k] = positions[k * N + j];
-                rij = rj[k] - ri[k];
-                while (rij > 0.5f * box_size[k])
-                    rij -= box_size[k];
-                while (rij < -0.5f * box_size[k])
-                    rij += box_size[k];
-                rij2 += rij * rij;
+                        rij2 = 0.0f;
+                        for (int k = 0; k < 3; k++) {
+                            rj[k] = positions[k * N + j];
+                            rij = rj[k] - ri[k];
+                            while (rij > 0.5f * box_size[k])
+                                rij -= box_size[k];
+                            while (rij < -0.5f * box_size[k])
+                                rij += box_size[k];
+                            rij2 += rij * rij;
+                        }
+                        rij = sqrt(rij2);
+
+                        if (rij > rcut_i && rij <= rcut_e){
+                            cn[idx] += 1;
+                        }
+                    }
+                }
             }
-            rij = sqrt(rij2);
-
-            if (rij <= rcut_i || rij > rcut_e)
-                continue;
-
-            cn[idx] += 1;
         }
-
         idx += 1;
     }
 }
