@@ -1,21 +1,46 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This file is part of exma (https://github.com/fernandezfran/exma/).
+# Copyright (c) 2021, Francisco Fernandez
+# License: MIT
+#   Full Text: https://github.com/fernandezfran/exma/blob/master/LICENSE
+
+# ======================================================================
+# DOCS
+# ======================================================================
+
+"""Implementation of classification through DBSCAN"""
+
+# ======================================================================
+# IMPORTS
+# ======================================================================
+
 import ctypes as ct
 import os
+import pathlib
 import sysconfig
 
 import numpy as np
-from sklearn.cluster import DBSCAN
 
-suffix = sysconfig.get_config_var("EXT_SUFFIX")
-if suffix is None:
-    suffix = ".so"
+import sklearn.cluster
 
-cluster_dir = os.path.dirname(__file__)
-cluster_name = "lib_cluster" + suffix
-libcluster = os.path.abspath(os.path.join(cluster_dir, cluster_name))
-lib_cluster = ct.CDLL(libcluster)
+# =============================================================================
+# CONSTANTS
+# =============================================================================
+
+PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
+
+lib_cluster = ct.CDLL(
+    str(PATH / "lib" / "lib_cluster") + sysconfig.get_config_var("EXT_SUFFIX")
+)
+
+# ============================================================================
+# CLASSES
+# ============================================================================
 
 
-class dbscan:
+class DBSCAN:
     """
     the main objetive of this module is to accomodate data (calculate the
     distance matrix taking account of the PBC) before using
@@ -102,7 +127,7 @@ class dbscan:
         # a void function that modifies the values of distrix
 
         distrix = distrix.reshape((natoms_c, natoms_c))
-        db = DBSCAN(
+        db = sklearn.cluster.DBSCAN(
             eps=self.eps, min_samples=self.min_samples, metric="precomputed"
         ).fit(distrix)
 

@@ -6,4 +6,5 @@ exclude pyproject.toml
 recursive-exclude tests *
 recursive-exclude docs *
 
+recursive-include exma *.c
 recursive-include exma *.h

@@ -10,7 +10,7 @@
 # IMPORTS
 # ======================================================================
 
-import exma.en.effective_neighbors
+import exma.en
 
 import numpy as np
 
@@ -51,8 +51,6 @@ def test_effective_neighbors():
     )
     types = np.array([1, 1, 2, 2, 2])
 
-    result = exma.en.effective_neighbors.hoppe(natoms, 1, 2).of_this_frame(
-        box, types, xyz
-    )
+    result = exma.en.EffectiveNeighbors(natoms, 1, 2).of_this_frame(box, types, xyz)
 
     np.testing.assert_array_almost_equal(result, enref, 5)

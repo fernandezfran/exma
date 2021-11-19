@@ -10,7 +10,7 @@
 # IMPORTS
 # ======================================================================
 
-import exma.cluster
+import exma.clusterization
 
 import numpy as np
 
@@ -28,7 +28,7 @@ def test_dbscan():
     types = np.array([1, 1, 1])
     xyz = np.array([0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.45, 0.55, 0.0])
 
-    result = exma.cluster.clusterization.dbscan(rcut).of_this_frame(
+    result = exma.clusterization.DBSCAN(rcut).of_this_frame(
         box, types, xyz, 1
     )
 

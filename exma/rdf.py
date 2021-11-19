@@ -1,17 +1,41 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This file is part of exma (https://github.com/fernandezfran/exma/).
+# Copyright (c) 2021, Francisco Fernandez
+# License: MIT
+#   Full Text: https://github.com/fernandezfran/exma/blob/master/LICENSE
+
+# ======================================================================
+# DOCS
+# ======================================================================
+
+"""Radial Distribution Function Calculations."""
+
+# ======================================================================
+# IMPORTS
+# ======================================================================
+
 import ctypes as ct
 import os
+import pathlib
 import sysconfig
 
 import numpy as np
 
-suffix = sysconfig.get_config_var("EXT_SUFFIX")
-if suffix is None:
-    suffix = ".so"
+# =============================================================================
+# CONSTANTS
+# =============================================================================
 
-rdf_dir = os.path.dirname(__file__)
-rdf_name = "lib_rdf" + suffix
-librdf = os.path.abspath(os.path.join(rdf_dir, rdf_name))
-lib_rdf = ct.CDLL(librdf)
+PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
+
+lib_rdf = ct.CDLL(
+    str(PATH / "lib" / "lib_rdf") + sysconfig.get_config_var("EXT_SUFFIX")
+)
+
+# ============================================================================
+# CLASSES
+# ============================================================================
 
 
 class gofr:

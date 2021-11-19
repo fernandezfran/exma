@@ -1,17 +1,41 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This file is part of exma (https://github.com/fernandezfran/exma/).
+# Copyright (c) 2021, Francisco Fernandez
+# License: MIT
+#   Full Text: https://github.com/fernandezfran/exma/blob/master/LICENSE
+
+# ======================================================================
+# DOCS
+# ======================================================================
+
+"""Coordination Number Calculations."""
+
+# ======================================================================
+# IMPORTS
+# ======================================================================
+
 import ctypes as ct
 import os
+import pathlib
 import sysconfig
 
 import numpy as np
 
-suffix = sysconfig.get_config_var("EXT_SUFFIX")
-if suffix is None:
-    suffix = ".so"
+# =============================================================================
+# CONSTANTS
+# =============================================================================
 
-cn_dir = os.path.dirname(__file__)
-cn_name = "lib_cn" + suffix
-libcn = os.path.abspath(os.path.join(cn_dir, cn_name))
-lib_cn = ct.CDLL(libcn)
+PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
+
+lib_cn = ct.CDLL(
+    str(PATH / "lib" / "lib_cn") + sysconfig.get_config_var("EXT_SUFFIX")
+)
+
+# ============================================================================
+# CLASSES
+# ============================================================================
 
 
 class monoatomic:

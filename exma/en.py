@@ -1,20 +1,44 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This file is part of exma (https://github.com/fernandezfran/exma/).
+# Copyright (c) 2021, Francisco Fernandez
+# License: MIT
+#   Full Text: https://github.com/fernandezfran/exma/blob/master/LICENSE
+
+# ======================================================================
+# DOCS
+# ======================================================================
+
+"""Effective Neighbors Calculations."""
+
+# ======================================================================
+# IMPORTS
+# ======================================================================
+
 import ctypes as ct
 import os
+import pathlib
 import sysconfig
 
 import numpy as np
 
-suffix = sysconfig.get_config_var("EXT_SUFFIX")
-if suffix is None:
-    suffix = ".so"
+# =============================================================================
+# CONSTANTS
+# =============================================================================
 
-en_dir = os.path.dirname(__file__)
-en_name = "lib_en" + suffix
-liben = os.path.abspath(os.path.join(en_dir, en_name))
-lib_en = ct.CDLL(liben)
+PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
+
+lib_en = ct.CDLL(
+    str(PATH / "lib" / "lib_en") + sysconfig.get_config_var("EXT_SUFFIX")
+)
+
+# ============================================================================
+# CLASSES
+# ============================================================================
 
 
-class hoppe:
+class EffectiveNeighbors:
     """
     the empirical effective coordination model, used to calculate the effective
     neighbors, assumes that the interact atoms donate more of its electron to

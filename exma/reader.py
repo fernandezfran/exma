@@ -1,4 +1,26 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# This file is part of exma (https://github.com/fernandezfran/exma/).
+# Copyright (c) 2021, Francisco Fernandez
+# License: MIT
+#   Full Text: https://github.com/fernandezfran/exma/blob/master/LICENSE
+
+# ============================================================================
+# DOCS
+# ============================================================================
+
+"""This module includes classes and functions to read MD trayectories."""
+
+# =============================================================================
+# IMPORTS
+# =============================================================================
+
 import numpy as np
+
+# ============================================================================
+# CLASSES
+# ============================================================================
 
 
 class reader(object):

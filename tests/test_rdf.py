@@ -11,7 +11,7 @@
 # ======================================================================
 
 import exma.positions
-import exma.rdf.gofr
+import exma.rdf
 
 import numpy as np
 
@@ -45,7 +45,7 @@ def test_monoatomic():
     particles = exma.positions.Positions(natoms, box[0]).fcc()
     xyz = np.concatenate((particles["x"], particles["y"], particles["z"]))
 
-    gofr = exma.rdf.gofr.monoatomic(natoms, box, 10)
+    gofr = exma.rdf.monoatomic(natoms, box, 10)
     gofr.accumulate(box, xyz)
     result = gofr.end(writes=False)
 
@@ -70,7 +70,7 @@ def test_diatomic():
     particles = exma.positions.Positions(natoms, box[0]).bcc()
     xyz = np.concatenate((particles["x"], particles["y"], particles["z"]))
 
-    gofr = exma.rdf.gofr.diatomic(natoms, box, 10, 1, 2)
+    gofr = exma.rdf.diatomic(natoms, box, 10, 1, 2)
     gofr.accumulate(box, types, xyz)
     result = gofr.end(types, writes=False)
 

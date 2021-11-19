@@ -1,43 +1,62 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+# This file is part of exma (https://github.com/fernandezfran/exma/).
+# Copyright (c) 2021, Francisco Fernandez
+# License: MIT
+#   Full Text: https://github.com/fernandezfran/exma/blob/master/LICENSE
+
+# ======================================================================
+# DOCS
+# ======================================================================
 
 """Installation of exma."""
 
+# ======================================================================
+# IMPORTS
+# ======================================================================
+
+import os
 import sysconfig
+
 from setuptools import find_packages
+
 from distutils.core import Extension, setup
 
-with open("README.md") as file_readme:
-    readme = file_readme.read()
+# =============================================================================
+# CONSTANTS
+# =============================================================================
 
 REQUIREMENTS = ["scikit-learn", "scipy", "more-itertools", "numpy"]
 
+COMMON = "exma/lib/"
 CFLAGS = sysconfig.get_config_var("CFLAGS").split()
 CFLAGS += ["-O3", "-ffast-math", "-fPIC", "-ftree-vectorize", "-march=native"]
-
-C_modules = []
-EXMA_PACKAGES = ["exma.cluster", "exma.cn", "exma.en", "exma.rdf"]
-for mod in EXMA_PACKAGES:
-    mod = mod.replace("exma.", "")
-    common = "exma/" + mod + "/"
-
-    library = common + "lib_" + mod
-    src = common + mod + ".c"
-    depend = common + mod + ".h"
-
-    C_modules.append(
-        Extension(
-            library, sources=[src], depends=[depend], extra_compile_args=CFLAGS
-        )
+C_MODS = [
+    Extension(
+        COMMON + "lib_" + mod,
+        sources=[COMMON + mod + ".c"],
+        depends=[COMMON + mod + ".h"],
+        extra_compile_args=CFLAGS,
     )
+    for mod in ["cluster", "cn", "en", "rdf"]
+]
 
+with open("README.md") as file_readme:
+    LONG_DESCRIPTION = file_readme.read()
+
+
+# =============================================================================
+# FUNCTIONS
+# =============================================================================
 
 setup(
     name="exma",
     version="0.2.0",
     description="extendable molecular dynamics analyzer",
-    long_description=readme,
+    long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
-    packages=find_packages(include=["exma"] + EXMA_PACKAGES),
+    packages=find_packages(),
     author="Francisco Fernandez",
     author_email="fernandezfrancisco2195@gmail.com",
     url="https://github.com/fernandezfran/exma",
@@ -55,5 +74,5 @@ setup(
         "Programming Language :: C",
         "Topic :: Scientific/Engineering",
     ],
-    ext_modules=C_modules,
+    ext_modules=C_MODS,
 )

@@ -11,7 +11,7 @@
 # ======================================================================
 
 import exma.positions
-import exma.cn.coordination_number
+import exma.cn
 
 import numpy as np
 
@@ -29,7 +29,7 @@ def test_monoatomic():
     particles = exma.positions.Positions(natoms, size[0]).sc()
     xyz = np.concatenate((particles["x"], particles["y"], particles["z"]))
 
-    mono = exma.cn.coordination_number.monoatomic(natoms, rcut)
+    mono = exma.cn.monoatomic(natoms, rcut)
     mono.accumulate(size, xyz)
     result = mono.end(0, xyz, writes=False)
 
@@ -50,7 +50,7 @@ def test_diatomic():
     particles = exma.positions.Positions(natoms, size[0]).bcc()
     xyz = np.concatenate((particles["x"], particles["y"], particles["z"]))
 
-    di = exma.cn.coordination_number.diatomic(natoms, types, 1, 2, rcut)
+    di = exma.cn.diatomic(natoms, types, 1, 2, rcut)
     di.accumulate(size, types, xyz)
     result = di.end(types, xyz, writes=False)
 
