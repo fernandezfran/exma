@@ -323,12 +323,7 @@ class in_lammps(writer):
 
     def __init__(self, file_in, ftype="custom"):
 
-        if (
-            (ftype != "custom")
-            and (ftype != "charge")
-            and (ftype != "image")
-            and (ftype != "charge_image")
-        ):
+        if ftype not in ["custom", "charge", "image", "charge_image"]:
             raise ValueError(
                 "ftype must be 'custom', 'charge', 'image' or" "'charge_image'"
             )

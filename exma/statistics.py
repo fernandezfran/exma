@@ -38,10 +38,10 @@ def block_average(x):
     Returns
     -------
     ``pd.DataFrame``
-        with `idx`, `data_size`, `mean`, `var` and `varerr` as columns that gives
-        information about the number of times that the block sums were applied,
-        the data size changes, the mean value of each block, the corresponding
-        variance and the error of that variance, respectively.
+        with `idx`, `data_size`, `mean`, `var` and `varerr` as columns that
+        gives information about the number of times that the block sums were
+        applied, the data size changes, the mean value of each block, the
+        corresponding variance and the error of that variance, respectively.
     """
     data_size, mean, var, varerr = [], [], [], []
 

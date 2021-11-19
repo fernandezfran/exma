@@ -10,9 +10,9 @@
 # IMPORTS
 # ======================================================================
 
-import numpy as np
-
 import exma.msd
+
+import numpy as np
 
 # ======================================================================
 # TESTS
@@ -65,7 +65,7 @@ def test_diatomic_wrapped():
     np.testing.assert_array_equal(result, msdref)
 
 
-def test_diatomic_wrapped():
+def test_diatomic_unwrapped():
     """Test the diatomic unwrapped mean square displacement."""
     # two particles: one in the origin of the box (type 1) and the other
     # int the center of the box (type 2)

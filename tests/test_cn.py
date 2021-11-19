@@ -10,8 +10,8 @@
 # IMPORTS
 # ======================================================================
 
-import exma.positions
 import exma.cn
+import exma.positions
 
 import numpy as np
 

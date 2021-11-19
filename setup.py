@@ -16,12 +16,11 @@
 # IMPORTS
 # ======================================================================
 
-import os
 import sysconfig
 
 from setuptools import find_packages
 
-from distutils.core import Extension, setup
+from distutils.core import Extension, setup  # noqa: I100
 
 # =============================================================================
 # CONSTANTS
