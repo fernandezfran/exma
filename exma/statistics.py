@@ -29,17 +29,17 @@ def block_average(x):
     """Estimating error method when data are correlated.
 
     This method offers an easy and efficient way to estimate the error of
-    correlated data by a renormalization groups, as described by H. Flyvbjerg
-    and H. G. Petersen [4]_.
+    correlated data by a renormalization groups, as described by
+    H. Flyvbjerg and H. G. Petersen [4]_.
 
     Parameters
     ----------
-    x : ``np.array``
+    x : np.array
         where the time series is
 
     Returns
     -------
-    ``pd.DataFrame``
+    pd.DataFrame
         with `idx`, `data_size`, `mean`, `var` and `varerr` as columns that
         gives information about the number of times that the block sums were
         applied, the data size changes, the mean value of each block, the
@@ -76,7 +76,6 @@ def block_average(x):
 
     return pd.DataFrame(
         data={
-            "idx": np.arange(idx + 1),
             "data_size": np.array(data_size),
             "mean": np.array(mean),
             "var": np.array(var),

@@ -19,9 +19,7 @@ nanoparticles.
     - mean square displacement,
     - radial distribution function,
     - coordination number, the ligancy or in a shell,
-    - clusterization,
-    - effective neighbors,
-    - short range order, an amorphous parameter, defined [here](https://doi.org/10.1039/D1CP02216D),
+among others.
 
 For more precise information, read the [tutorials](https://exma.readthedocs.io/en/latest/tutorial.html)
 and the [API](https://exma.readthedocs.io/en/latest/api.html) in the documentation.
@@ -29,14 +27,14 @@ and the [API](https://exma.readthedocs.io/en/latest/api.html) in the documentati
 
 ## Requirements
 
-You need Python 3.8+ to run **exma**. 
+You need Python 3.8+ to run exma. 
 
 
 ## Installation
 
 ### Stable release
 
-To install the most recent stable release of **exma** with [pip](https://pip.pypa.io/en/stable/), 
+To install the most recent stable release of exma with [pip](https://pip.pypa.io/en/stable/), 
 run the following command in your termninal:
 
 ```bash

@@ -38,22 +38,22 @@ def sro(rdf_x, rdf_y, rcut, **kwargs):
 
     Parameters
     ----------
-    rdf_x : ``np.array``
+    rdf_x : np.array
         x of the radial distribution function
 
-    rdf_y : ``np.array``
+    rdf_y : np.array
         y of the radial distribution function
 
-    rcut : ``float``
+    rcut : float
         cutoff radius
 
     **kwargs
         Additional keyword arguments that are passed and are documented in
-        ``scipy.integrate.simpson``.
+        `scipy.integrate.simpson`.
 
     Returns
     -------
-    ``float``
+    float
         amorphous short range order parameter
 
     References

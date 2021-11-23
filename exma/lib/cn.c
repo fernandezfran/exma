@@ -26,7 +26,7 @@ void monoatomic(const int N, const float *box_size, const float *positions,
             }
             rij = sqrt(rij2);
             
-            if (rij > rcut_i && rij <= rcut_e){
+            if (rij > rcut_i && rij <= rcut_e) {
                 cn[i] += 1;
                 cn[j] += 1;
             }
@@ -55,8 +55,7 @@ void diatomic(const int N, const float *box_size, const int *atom_type,
 
                 if (j != i){
 
-                    if (atom_type[j] == atype_b){
-
+                    if (atom_type[j] == atype_b) {
                         rij2 = 0.0f;
                         for (int k = 0; k < 3; k++) {
                             rj[k] = positions[k * N + j];
@@ -69,7 +68,7 @@ void diatomic(const int N, const float *box_size, const int *atom_type,
                         }
                         rij = sqrt(rij2);
 
-                        if (rij > rcut_i && rij <= rcut_e){
+                        if (rij > rcut_i && rij <= rcut_e) {
                             cn[idx] += 1;
                         }
                     }

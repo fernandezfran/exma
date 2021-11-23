@@ -43,16 +43,16 @@ class monoatomic:
 
     Parameters
     ----------
-    natoms : ``int``
+    natoms : int
         number of atoms
 
-    box_size : ``np.array``
+    box_size : np.array
         the box size in x, y, z
 
-    nbin : ``int``
+    nbin : int
         number of bins in the histogram
 
-    pbc : ``bool`` (default=True)
+    pbc : bool, default=True
         True if pbc must be considered, False if not
     """
 
@@ -87,12 +87,12 @@ class monoatomic:
 
         Parameters
         ----------
-        box_size : ``np.array``
+        box_size : np.array
             the box size in x, y, z
 
-        positions : ``np.array``
-            the positions in the SoA convention (i.e. first all the x, then y
-            and then z)
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x,
+            then y and then z)
         """
         # got to be sure that the box_size and positions type is np.float32
         # because that is the pointer type in C
@@ -120,20 +120,20 @@ class monoatomic:
 
         Parameters
         ----------
-        r_mean : ``float`` (default=None)
-            the mean radius of the simulated cluster, only usefull when pbc
-            was passed with a False value.
+        r_mean : float, default=None
+            the mean radius of the simulated cluster, only usefull when
+            pbc was passed with a False value.
 
-        writes : ``bool`` (default=False)
+        writes : bool, default=False
             if you want (or don't want) to write an output
 
-        file_rdf : ``str``
+        file_rdf : str
             the file were the g(r) is going to be written
 
         Returns
         -------
-        ``tuple`` of ``np.array``
-            the first ``np.array`` is the x of the histogram and the second the
+        tuple of np.array
+            the first np.array is the x of the histogram and the second the
             g(r)
         """
         volume = self.volume_ / self.ngr_
@@ -167,22 +167,22 @@ class diatomic:
 
     Parameters
     ----------
-    natoms : ``int``
+    natoms : int
         number of atoms
 
-    box_size : ``np.array``
+    box_size : np.array
         the box size in x, y, z
 
-    nbin : ``int``
+    nbin : int
         number of bins in the histogram
 
-    atom_type_a : ``int`` or ``str``
+    atom_type_a : int or str
         type of central atoms
 
-    atom_type_b : ``int`` or ``str``
+    atom_type_b : int or str
         type of interacting atoms
 
-    pbc : ``bool`` (default=True)
+    pbc : bool, default=True
         True if pbc must be considered, False if not
     """
 
@@ -221,15 +221,15 @@ class diatomic:
 
         Parameters
         ----------
-        box_size : ``np.array``
+        box_size : np.array
             the box size in x, y, z
 
-        atom_type : ``np.array``
+        atom_type : np.array
             type of atoms
 
-        positions : ``np.array``
-            the positions in the SoA convention (i.e. first all the x, then y
-            and then z)
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x,
+            then y and then z)
         """
         # got to be sure that the box_size and the positions types are
         # np.float32 and atom_type is an array of np.intc because those are
@@ -264,23 +264,23 @@ class diatomic:
 
         Parameters
         ----------
-        atom_type : ``np.array`` or ``list``
+        atom_type : np.array or list
             type of atoms
 
-        r_mean : ``float`` (default=None)
+        r_mean : float, default=None
             the mean radius of the simulated cluster, only usefull when pbc
             was passed with a False value.
 
-        writes : ``bool`` (default=False)
+        writes : bool, default=False
             if you want (or don't want) to write an output
 
-        file_rdf : ``str``
+        file_rdf : str
             the file were the g(r) is going to be written
 
         Returns
         -------
-        ``tuple`` of ``np.array``
-            the first ``np.array`` is the x of the histogram and the second the
+        tuple of np.array
+            the first np.array is the x of the histogram and the second the
             g(r)
         """
         n_a = np.count_nonzero(atom_type == self.atom_type_a)

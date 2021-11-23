@@ -43,14 +43,14 @@ class monoatomic:
 
     Parameters
     ----------
-    natoms : ``int``
+    natoms : int
         number of atoms
 
-    rcut_e : ``float``
-        external of the shell
+    rcut_e : float
+        external cutoff radius of the shell
 
-    rcut_i : ``float`` (default=0.0)
-        internal of the shell
+    rcut_i : float, default=0.0
+        internal cutoff radius of the shell
     """
 
     def __init__(self, natoms, rcut_e, rcut_i=0.0):
@@ -77,12 +77,12 @@ class monoatomic:
 
         Parameters
         ----------
-        box_size : ``np.array``
+        box_size : np.array
             the box size in x, y, z
 
-        positions : ``np.array``
-            the positions in the SoA convention (i.e. first all the x, then y
-            and then z)
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x,
+            then y and then z)
         """
         box_size = box_size.astype(np.float32)
         box_size = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
@@ -101,21 +101,21 @@ class monoatomic:
 
         Parameters
         ----------
-        writes : ``bool`` (default=False)
+        writes : bool, default=False
             if you want (or don't want) to write an output
 
-        file_cn : ``str`` (default="cn.dat")
+        file_cn : str, default="cn.dat"
             the file were the cn is going to be written
 
-        positions : ``np.array``
-            the positions in the SoA convention (i.e. first all the x, then y
-            and then z)
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x,
+            then y and then z)
 
         Returns
         -------
-        ``np.array``
-            with the coordination number of each atom selected sorted by the
-            same order
+        np.array
+            with the coordination number of each atom selected sorted by
+            the same order
         """
         cn_ = np.asarray(
             np.frombuffer(self.cn_res, dtype=np.intc, count=self.natoms)
@@ -148,23 +148,23 @@ class diatomic:
 
     Parameters
     ----------
-    natoms : ``int``
+    natoms : int
         number of atoms
 
-    atom_type : ``np.array``
+    atom_type : np.array
         type of atoms
 
-    atom_type_a : ``int`` or ``str``
+    atom_type_a : int or str
         type of central atoms
 
-    atom_type_b : ``int`` or ``str``
+    atom_type_b : int or str
         type of interacting atoms
 
-    rcut_e : ``float``
-        external of the shell
+    rcut_e : float
+        external cutoff radius of the shell
 
-    rcut_i : ``float`` (default=0.0)
-        internal of the shell
+    rcut_i : float, default=0.0
+        internal cutoff radius of the shell
     """
 
     def __init__(
@@ -200,15 +200,15 @@ class diatomic:
 
         Parameters
         ----------
-        box_size : ``np.array``
+        box_size : np.array
             the box size in x, y, z
 
-        atom_type : ``np.array``
+        atom_type : np.array
             type of atoms
 
-        positions : ``np.array``
-            the positions in the SoA convention (i.e. first all the x, then y
-            and then z)
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x,
+            then y and then z)
         """
         box_size = box_size.astype(np.float32)
         box_size = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
@@ -238,21 +238,21 @@ class diatomic:
 
         Parameters
         ----------
-        writes : ``bool`` (default=False)
+        writes : bool, default=False
             if you want (or don't want) to write an output
 
-        file_cn : ``str`` (default="cn.dat")
+        file_cn : str, default="cn.dat"
             the file were the cn is going to be written
 
-        positions : ``np.array``
-            the positions in the SoA convention (i.e. first all the x, then y
-            and then z)
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x,
+            then y and then z)
 
         Returns
         -------
-        ``np.array``
-            with the coordination number of each atom selected sorted by the
-            same order
+        np.array
+            with the coordination number of each atom selected sorted by
+            the same order
         """
         cn_ = np.asarray(
             np.frombuffer(self.cn_res, dtype=np.intc, count=self.n_a_)

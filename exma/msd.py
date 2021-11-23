@@ -26,9 +26,11 @@ import numpy as np
 class msd:
     """Mean Square Displacement.
 
-    Remember that trajectories must be sorted with the same order as reference
-    positions (no problem with .xyz files, but with .lammpstrj file a np.sort /
-    np.argsort must be used before the calculation).
+    Notes
+    -----
+    Remember that trajectories must be sorted with the same order as
+    reference positions (no problem with .xyz files, but with .lammpstrj
+    file a np.sort / np.argsort must be used before the calculation).
     """
 
 
@@ -37,17 +39,17 @@ class monoatomic(msd):
 
     Parameters
     ----------
-    natoms : ``int``
+    natoms : int
         the number of atoms
 
-    box_size : ``np.array``
+    box_size : np.array
         with the box lenght in x, y, z
 
-    x_ref : ``np.array``
+    x_ref : np.array
         the reference positions in the SoA convention (i.e. first all the x,
         then y and then z)
 
-    image_ref : ``np.array`` (default=None)
+    image_ref : np.array, default=None
         reference image, same as positions
     """
 
@@ -71,19 +73,19 @@ class monoatomic(msd):
 
         Parameters
         ----------
-        box_size : ``np.array``
+        box_size : np.array
             with the box lenght in x, y, z
 
-        positions : ``np.array``
-            the positions in the SoA convention (i.e. first all the x, then y
-            and then z)
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x,
+            then y and then z)
 
-        image : ``np.array``
+        image : np.array
             same as positions
 
         Returns
         -------
-        ``np.array``
+        np.array
             with the frame in the first value and the msd in the second
         """
         msd = 0.0
@@ -104,13 +106,13 @@ class monoatomic(msd):
 
         Parameters
         ----------
-        positions : ``np.array``
-            the positions in the SoA convention (i.e. first all the x, then y
-            and then z)
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x,
+            then y and then z)
 
         Returns
         -------
-        ``np.array``
+        np.array
             with the frame in the first value and the msd in the second
         """
         msd = 0.0
@@ -131,26 +133,26 @@ class diatomic(msd):
 
     Parameters
     ----------
-    natoms : ``int``
+    natoms : int
         the number of atoms in the frame
 
-    box_size : ``np.array``
+    box_size : np.array
         with the box lenght in x, y, z
 
-    atom_type : ``list``
+    atom_type : list
         the type of the atoms
 
-    x_ref : ``np.array``
-        the reference positions in the SoA convention (i.e. first all the x,
-        then y and then z)
+    x_ref : np.array
+        the reference positions in the SoA convention (i.e. first all
+        the x, then y and then z)
 
-    atom_type_a : ``int``
+    atom_type_a : int
         one type of atom
 
-    atom_type_b : ``int``
+    atom_type_b : int
         another type of atom
 
-    image_ref : ``np.array`` (default=None)
+    image_ref : np.array, default=None
         reference image, same as positions
     """
 
@@ -187,22 +189,22 @@ class diatomic(msd):
 
         Parameters
         ----------
-        box_size : ``np.array``
+        box_size : np.array
             with the box lenght in x, y, z
 
-        atom_type : ``list``
+        atom_type : list
             the type of the atoms
 
-        positions : ``np.array``
-            the positions in the SoA convention
-            i.e. first all the x, then y and then z
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x,
+            then y and then z)
 
-        image : ``np.array``
+        image : np.array
             same as positions
 
         Returns
         -------
-        ``np.array``
+        np.array
             with the frame in the first value, the msd of atom type a in the
             second, the msd of atom type b in the third and the total msd in
             the fourth.
@@ -228,16 +230,16 @@ class diatomic(msd):
 
         Parameters
         ----------
-        atom_type : ``list``
+        atom_type : list
             the type of the atoms
 
-        positions : ``np.array``
-            the positions in the SoA convention (i.e. first all the x, then y
-            and then z)
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x,
+            then y and then z)
 
         Returns
         -------
-        ``np.array``
+        np.array
             with the frame in the first value, the msd of atom type a in the
             second, the msd of atom type b in the third and the total msd in
             the fourth.

@@ -43,18 +43,18 @@ class EffectiveNeighbors:
 
     The empirical effective coordination model [1]_, used to calculate the
     effective neighbors, assumes that the interact atoms donate more of its
-    electron to the closest central atoms. Then, fractions of the interact atom
-    can be assigned to the various central neighbors atoms [2]_.
+    electron to the closest central atoms. Then, fractions of the interact
+    atom can be assigned to the various central neighbors atoms [2]_.
 
     Parameters
     ----------
-    natoms : ``int``
+    natoms : int
         number of atoms
 
-    atom_type_central : ``int``
+    atom_type_central : int or str
         type of central atoms
 
-    atom_type_interact : ``int``
+    atom_type_interact : int or str
         type of interacting atoms
 
     References
@@ -89,19 +89,19 @@ class EffectiveNeighbors:
 
         Parameters
         ----------
-        box_size : ``np.array``
+        box_size : np.array
             the box size in x, y, z
 
-        atom_type : ``np.array``
+        atom_type : np.array
             types of atoms
 
-        positions : ``np.array``
-            the positions in the SoA convention (i.e. first all the x, then y
-            and then z)
+        positions : np.array
+            the positions in the SoA convention (i.e. first all the x,
+            then y and then z)
 
         Returns
         -------
-        effnei : ``np.array``
+        np.array
             effective (interact) neighbor of the central atoms in the same
             order that are in the positions vector
         """
@@ -152,6 +152,5 @@ class EffectiveNeighbors:
         #   effective (interact) neighbor
         weitrix = np.transpose(weitrix)
         effnei = [np.sum(weitrix[i]) for i in range(n_central)]
-        effnei = np.array(effnei, dtype=np.float32)
 
-        return effnei
+        return np.array(effnei, dtype=np.float32)
