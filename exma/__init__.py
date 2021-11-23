@@ -28,6 +28,7 @@ __version__ = "0.3.0"
 from exma.positions import Positions, spherical_nanoparticle, replicate  # noqa
 from exma.cluster import DBSCAN  # noqa
 from exma.cn import monoatomic, diatomic  # noqa
+from exma.electrochemistry import Electrochemistry  # noqa
 from exma.en import EffectiveNeighbors  # noqa
 from exma.msd import monoatomic, diatomic  # noqa
 from exma.rdf import monoatomic, diatomic  # noqa

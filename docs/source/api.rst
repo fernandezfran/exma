@@ -22,6 +22,15 @@ exma API
    :show-inheritance:
    :member-order: bysource
 
+``exma.electrochemistry`` module
+--------------------------------
+
+.. automodule:: exma.electrochemistry
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :member-order: bysource
+
 ``exma.en`` module
 ------------------
 
