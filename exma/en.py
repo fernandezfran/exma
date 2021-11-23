@@ -41,25 +41,31 @@ lib_en = ct.CDLL(
 class EffectiveNeighbors:
     """Emipirical way to describe charge transfer and coordination in solids.
 
-    The empirical effective coordination model, used to calculate the effective
-    neighbors, assumes that the interact atoms donate more of its electron to
-    the closest central atoms. Then, fractions of the interact atom can be
-    assigned to the various central neighbors atoms
-
-    See:
-        V. L. Chevrier and J. R. Dahn 2010 J. Electrochem. Soc. 157 A392
-        R. Hoppe et al., J. Less Common Met., 156, 105 (1989)
+    The empirical effective coordination model [1]_, used to calculate the
+    effective neighbors, assumes that the interact atoms donate more of its
+    electron to the closest central atoms. Then, fractions of the interact atom
+    can be assigned to the various central neighbors atoms [2]_.
 
     Parameters
     ----------
-    natoms : int
+    natoms : ``int``
         number of atoms
 
-    atom_type_central : int
+    atom_type_central : ``int``
         type of central atoms
 
-    atom_type_interact : int
+    atom_type_interact : ``int``
         type of interacting atoms
+
+    References
+    ----------
+    .. [1] Hoppe, R., Voigt, S., Glaum, H., Kissel, J., Müller, H.P. and
+       Bernet, K., 1988. A new route to charge distributions in ionic solids.
+       `Journal of the Less Common Metals`, 156(1-2), pp.105-122.
+    .. [2] Chevrier, V.L. and Dahn, J.R., 2010. First principles studies of
+       disordered lithiated silicon. `Journal of the Electrochemical Society`,
+       157(4), p.A392.
+
     """
 
     def __init__(self, natoms, atom_type_central, atom_type_interact):
@@ -83,19 +89,19 @@ class EffectiveNeighbors:
 
         Parameters
         ----------
-        box_size : np.array
+        box_size : ``np.array``
             the box size in x, y, z
 
-        atom_type : np.array
+        atom_type : ``np.array``
             types of atoms
 
-        positions : np.array
+        positions : ``np.array``
             the positions in the SoA convention (i.e. first all the x, then y
             and then z)
 
         Returns
         -------
-        effnei : np.array
+        effnei : ``np.array``
             effective (interact) neighbor of the central atoms in the same
             order that are in the positions vector
         """

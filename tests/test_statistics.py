@@ -25,7 +25,6 @@ def test_block_average():
         [3.14, 3.15, 3.13, 3.13, 3.15, 3.15, 3.16, 3.12]
     )
 
-    np.testing.assert_array_equal(result["idx"], np.array([0, 1]))
     np.testing.assert_array_equal(result["data_size"], np.array([8, 4]))
     np.testing.assert_array_almost_equal(
         result["mean"], np.array([3.1412501, 3.1412501])

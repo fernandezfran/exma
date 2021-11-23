@@ -1,20 +1,11 @@
-exma package
-============
+exma API
+========
 
-Module contents
----------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: exma
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :member-order: bysource
-
-Submodules
-----------
-
-exma.cluster module
--------------------
+``exma.cluster`` module
+-----------------------
 
 .. automodule:: exma.cluster
    :members:
@@ -22,8 +13,8 @@ exma.cluster module
    :show-inheritance:
    :member-order: bysource
 
-exma.cn module
---------------
+``exma.cn`` module
+------------------
 
 .. automodule:: exma.cn
    :members:
@@ -31,8 +22,8 @@ exma.cn module
    :show-inheritance:
    :member-order: bysource
 
-exma.en module
---------------
+``exma.en`` module
+------------------
 
 .. automodule:: exma.en
    :members:
@@ -40,8 +31,8 @@ exma.en module
    :show-inheritance:
    :member-order: bysource
 
-exma.msd module
----------------
+``exma.msd`` module
+-------------------
 
 .. automodule:: exma.msd
    :members:
@@ -49,8 +40,8 @@ exma.msd module
    :show-inheritance:
    :member-order: bysource
 
-exma.positions module
----------------------
+``exma.positions`` module
+-------------------------
 
 .. automodule:: exma.positions
    :members:
@@ -58,8 +49,8 @@ exma.positions module
    :show-inheritance:
    :member-order: bysource
 
-exma.rdf module
----------------
+``exma.rdf`` module
+-------------------
 
 .. automodule:: exma.rdf
    :members:
@@ -67,8 +58,8 @@ exma.rdf module
    :show-inheritance:
    :member-order: bysource
 
-exma.reader module
-------------------
+``exma.reader`` module
+----------------------
 
 .. automodule:: exma.reader
    :members:
@@ -76,8 +67,8 @@ exma.reader module
    :show-inheritance:
    :member-order: bysource
 
-exma.sro module
----------------
+``exma.sro`` module
+-------------------
 
 .. automodule:: exma.sro
    :members:
@@ -85,8 +76,8 @@ exma.sro module
    :show-inheritance:
    :member-order: bysource
 
-exma.statistics module
-----------------------
+``exma.statistics`` module
+--------------------------
 
 .. automodule:: exma.statistics
    :members:
@@ -94,8 +85,8 @@ exma.statistics module
    :show-inheritance:
    :member-order: bysource
 
-exma.writer module
-------------------
+``exma.writer`` module
+----------------------
 
 .. automodule:: exma.writer
    :members:
@@ -103,10 +94,11 @@ exma.writer module
    :show-inheritance:
    :member-order: bysource
 
-Subpackages
------------
+``exma.lib`` subpackage
+-----------------------
 
-.. toctree::
-   :maxdepth: 4
-
-   exma.lib
+.. automodule:: exma.lib
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :member-order: bysource

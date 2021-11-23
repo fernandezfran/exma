@@ -28,11 +28,13 @@ import pandas as pd
 def block_average(x):
     """Estimating error method when data are correlated.
 
-    See: H. Flyvbjerg and H. G. Petersen: Averages of correlated data (1989)
+    This method offers an easy and efficient way to estimate the error of
+    correlated data by a renormalization groups, as described by H. Flyvbjerg
+    and H. G. Petersen [4]_.
 
     Parameters
     ----------
-    x : array
+    x : ``np.array``
         where the time series is
 
     Returns
@@ -42,6 +44,12 @@ def block_average(x):
         gives information about the number of times that the block sums were
         applied, the data size changes, the mean value of each block, the
         corresponding variance and the error of that variance, respectively.
+
+    References
+    ----------
+    .. [4] Flyvbjerg, H. and Petersen, H.G., 1989. Error estimates on averages
+       of correlated data. `The Journal of Chemical Physics`, 91(1),
+       pp.461-466.
     """
     data_size, mean, var, varerr = [], [], [], []
 

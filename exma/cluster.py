@@ -44,15 +44,15 @@ class DBSCAN:
     """DBSCAN clustering using PBC for the distance matrix calculations.
 
     Note that if the system is not under periodic boundary conditions, then
-    everything can be calculated from `sklearn.cluster.DBSCAN` using
+    everything can be calculated from ``sklearn.cluster.DBSCAN`` using
     `metrics="euclidean"`.
 
     Parameters
     ----------
-    eps : float
+    eps : ``float``
         like an rcut where an atoms stop to be considered part of a cluster
 
-    min_samples : int (default=2)
+    min_samples : ``int`` (default=2)
         the number of atoms that can be a core point
 
     """
@@ -76,17 +76,17 @@ class DBSCAN:
 
         Parameters
         ----------
-        box_size : np.array
+        box_size : ``np.array``
             the box size in x, y, z
 
-        atom_type : np.array
+        atom_type : ``np.array``
             type of atoms
 
-        positions : np.array
+        positions : ``np.array``
             the positions in the SoA convention (i.e. first all the x, then y
             and then z).
 
-        atom_type_c : int or str
+        atom_type_c : ``int`` or ``str``
             type of atom to which you want to perform the cluster analysis
 
         **kwargs
@@ -95,7 +95,7 @@ class DBSCAN:
 
         Returns
         -------
-        id_cluster : np.array
+        id_cluster : ``np.array``
             as explained in ``sklearn.cluster.DBSCAN``. It contains the id
             number of the cluster to which belongs the corresponding atom (the
             array is sorted). A value of -1 means that the atom is isolated.

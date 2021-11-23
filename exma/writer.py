@@ -28,15 +28,20 @@ class xyz:
 
     Parameters
     ----------
-    file_xyz : str
+    file_xyz : ``str``
         name of the file where the trajectories in xyz format are going to be
         written
 
-    ftype : str (default=typical)
+    ftype : ``str`` (default=typical)
         the possible values are `typical`, `property` and `image`. `typical`
         if is the usual xyz file. `property` if in the last column there is
         a property. `image` if in the last three columns there are the image
         box of the corresponding atom.
+
+    Raises
+    ------
+    ``ValueError``
+        If xyz file type is not among the possible values
     """
 
     def __init__(self, file_xyz, ftype="typical"):
@@ -51,20 +56,20 @@ class xyz:
 
         Parameters
         ----------
-        natoms : int
+        natoms : ``int``
             the number of atoms in the frame
 
-        atom_type : list of str
-            the type of the atoms
+        atom_type : ``list``
+            with the type of each atom as ``str``.
 
-        positions : np.array
+        positions : ``np.array``
             the positions in the SoA convention (i.e. first all the x, then y
             and then z)
 
-        prop : np.array
+        prop : ``np.array``
             if ftype='property' was selected
 
-        image : np.array
+        image : ``np.array``
             same as positions, if ftype='image' was selected
         """
         self.file_xyz.write("%d\n\n" % natoms)
@@ -129,16 +134,21 @@ class lammpstrj:
 
     Parameters
     ----------
-    file_lammps : str
+    file_lammps : ``str``
         name of the file where the trajectories of lammps are going to be
         written
 
-    ftype : str (defualt="custom")
+    ftype : ``str`` (defualt="custom")
         the possible values are custom, charge, image and charge_image.
         custom = dump ... custom ... id type x y z
         charge = dump ... custom ... id type q x y z
         image = dump ... custom ... id type x y z ix iy iz
         charge_image = dump ... custom ... id type q x y z ix iy iz
+
+    Raises
+    ------
+    ``ValueError``
+        If lammpstrj file type is not among the possible values
     """
 
     def __init__(self, file_lammps, ftype="custom"):
@@ -165,26 +175,26 @@ class lammpstrj:
 
         Parameters
         ----------
-        natoms : int
+        natoms : ``int``
             the number of atoms in the frame
 
-        box_size : np.array
+        box_size : ``np.array``
             with the box lenght in x, y, z
 
-        atom_id : list of ints
-            the id of the respective atom
+        atom_id : ``list``
+            with the id of the respective atom
 
-        atom_type : list of ints
-            the type of the atoms
+        atom_type : ``list``
+            with the type of each atom as ``int``
 
-        positions : np.array
+        positions : ``np.array``
             the positions in the SoA convention (i.e. first all the x, then y
             and then z)
 
-        atom_q : np.array (default=None)
+        atom_q : ``np.array`` (default=None)
             the charge of the respective atom, if ftype='charge' was selected
 
-        image : np.array (default=None)
+        image : ``np.array`` (default=None)
             same as positions, if ftype='image' was selected
         """
         self.file_lammps.write("ITEM: TIMESTEP\n")
@@ -291,15 +301,20 @@ class in_lammps:
 
     Parameters
     ----------
-    file_in : str
+    file_in : ``str``
         name of the file where you want to write the input info
 
-    ftype : str (defualt="custom")
+    ftype : ``str`` (defualt="custom")
         the possible values are custom, charge, image and charge_image.
         custom = dump ... custom ... id type x y z
         charge = dump ... custom ... id type q x y z
         image = dump ... custom ... id type x y z ix iy iz
         charge_image = dump ... custom ... id type q x y z ix iy iz
+
+    Raises
+    ------
+    ``ValueError``
+        If in.lammps file type is not among the possible values
     """
 
     def __init__(self, file_in, ftype="custom"):
@@ -325,26 +340,26 @@ class in_lammps:
 
         Parameters
         ----------
-        natoms : int
+        natoms : ``int``
             the number of atoms in the frame
 
-        box_size : np.array
+        box_size : ``np.array``
             with the box lenght in x, y, z
 
-        atom_id : list of ints
-            the id of the respective atom
+        atom_id : ``list``
+            with the id of the respective atom
 
-        atom_type : list of ints
-            the type of the atoms
+        atom_type : ``list``
+            with the type of each atom as ``int``
 
-        positions : np.array
+        positions : ``np.array``
             the positions in the SoA convention (i.e. first all the x, then y
             and then z)
 
-        atom_q : np.array (default=None)
+        atom_q : ``np.array`` (default=None)
             the charge of the respective atom, if ftype='charge' was selected
 
-        image : np.array (default=None)
+        image : ``np.array`` (default=None)
             same as positions, if ftype='image' was selected
         """
         self.file_in.write("# the first three lines are comments...\n")

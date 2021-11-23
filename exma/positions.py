@@ -26,17 +26,21 @@ import numpy as np
 
 
 class Positions:
-    """Define the positions of the atoms in an orthogonal lattice.
+    r"""Define the positions of the atoms in an orthogonal lattice.
 
     Note that the density is defined by the input parameters as follow:
-    rho = natoms / (box_size^3)
+
+    .. math::
+        {\\rho} = {\\frac{N}{L^3}}
+
+    where `N` is the number of atoms and `L` the box lenght in each direction.
 
     Parameters
     ----------
-    natoms : int
+    natoms : ``int``
         number of atoms
 
-    box_size : float
+    box_size : ``float``
         box size in each direction (cubic)
     """
 
@@ -52,9 +56,15 @@ class Positions:
 
         Returns
         -------
-        dict :
+        ``dict``
             with the keys `natoms`, `box`, `x`, `y`, `z`, the number of
             atoms, the box size and the xyz of the atoms, respectively.
+
+        Raises
+        ------
+        ``ValueError``
+            If the number of atoms does not correspond with the number of
+            sites that a sc crystal structure has.
         """
         nside = np.cbrt(self.natoms, dtype=np.float32)
         tmp = np.intc(nside)
@@ -83,9 +93,15 @@ class Positions:
 
         Returns
         -------
-        dict :
+        ``dict``
             with the keys `natoms`, `box`, `x`, `y`, `z`, the number of
             atoms, the box size and the xyz of the atoms, respectively.
+
+        Raises
+        ------
+        ``ValueError``
+            If the number of atoms does not correspond with the number of
+            sites that a bcc crystal structure has.
         """
         nside = np.cbrt(self.natoms / 2, dtype=np.float32)
         tmp = np.intc(nside)
@@ -120,9 +136,15 @@ class Positions:
 
         Returns
         -------
-        dict :
+        ``dict``
             with the keys `natoms`, `box`, `x`, `y`, `z`, the number of
             atoms, the box size and the xyz of the atoms, respectively.
+
+        Raises
+        ------
+        ``ValueError``
+            If the number of atoms does not correspond with the number of
+            sites that a fcc crystal structure has.
         """
         nside = np.cbrt(self.natoms / 4, dtype=np.float32)
         tmp = np.intc(nside)
@@ -159,9 +181,15 @@ class Positions:
 
         Returns
         -------
-        dict :
+        ``dict``
             with the keys `natoms`, `box`, `x`, `y`, `z`, the number of
             atoms, the box size and the xyz of the atoms, respectively.
+
+        Raises
+        ------
+        ``ValueError``
+            If the number of atoms does not correspond with the number of
+            sites that a dc crystal structure has.
         """
         nside = np.cbrt(self.natoms / 8, dtype=np.float32)
         tmp = np.intc(nside)
@@ -208,20 +236,20 @@ def spherical_nanoparticle(box_size, positions, rcut):
 
     Parameters
     ----------
-    box_size : np.array
+    box_size : ``np.array``
         box size in each direction x, y, z.
 
-    positions : np.array
+    positions : ``np.array``
         the positions of the atoms in a lattice that wants to be
         replicated. It must first have all the x's of the atoms, then the
         y's and then the z's concatenated.
 
-    rcut : float
+    rcut : ``float``
         the radius of the nanoparticle.
 
     Returns
     -------
-    dict :
+    ``dict``
         with the keys `natoms`, `x`, `y`, `z`, the number of atoms and
         the xyz of the atoms, respectively.
     """
@@ -255,29 +283,29 @@ def replicate(natoms, box_size, atom_type, positions, nrf):
 
     Parameters
     ----------
-    natoms : int
+    natoms : ``int``
         number of atoms
 
-    box_size : np.array
+    box_size : ``np.array``
         box size in each direction x, y, z.
 
-    atom_type : list of integers
+    atom_type : ``list``
         the type of the atoms.
 
-    positions : np.array
+    positions : ``np.array``
         the positions of the atoms in a lattice that wants to be
         replicated. It must first have all the x's of the atoms, then the
         y's and then the z's concatenated.
 
-    nrf : list of integers.
-        the integers must be greater than or equal to 1 and indicate the
-        replication factor in each x, y, z direction, respectively. Value
+    nrf : ``list``
+        three integers that must be greater than or equal to 1 and indicates
+        the replication factor in each x, y, z direction, respectively. Value
         equal to 1 means that only the current cell in that direction is
         considered.
 
     Returns
     -------
-    dict :
+    ``dict``
         with the keys `natoms`, `box`, types`, x`, `y`, `z`, the number of
         atoms, the box size, the types of the atoms and the xyz of the
         atoms, respectively.

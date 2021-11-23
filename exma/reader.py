@@ -28,14 +28,19 @@ class xyz:
 
     Parameters
     ----------
-    file_xyz : str
+    file_xyz : ``str``
         name of the file where the trajectories in xyz format are
 
-    ftype : str (default=typical)
+    ftype : ``str`` (default=typical)
         the possible values are `typical`, `property` and `image`. `typical`
         if is the usual xyz file. `property` if in the last column there is
         a property. `image` if in the last three columns there are the image
         box of the corresponding atom.
+
+    Raises
+    ------
+    ``ValueError``
+        If xyz file type is not among the possible values
     """
 
     def __init__(self, file_xyz, ftype="typical"):
@@ -50,21 +55,26 @@ class xyz:
 
         Returns
         -------
-        natoms : int
+        natoms : ``int``
             the number of atoms in the frame
 
-        atom_type : list of str
+        atom_type : ``list``
             the type of the atoms
 
-        positions : np.array
+        positions : ``np.array``
             the positions in the SoA convention (i.e. first all the x, then y
             and then z)
 
-        property : np.array
+        property : ``np.array``
             if ftype='property' was selected
 
-        image : np.array
+        image : ``np.array``
             same as positions, if ftype='image' was selected
+
+        Raises
+        ------
+        ``EOFError``
+            If there are no more frames to read
         """
         natoms = self.file_xyz.readline()
         if not natoms:
@@ -162,15 +172,20 @@ class lammpstrj:
 
     Parameters
     ----------
-    file_lammps : str
+    file_lammps : ``str``
         name of the file where the trajectories of lammps are
 
-    ftype : str (defualt="custom")
+    ftype : ``str`` (defualt="custom")
         the possible values are custom, charge, image and charge_image.
         custom = dump ... custom ... id type x y z
         charge = dump ... custom ... id type q x y z
         image = dump ... custom ... id type x y z ix iy iz
         charge_image = dump ... custom ... id type q x y z ix iy iz
+
+    Raises
+    ------
+    ``ValueError``
+        If lammpstrj file type is not among the possible values
     """
 
     def __init__(self, file_lammps, ftype="custom"):
@@ -187,27 +202,32 @@ class lammpstrj:
 
         Returns
         -------
-        natoms : int
+        natoms : ``int``
             the number of atoms in the frame
 
-        box_size : np.array
+        box_size : ``np.array``
             with the box lenght in x, y, z
 
-        atom_id : list of ints
+        atom_id : ``list``
             the id of the respective atom
 
-        atom_type : list of ints
+        atom_type : ``list``
             the type of the atoms
 
-        positions : np.array
+        positions : ``np.array``
             the positions in the SoA convention (i.e. first all the x, then y
             and then z)
 
-        atom_q : np.array
+        atom_q : ``np.array``
             the charge of the respective atom, if ftype='charge' was selected
 
-        image : np.array
+        image : ``np.array``
             same as positions, if ftype='image' was selected
+
+        Raises
+        ------
+        ``EOFError``
+            If there are no more frames to read
         """
         comment = self.file_lammps.readline()
         if not comment:

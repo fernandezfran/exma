@@ -43,13 +43,13 @@ class monoatomic:
 
     Parameters
     ----------
-    natoms : int
+    natoms : ``int``
         number of atoms
 
-    rcut_e : float
+    rcut_e : ``float``
         external of the shell
 
-    rcut_i : float (default=0.0)
+    rcut_i : ``float`` (default=0.0)
         internal of the shell
     """
 
@@ -77,10 +77,10 @@ class monoatomic:
 
         Parameters
         ----------
-        box_size : np.array
+        box_size : ``np.array``
             the box size in x, y, z
 
-        positions : np.array
+        positions : ``np.array``
             the positions in the SoA convention (i.e. first all the x, then y
             and then z)
         """
@@ -101,19 +101,19 @@ class monoatomic:
 
         Parameters
         ----------
-        writes : bool (default=False)
+        writes : ``bool`` (default=False)
             if you want (or don't want) to write an output
 
-        file_cn : str (default="cn.dat")
+        file_cn : ``str`` (default="cn.dat")
             the file were the cn is going to be written
 
-        positions : np.array
+        positions : ``np.array``
             the positions in the SoA convention (i.e. first all the x, then y
             and then z)
 
         Returns
         -------
-        np.array
+        ``np.array``
             with the coordination number of each atom selected sorted by the
             same order
         """
@@ -148,22 +148,22 @@ class diatomic:
 
     Parameters
     ----------
-    natoms : int
+    natoms : ``int``
         number of atoms
 
-    atom_type : np.array
+    atom_type : ``np.array``
         type of atoms
 
-    atom_type_a : int (or str)
+    atom_type_a : ``int`` or ``str``
         type of central atoms
 
-    atom_type_a : int (or str)
+    atom_type_b : ``int`` or ``str``
         type of interacting atoms
 
-    rcut_e : float
+    rcut_e : ``float``
         external of the shell
 
-    rcut_i : float (default=0.0)
+    rcut_i : ``float`` (default=0.0)
         internal of the shell
     """
 
@@ -200,13 +200,13 @@ class diatomic:
 
         Parameters
         ----------
-        box_size : np.array
+        box_size : ``np.array``
             the box size in x, y, z
 
-        atom_type : np.array
+        atom_type : ``np.array``
             type of atoms
 
-        positions : np.array
+        positions : ``np.array``
             the positions in the SoA convention (i.e. first all the x, then y
             and then z)
         """
@@ -238,19 +238,19 @@ class diatomic:
 
         Parameters
         ----------
-        writes : bool (default=False)
+        writes : ``bool`` (default=False)
             if you want (or don't want) to write an output
 
-        file_cn : str (default="cn.dat")
+        file_cn : ``str`` (default="cn.dat")
             the file were the cn is going to be written
 
-        positions : np.array
+        positions : ``np.array``
             the positions in the SoA convention (i.e. first all the x, then y
             and then z)
 
         Returns
         -------
-        np.array
+        ``np.array``
             with the coordination number of each atom selected sorted by the
             same order
         """

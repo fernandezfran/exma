@@ -7,14 +7,17 @@
 exma
 ====
 
-**exma** is a library that allows to analyze molecular dynamics trajectories 
-with different tools.
+**exma** is a Python module with C extensions that allows to analyze 
+molecular dynamics trajectories with different tools.
+
+| **Authors**
+| Francisco Fernandez (E-mail: fernandezfrancisco2195@gmail.com)
 
 
 Repository
 ----------
 
-`https://github.com/fernandezfran/exma/ <https://github.com/fernandezfran/exma/>`__
+https://github.com/fernandezfran/exma/
 
 
 License
@@ -31,8 +34,7 @@ Contents
 
    install
    tutorial
-   modules
-
+   api
 
 Indices and tables
 ==================

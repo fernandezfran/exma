@@ -4,8 +4,8 @@
 [![Documentation Status](https://readthedocs.org/projects/exma/badge/?version=latest)](https://exma.readthedocs.io/en/latest/?badge=latest)
 [![PyPI](https://img.shields.io/pypi/v/exma)](https://pypi.org/project/exma/)
 
-**exma** is a library that allows to analyze molecular dynamics trajectories with
-different tools.
+**exma** is a Python module with C extensions that allows to analyze molecular 
+dynamics trajectories with different tools.
 
 
 ## Main Features
