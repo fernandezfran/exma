@@ -1,6 +1,6 @@
 # exma
 
-[![Build Status](https://travis-ci.com/fernandezfran/exma.svg?branch=master)](https://travis-ci.com/github/fernandezfran/exma)
+[![Build Status](https://github.com/fernandezfran/exma/actions/workflows/exma_ci.yml/badge.svg?branch=master)](https://github.com/fernandezfran/exma/actions/workflows/exma_ci.yml)
 [![Documentation Status](https://readthedocs.org/projects/exma/badge/?version=latest)](https://exma.readthedocs.io/en/latest/?badge=latest)
 [![PyPI](https://img.shields.io/pypi/v/exma)](https://pypi.org/project/exma/)
 
