@@ -13,7 +13,7 @@ dynamics trajectories with different tools.
 Some of the main functionalities are listed below:
 
 * Read and write MD files in xyz or lammpstrj format.
-* Initializate positions of atoms in SC, BCC, FCF, DC crystals or spherical
+* Initializate positions of atoms in SC, BCC, FCC, DC crystals or spherical
 nanoparticles.
 * Calculate: 
     - mean square displacement,
