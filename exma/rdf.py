@@ -29,9 +29,6 @@ import numpy as np
 
 PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
 
-lib_rdf = ct.CDLL(
-    str(PATH / "lib" / "lib_rdf") + sysconfig.get_config_var("EXT_SUFFIX")
-)
 
 # ============================================================================
 # CLASSES
@@ -70,6 +67,10 @@ class monoatomic:
         self.gr_ = np.zeros(self.nbin, dtype=np.float32)
         self.ngr_ = 0
 
+        lib_rdf = ct.CDLL(
+            str(PATH / "lib" / "lib_rdf")
+            + sysconfig.get_config_var("EXT_SUFFIX")
+        )
         self.rdf_c = lib_rdf.monoatomic
         self.rdf_c.argtypes = [
             ct.c_int,
@@ -201,6 +202,10 @@ class diatomic:
         self.dg_ = 0.5 * minbox / self.nbin
         self.ngr_ = 0
 
+        lib_rdf = ct.CDLL(
+            str(PATH / "lib" / "lib_rdf")
+            + sysconfig.get_config_var("EXT_SUFFIX")
+        )
         self.rdf_c = lib_rdf.diatomic
         self.rdf_c.argtypes = [
             ct.c_int,

@@ -31,9 +31,6 @@ import sklearn.cluster
 
 PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
 
-lib_cluster = ct.CDLL(
-    str(PATH / "lib" / "lib_cluster") + sysconfig.get_config_var("EXT_SUFFIX")
-)
 
 # ============================================================================
 # CLASSES
@@ -62,6 +59,10 @@ class DBSCAN:
         self.eps = eps
         self.min_samples = min_samples
 
+        lib_cluster = ct.CDLL(
+            str(PATH / "lib" / "lib_cluster")
+            + sysconfig.get_config_var("EXT_SUFFIX")
+        )
         self.distance_matrix_c = lib_cluster.distance_matrix
         self.distance_matrix_c.argtypes = [
             ct.c_int,

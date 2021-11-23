@@ -29,9 +29,6 @@ import numpy as np
 
 PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
 
-lib_cn = ct.CDLL(
-    str(PATH / "lib" / "lib_cn") + sysconfig.get_config_var("EXT_SUFFIX")
-)
 
 # ============================================================================
 # CLASSES
@@ -61,6 +58,10 @@ class monoatomic:
         self.cn_ = np.zeros(self.natoms, dtype=np.intc)
         self.ncn_ = 0
 
+        lib_cn = ct.CDLL(
+            str(PATH / "lib" / "lib_cn")
+            + sysconfig.get_config_var("EXT_SUFFIX")
+        )
         self.cn_c = lib_cn.monoatomic
         self.cn_c.argtypes = [
             ct.c_int,
@@ -181,6 +182,10 @@ class diatomic:
         self.cn_ = np.zeros(self.n_a_, dtype=np.intc)
         self.ncn_ = 0
 
+        lib_cn = ct.CDLL(
+            str(PATH / "lib" / "lib_cn")
+            + sysconfig.get_config_var("EXT_SUFFIX")
+        )
         self.cn_c = lib_cn.diatomic
         self.cn_c.argtypes = [
             ct.c_int,

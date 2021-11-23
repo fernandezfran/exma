@@ -29,9 +29,6 @@ import numpy as np
 
 PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
 
-lib_en = ct.CDLL(
-    str(PATH / "lib" / "lib_en") + sysconfig.get_config_var("EXT_SUFFIX")
-)
 
 # ============================================================================
 # CLASSES
@@ -74,6 +71,10 @@ class EffectiveNeighbors:
         self.atom_type_central = atom_type_central
         self.atom_type_interact = atom_type_interact
 
+        lib_en = ct.CDLL(
+            str(PATH / "lib" / "lib_en")
+            + sysconfig.get_config_var("EXT_SUFFIX")
+        )
         self.distance_matrix_c = lib_en.distance_matrix
         self.distance_matrix_c.argtypes = [
             ct.c_int,
