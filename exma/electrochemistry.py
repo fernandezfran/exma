@@ -73,7 +73,9 @@ class Electrochemistry:
     def __init__(self, df):
         self.df = df
 
+        self.dffvc_ = None
         self.dffe_ = None
+        self.dfv_ = None
 
     def fractional_volume_change(self, reference_atoms, reference_volume):
         r"""Fractional volume change (fvc) with respect to A.
@@ -109,11 +111,6 @@ class Electrochemistry:
         ------
         KeyError
             if the number of atoms of type A or the volume are not defined.
-
-        Notes
-        -----
-        The volume, and the number of atoms of type A in the structure must be
-        defined in the corresponding df.
         """
         if ("NA" not in self.df) or ("Vol" not in self.df):
             raise KeyError(
@@ -168,10 +165,6 @@ class Electrochemistry:
         ------
         KeyError
             if the `x` values or the potential energies are not defined.
-
-        Notes
-        -----
-        The number of atoms of A is fixed and B is the varying element.
         """
         if (
             ("x" not in self.df)
@@ -198,7 +191,7 @@ class Electrochemistry:
         self.dffe_ = pd.DataFrame(self.dffe_)
         return self.dffe_
 
-    def voltage(self, **kwargs):
+    def voltage(self, nums=50, **kwargs):
         r"""Approximation to the voltage curve.
 
         The formation energies can be used as an approximation to the Gibbs
@@ -209,6 +202,9 @@ class Electrochemistry:
 
         Parameters
         ----------
+        nums : int, default=50
+            number of points at which to evaluate the spline and its
+            derivative
         **kwargs
             additional keyword arguments that are passed and are documented
             in `scipy.interpolate.UnivariateSpline`
@@ -238,13 +234,16 @@ class Electrochemistry:
         )
         dspline = spline.derivative()
 
-        fe_spline = [spline(x) for x in self.dffe_.x]
-        voltage = [-dspline(x) for x in self.dffe_.x]
+        xpoints = np.linspace(np.min(self.df.x), np.max(self.df.x), nums)
+        fe_spline = [spline(x) for x in xpoints]
+        voltage = [-dspline(x) for x in xpoints]
 
-        return pd.DataFrame(
+        self.dfv_ = pd.DataFrame(
             {
-                "x": self.df.x,
+                "x": xpoints,
                 "fe_spline": np.array(fe_spline, dtype=np.float32),
                 "voltage": np.array(voltage, dtype=np.float32),
             }
         )
+
+        return self.dfv_
