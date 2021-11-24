@@ -43,10 +43,11 @@ class DBSCAN:
     Parameters
     ----------
     eps : float
-        like an rcut where an atoms stop to be considered part of a cluster
+        a cutoff radius at which an atom is no longer considered part of the
+        cluster.
 
     min_samples : int, default=2
-        the number of atoms that can be a core point
+        number of atoms required to form a cluster.
 
     Notes
     -----

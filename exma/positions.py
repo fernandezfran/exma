@@ -33,7 +33,7 @@ class Positions:
     natoms : int
         number of atoms
 
-    box_size : ``float``
+    box_size : float
         box size in each direction (cubic)
 
     Notes
@@ -311,8 +311,8 @@ def replicate(natoms, box_size, atom_type, positions, nrf):
     Returns
     -------
     dict
-        with the keys `natoms`, `box`, types`, x`, `y`, `z`, the number of
-        atoms, the box size, the types of the atoms and the xyz of the
+        with the keys `natoms`, `box`, `types`, `x`, `y`, `z`, the number
+        of atoms, the box size, the types of the atoms and the xyz of the
         atoms, respectively.
     """
     x, y, z = np.split(positions, 3)

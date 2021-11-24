@@ -10,18 +10,15 @@ dynamics trajectories with different tools.
 
 ## Main Features
 
-Some of the main functionalities are listed below:
+Some of the main calculations that can be performed are listed below:
 
-* Read and write MD files in xyz or lammpstrj format.
-* Initializate positions of atoms in SC, BCC, FCC, DC crystals or spherical
-nanoparticles.
-* Calculate: 
-    - mean square displacement,
-    - radial distribution function,
-    - coordination number, the ligancy or in a shell,
+* mean square displacement,
+* radial distribution function,
+* coordination number, the ligancy or in a shell,
+
 among others.
 
-For more precise information, read the [tutorials](https://exma.readthedocs.io/en/latest/tutorial.html)
+For more precise information, see the [tutorials](https://exma.readthedocs.io/en/latest/tutorial.html)
 and the [API](https://exma.readthedocs.io/en/latest/api.html) in the documentation.
 
 
