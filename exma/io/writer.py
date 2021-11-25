@@ -158,7 +158,12 @@ class LAMMPS(TrajectoryWriter):
             for key in frame.keys():
                 if key in ["natoms", "box"]:
                     continue
-                line += f"{frame[key][i]}  "
+                value = frame[key][i]
+                line += (
+                    f"{value:.6e}  "
+                    if isinstance(value, np.float32)
+                    else f"{value}  "
+                )
             line = line.rstrip()
             line += "\n"
             self.file_traj.write(line)
@@ -203,7 +208,12 @@ def in_lammps(file_in, frame):
             for key in frame.keys():
                 if key in ["natoms", "box"]:
                     continue
-                line += f"{frame[key][i]}  "
+                value = frame[key][i]
+                line += (
+                    f"{value:.6e}  "
+                    if isinstance(value, np.float32)
+                    else f"{value}  "
+                )
             line = line.rstrip()
             line += "\n"
             f_in.write(line)
