@@ -26,7 +26,7 @@ from . import writer
 # ======================================================================
 
 
-def xyz2lammsptrj(xyztraj, lammpstrj_name, cell_info, xyzftype="xyz"):
+def xyz2lammpstrj(xyztraj, lammpstrj_name, cell_info, xyzftype="xyz"):
     """Rewrite an xyz file to a lammpstrj file.
 
     Parameters
@@ -74,7 +74,7 @@ def xyz2inlmp():
     raise NotImplementedError("To be implemented soon.")
 
 
-def lammsptrj2xyz():
+def lammpstrj2xyz():
     """Not implemented yet."""
     raise NotImplementedError("To be implemented soon.")
 
