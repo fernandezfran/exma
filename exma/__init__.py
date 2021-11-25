@@ -30,7 +30,8 @@ from .io.writer import XYZ, LAMMPS, in_lammps  # noqa
 from .msd import monoatomic, diatomic  # noqa
 from .rdf import monoatomic, diatomic  # noqa
 from .cn import monoatomic, diatomic  # noqa
-from .cluster import DBSCAN, EffectiveNeighbors, sro  # noqa
+from .en import EffectiveNeighbors  # noqa
+from .cluster import DBSCAN, sro  # noqa
 from .electrochemistry import Electrochemistry  # noqa
 from .positions import Positions, spherical_nanoparticle, replicate  # noqa
 from .statistics import block_average  # noqa

@@ -51,45 +51,6 @@ def test_dbscan_characterize():
     assert clusters == clustersref
 
 
-def test_effective_neighbors():
-    """Test the calculation of effective_neighbors."""
-    enref = np.array([1.0, 2.0])
-
-    # this is a dumbell of atoms type 1 in y-direction crossed by a dumbell
-    # of atoms type 2 in z-direction and an isolated atom near second
-    # atom of type 1. then, the first atom of type 1 has 1 effective
-    # neighbor (half of each dumbell of type 2), the same for the second
-    # atom plus the isolated atom, so it has 2 effective neighbor.
-    natoms = 5
-    box = np.array([1.0, 1.0, 1.0])
-    xyz = np.array(
-        [
-            0.5,
-            0.5,
-            0.5,
-            0.5,
-            0.5,
-            0.4,
-            0.6,
-            0.5,
-            0.5,
-            0.7,
-            0.5,
-            0.5,
-            0.4,
-            0.6,
-            0.5,
-        ]
-    )
-    types = np.array([1, 1, 2, 2, 2])
-
-    result = exma.cluster.EffectiveNeighbors(natoms, 1, 2).of_this_frame(
-        box, types, xyz
-    )
-
-    np.testing.assert_array_almost_equal(result, enref, 5)
-
-
 def test_sro():
     """Test the amorphous parameter calculation in the rdf of a fcc crystal."""
     sroref = -0.8731494
