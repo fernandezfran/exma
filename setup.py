@@ -16,6 +16,8 @@
 # IMPORTS
 # ======================================================================
 
+import os
+import pathlib
 import sysconfig
 
 from setuptools import find_packages
@@ -25,6 +27,8 @@ from distutils.core import Extension, setup  # noqa: I100
 # =============================================================================
 # CONSTANTS
 # =============================================================================
+
+PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
 
 REQUIREMENTS = ["more-itertools", "numpy", "pandas", "scikit-learn", "scipy"]
 
@@ -41,6 +45,12 @@ C_MODS = [
     for mod in ["cluster", "cn", "en", "rdf"]
 ]
 
+with open(PATH / "exma" / "__init__.py") as fp:
+    for line in fp.readlines():
+        if line.startswith("__version__ = "):
+            VERSION = line.split("=", 1)[-1].replace('"', "").strip()
+            break
+
 with open("README.md") as file_readme:
     LONG_DESCRIPTION = file_readme.read()
 
@@ -51,7 +61,7 @@ with open("README.md") as file_readme:
 
 setup(
     name="exma",
-    version="0.3.0",
+    version=VERSION,
     description="extendable molecular dynamics analyzer",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",

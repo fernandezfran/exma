@@ -25,14 +25,14 @@ __version__ = "0.3.0"
 # IMPORTS
 # ======================================================================
 
-from exma.positions import Positions, spherical_nanoparticle, replicate  # noqa
-from exma.cluster import DBSCAN  # noqa
-from exma.cn import monoatomic, diatomic  # noqa
-from exma.electrochemistry import Electrochemistry  # noqa
-from exma.en import EffectiveNeighbors  # noqa
-from exma.msd import monoatomic, diatomic  # noqa
-from exma.rdf import monoatomic, diatomic  # noqa
-from exma.reader import xyz, lammpstrj  # noqa
-from exma.sro import sro  # noqa
-from exma.statistics import block_average  # noqa
-from exma.writer import xyz, lammpstrj, in_lammps  # noqa
+from .io.reader import XYZ, LAMMPS  # noqa
+from .io.writer import XYZ, LAMMPS, in_lammps  # noqa
+from .msd import monoatomic, diatomic  # noqa
+from .rdf import monoatomic, diatomic  # noqa
+from .cn import monoatomic, diatomic  # noqa
+from .cluster import DBSCAN  # noqa
+from .en import EffectiveNeighbors  # noqa
+from .electrochemistry import Electrochemistry  # noqa
+from .sro import sro  # noqa
+from .positions import Positions, spherical_nanoparticle, replicate  # noqa
+from .statistics import block_average  # noqa

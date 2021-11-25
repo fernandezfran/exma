@@ -40,6 +40,33 @@ exma API
    :show-inheritance:
    :member-order: bysource
 
+``exma.io`` module
+------------------
+
+.. automodule:: exma.io
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :member-order: bysource
+
+``exma.io.reader`` module
+-------------------------
+
+.. automodule:: exma.io.reader
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :member-order: bysource
+
+``exma.io.writer`` module
+-------------------------
+
+.. automodule:: exma.io.writer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :member-order: bysource
+
 ``exma.msd`` module
 -------------------
 
@@ -67,15 +94,6 @@ exma API
    :show-inheritance:
    :member-order: bysource
 
-``exma.reader`` module
-----------------------
-
-.. automodule:: exma.reader
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :member-order: bysource
-
 ``exma.sro`` module
 -------------------
 
@@ -89,24 +107,6 @@ exma API
 --------------------------
 
 .. automodule:: exma.statistics
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :member-order: bysource
-
-``exma.writer`` module
-----------------------
-
-.. automodule:: exma.writer
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :member-order: bysource
-
-``exma.lib`` subpackage
------------------------
-
-.. automodule:: exma.lib
    :members:
    :undoc-members:
    :show-inheritance:
