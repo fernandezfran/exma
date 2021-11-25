@@ -31,15 +31,6 @@ exma API
    :show-inheritance:
    :member-order: bysource
 
-``exma.en`` module
-------------------
-
-.. automodule:: exma.en
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :member-order: bysource
-
 ``exma.io`` module
 ------------------
 
@@ -89,15 +80,6 @@ exma API
 -------------------
 
 .. automodule:: exma.rdf
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :member-order: bysource
-
-``exma.sro`` module
--------------------
-
-.. automodule:: exma.sro
    :members:
    :undoc-members:
    :show-inheritance:
