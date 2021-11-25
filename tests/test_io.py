@@ -233,3 +233,20 @@ def test_in_lammps():
         assert f.readline() == "\n"
         assert f.readline() == "Atoms\n"
         assert f.readline() == "\n"
+
+
+def test_read_log_lammps():
+    """Test the read of log.lammps"""
+    log = exma.io.reader.read_log_lammps(logname=TEST_DATA_PATH / "log.test")
+
+    np.testing.assert_array_almost_equal(log["Step"], np.arange(0, 11))
+    np.testing.assert_almost_equal(np.mean(log["Press"]), 14677.928, decimal=3)
+    np.testing.assert_almost_equal(
+        np.mean(log["PotEng"]), -6847.817, decimal=3
+    )
+    np.testing.assert_almost_equal(
+        np.mean(log["TotEng"]), -6847.817, decimal=3
+    )
+    np.testing.assert_almost_equal(
+        np.mean(log["Volume"]), 1310.3907, decimal=4
+    )

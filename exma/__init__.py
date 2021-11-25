@@ -25,7 +25,7 @@ __version__ = "0.3.0"
 # IMPORTS
 # ======================================================================
 
-from .io.reader import XYZ, LAMMPS  # noqa
+from .io.reader import XYZ, LAMMPS, read_log_lammps  # noqa
 from .io.writer import XYZ, LAMMPS, in_lammps  # noqa
 from .msd import monoatomic, diatomic  # noqa
 from .rdf import monoatomic, diatomic  # noqa

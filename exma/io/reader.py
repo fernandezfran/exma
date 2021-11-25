@@ -18,7 +18,7 @@
 
 import numpy as np
 
-# import pandas as pd #  para read_log_lammps():
+import pandas as pd
 
 # ============================================================================
 # CLASSES
@@ -82,8 +82,8 @@ class XYZ(TrajectoryReader):
         Returns
         -------
         dict
-            with the keys `natoms`, `type`, `x`, `y`, `z`, the number of
-            atoms (int), the element of each atom (str) and the x, y, z
+            frame with the keys `natoms`, `type`, `x`, `y`, `z`, the number
+            of atoms (int), the element of each atom (str) and the x, y, z
             positions of the atoms (np.array), respectively. If
             `ftype="property"` was selected, then the key `property` is
             also a key. On the other hand, if `ftype="image"` was selected,
@@ -122,29 +122,29 @@ class XYZ(TrajectoryReader):
                 iy.append(xyzline[5])
                 iz.append(xyzline[6])
 
-        dict_ = {
+        frame = {
             "natoms": natoms,
             "type": atom_type,
             "x": np.asarray(x, dtype=np.float32),
             "y": np.asarray(y, dtype=np.float32),
             "z": np.asarray(z, dtype=np.float32),
         }
-        dict_["property"] = (
+        frame["property"] = (
             np.asarray(prop, dtype=np.float32)
             if self.ftype == "property"
             else None
         )
-        dict_["ix"] = (
+        frame["ix"] = (
             np.asarray(ix, dtype=np.intc) if self.ftype == "image" else None
         )
-        dict_["iy"] = (
+        frame["iy"] = (
             np.asarray(iy, dtype=np.intc) if self.ftype == "image" else None
         )
-        dict_["iz"] = (
+        frame["iz"] = (
             np.asarray(iz, dtype=np.intc) if self.ftype == "image" else None
         )
 
-        return dict_
+        return frame
 
 
 class LAMMPS(TrajectoryReader):
@@ -165,8 +165,8 @@ class LAMMPS(TrajectoryReader):
         Returns
         -------
         dict
-            with the list of attributes selected by the `dump` command of
-            LAMMPS for each atom as keys and the corresponding frame values
+            frame with the list of attributes selected by the `dump` command
+            of LAMMPS for each atom as keys and the corresponding frame values
             as `np.array`; except the number of atoms, which is an `int`.
 
         Raises
@@ -190,28 +190,26 @@ class LAMMPS(TrajectoryReader):
             box_size.append(np.float32(lohi[1]) - np.float32(lohi[0]))
         box = np.array(box_size)
 
-        cell_dict = {"natoms": natoms, "box": box}
+        cell = {"natoms": natoms, "box": box}
 
         keys = self.file_traj.readline().split()[2:]
-        frame_dict = {key: list() for key in keys}
+        frame = {key: list() for key in keys}
         for _ in range(natoms):
             line = self.file_traj.readline().split()
             for j, element in enumerate(line):
-                frame_dict[keys[j]].append(element)
+                frame[keys[j]].append(element)
 
         # automatic way to know the type of data (between int or float)
         dtypes = [
             np.float32 if "." in element else np.intc for element in line
         ]
 
-        frame_dict = {
+        frame = {
             key: np.array(value, dtype=dtype)
-            for key, value, dtype in zip(
-                frame_dict.keys(), frame_dict.values(), dtypes
-            )
+            for key, value, dtype in zip(frame.keys(), frame.values(), dtypes)
         }
 
-        return dict(cell_dict, **frame_dict)
+        return dict(cell, **frame)
 
 
 # ============================================================================
@@ -219,6 +217,40 @@ class LAMMPS(TrajectoryReader):
 # ============================================================================
 
 
-def read_log_lammps():
-    """Not implemented yet."""
-    raise NotImplementedError("To be implemented soon.")
+def read_log_lammps(logname="log.lammps"):
+    """Read log file of lammps.
+
+    It only works if the first thermo parameter is `Step`.
+
+    Parameters
+    ----------
+    logname : str, defalut="log.lammps".
+        the name of the file where the thermodynamic info was logged.
+
+    Returns
+    -------
+    pd.DataFrame
+        with the columns corresponding to the thermodynamic info.
+    """
+    with open(logname, "r") as flog:
+        # ignore all previous info
+        line = flog.readline()
+        while line.startswith("Step ") is False:
+            line = flog.readline()
+
+        keys = list(line.split())
+        thermo = {key: list() for key in keys}
+
+        # append info until subsequent info to be ignored
+        line = flog.readline()
+        while line.startswith("Loop time") is False:
+            for i, element in enumerate(line.split()):
+                thermo[keys[i]].append(element)
+            line = flog.readline()
+
+        thermo = {
+            key: np.array(value, dtype=np.float32)
+            for key, value in zip(thermo.keys(), thermo.values())
+        }
+
+        return pd.DataFrame(thermo)
