@@ -93,56 +93,60 @@ class XYZ(TrajectoryReader):
         EOFError
             If there are no more frames to read
         """
-        natoms = self.file_traj.readline()
-        if not natoms:
-            raise EOFError("There is no more frames to read")
+        try:
+            natoms = self.file_traj.readline()
+            if not natoms:
+                raise EOFError("There is no more frames to read")
 
-        natoms = np.intc(natoms)
-        self.file_traj.readline()  # usually a comment in .xyz files
+            natoms = np.intc(natoms)
+            self.file_traj.readline()  # usually a comment in .xyz files
 
-        atom_type = []
-        x, y, z = [], [], []
-        prop = [] if self.ftype == "property" else None
-        ix, iy, iz = [], [], [] if self.ftype == "image" else None
-        for i in range(natoms):
-            xyzline = self.file_traj.readline().split()
+            atom_type = []
+            x, y, z = [], [], []
+            prop = [] if self.ftype == "property" else None
+            ix, iy, iz = [], [], [] if self.ftype == "image" else None
+            for i in range(natoms):
+                xyzline = self.file_traj.readline().split()
 
-            atom_type.append(xyzline[0])
+                atom_type.append(xyzline[0])
 
-            x.append(xyzline[1])
-            y.append(xyzline[2])
-            z.append(xyzline[3])
+                x.append(xyzline[1])
+                y.append(xyzline[2])
+                z.append(xyzline[3])
 
-            if self.ftype == "property":
-                prop.append(xyzline[4])
-            elif self.ftype == "image":
-                ix.append(xyzline[4])
-                iy.append(xyzline[5])
-                iz.append(xyzline[6])
+                if self.ftype == "property":
+                    prop.append(xyzline[4])
+                elif self.ftype == "image":
+                    ix.append(xyzline[4])
+                    iy.append(xyzline[5])
+                    iz.append(xyzline[6])
 
-        dict_ = {
-            "natoms": natoms,
-            "type": atom_type,
-            "x": np.asarray(x, dtype=np.float32),
-            "y": np.asarray(y, dtype=np.float32),
-            "z": np.asarray(z, dtype=np.float32),
-        }
-        dict_["property"] = (
-            np.asarray(prop, dtype=np.float32)
-            if self.ftype == "property"
-            else None
-        )
-        dict_["ix"] = (
-            np.asarray(ix, dtype=np.intc) if self.ftype == "image" else None
-        )
-        dict_["iy"] = (
-            np.asarray(iy, dtype=np.intc) if self.ftype == "image" else None
-        )
-        dict_["iz"] = (
-            np.asarray(iz, dtype=np.intc) if self.ftype == "image" else None
-        )
+            dict_ = {
+                "natoms": natoms,
+                "type": atom_type,
+                "x": np.asarray(x, dtype=np.float32),
+                "y": np.asarray(y, dtype=np.float32),
+                "z": np.asarray(z, dtype=np.float32),
+            }
+            dict_["property"] = (
+                np.asarray(prop, dtype=np.float32)
+                if self.ftype == "property"
+                else None
+            )
+            dict_["ix"] = (
+                np.asarray(ix, dtype=np.intc) if self.ftype == "image" else None
+            )
+            dict_["iy"] = (
+                np.asarray(iy, dtype=np.intc) if self.ftype == "image" else None
+            )
+            dict_["iz"] = (
+                np.asarray(iz, dtype=np.intc) if self.ftype == "image" else None
+            )
 
-        return dict_
+            return dict_
+
+        except ValueError as e:
+            raise ValueError("File might be broken")
 
 
 class LAMMPS(TrajectoryReader):
