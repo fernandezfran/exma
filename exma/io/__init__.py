@@ -52,7 +52,6 @@ def xyz2lammpstrj(xyztraj, lammpstrj_name, cell_info, xyzftype="xyz"):
         while True:
             xyz_frame = xyz.read_frame()
 
-            cell_info["id"] = np.arange(1, xyz_frame["natoms"] + 1)
             xyz_frame["type"] = [
                 cell_info["type"][t] for t in xyz_frame["type"]
             ]
@@ -61,6 +60,8 @@ def xyz2lammpstrj(xyztraj, lammpstrj_name, cell_info, xyzftype="xyz"):
                 for key, value in zip(xyz_frame.keys(), xyz_frame.values())
                 if value is not None
             }
+            cell_info["id"] = np.arange(1, xyz_frame["natoms"] + 1)
+            del cell_info["type"]
 
             lmp.write_frame(dict(cell_info, **xyz_frame))
 
@@ -74,9 +75,38 @@ def xyz2inlmp():
     raise NotImplementedError("To be implemented soon.")
 
 
-def lammpstrj2xyz():
-    """Not implemented yet."""
-    raise NotImplementedError("To be implemented soon.")
+def lammpstrj2xyz(lammpstrjtraj, xyz_name, type_info):
+    """Rewrite a lammpstrj file to an xyz file.
+
+    Parameters
+    ----------
+    lammpstrjtraj : str
+        the name of the file with the lammpstrj trajectory.
+
+    xyz_name : str
+        the name of the file with the lammpstrj trajectory.
+
+    type_info : dict
+        a correspondence between the elements id present in lammpstrj file
+        with str element, e.g. {1: "Sn", 2: "O"}
+    """
+    lmp = reader.LAMMPS(lammpstrjtraj)
+    xyz = writer.XYZ(xyz_name)
+    try:
+        while True:
+            lmp_frame = lmp.read_frame()
+            lmp_frame["type"] = [type_info[t] for t in lmp_frame["type"]]
+
+            xyz_frame = {
+                key: value
+                for key, value in zip(lmp_frame.keys(), lmp_frame.values())
+                if key in ["natoms", "type", "x", "y", "z", "ix", "iy", "iz"]
+            }
+            xyz.write_frame(xyz_frame)
+
+    except EOFError:
+        lmp.file_close()
+        xyz.file_close()
 
 
 def lammpstrj2inlmp():
