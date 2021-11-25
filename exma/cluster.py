@@ -138,9 +138,24 @@ class DBSCAN:
             **kwargs,
         ).fit(distrix)
 
-        id_cluster = np.asarray(db.labels_, dtype=np.intc)
+        self.id_cluster_ = np.asarray(db.labels_, dtype=np.intc)
 
-        return id_cluster
+        return self.id_cluster_
+
+    def characterize(self):
+        """Characterization in number of clusters and isolated.
+
+        Returns
+        -------
+        tuple
+            with the number of clusters and the number of isolated atoms.
+        """
+        isolated = np.count_nonzero(self.id_cluster_ == -1)
+
+        uniques = np.unique(self.id_cluster_).size
+        clusters = uniques if isolated == 0 else uniques - 1
+
+        return (clusters, isolated)
 
 
 class EffectiveNeighbors:

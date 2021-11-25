@@ -19,8 +19,8 @@ import numpy as np
 # ======================================================================
 
 
-def test_dbscan():
-    """Test the dbscan cluster analyzer."""
+def test_dbscan_id():
+    """Test the dbscan cluster ids."""
     idref = np.array([0, 0, -1])
 
     box = np.array([1.0, 1.0, 1.0])
@@ -31,6 +31,24 @@ def test_dbscan():
     result = exma.cluster.DBSCAN(rcut).of_this_frame(box, types, xyz, 1)
 
     np.testing.assert_array_equal(result, idref)
+
+
+def test_dbscan_characterize():
+    """Test the dbscan cluster simple characterize."""
+    isolatedref = 1
+    clustersref = 1
+
+    box = np.array([1.0, 1.0, 1.0])
+    rcut = 0.2
+    types = np.array([1, 1, 1])
+    xyz = np.array([0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.45, 0.55, 0.0])
+
+    dbscan = exma.cluster.DBSCAN(rcut)
+    dbscan.of_this_frame(box, types, xyz, 1)
+    isolated, clusters = dbscan.characterize()
+
+    assert isolated == isolatedref
+    assert clusters == clustersref
 
 
 def test_effective_neighbors():
