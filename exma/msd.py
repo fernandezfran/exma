@@ -16,245 +16,212 @@
 # IMPORTS
 # ======================================================================
 
+import warnings
+
 import numpy as np
+
+import pandas as pd
+
+from . import _traj_sorter
+from .io import reader
 
 # ======================================================================
 # CLASSES
 # ======================================================================
 
 
-class msd:
-    """Mean Square Displacement.
+class MeanSquareDisplacement:
+    """Mean Square Displacement (MSD) implementation.
+
+    The MSD is a measure of the deviation of the position of an atom
+    with respect to its reference position over time. At each time value
+    `t`, the MSD is defined as an ensemble average over all atoms to be
+    considered.
+
+    Parameters
+    ----------
+    ftraj : str
+        the string corresponding with the filename with the molecular
+        dynamics trajectory
+
+    dt : int or float
+        the timestep, how separated the frames are from each other in
+        the corresponding time units
+
+    type_e : int or str
+        the type of the element for which the msd is going to be calculated
+
+    start : int, default=0
+        the initial frame
+
+    stop : int, default=-1
+        the last frame, by default -1 means the last
+
+    step : int, default=1
+        the incrementation if it is necessary to skip frames
+
+    xyztype : str, default="xyz"
+        the string that describes the type of xyz file, to pass to reader, it
+        is only necessary if ftraj ends with .xyz extension
 
     Notes
     -----
-    Remember that trajectories must be sorted with the same order as
-    reference positions (no problem with .xyz files, but with .lammpstrj
-    file a np.sort / np.argsort must be used before the calculation).
-    """
-
-
-class monoatomic(msd):
-    """MSD of a monoatomic system.
-
-    Parameters
-    ----------
-    natoms : int
-        the number of atoms
-
-    box_size : np.array
-        with the box lenght in x, y, z
-
-    x_ref : np.array
-        the reference positions in the SoA convention (i.e. first all the x,
-        then y and then z)
-
-    image_ref : np.array, default=None
-        reference image, same as positions
-    """
-
-    def __init__(self, natoms, box_size, x_ref, image_ref=None):
-
-        self.natoms = natoms
-
-        if image_ref is not None:
-            x, y, z = np.split(x_ref, 3)
-            ix, iy, iz = np.split(image_ref, 3)
-            x += box_size[0] * ix
-            y += box_size[1] * iy
-            z += box_size[2] * iz
-            x_ref = np.concatenate((x, y, z))
-
-        self.ref = np.split(x_ref, 3)
-        self.frame_ = 0
-
-    def wrapped(self, box_size, positions, image):
-        """If trajectory is wrapped inside the simulation box.
-
-        Parameters
-        ----------
-        box_size : np.array
-            with the box lenght in x, y, z
-
-        positions : np.array
-            the positions in the SoA convention (i.e. first all the x,
-            then y and then z)
-
-        image : np.array
-            same as positions
-
-        Returns
-        -------
-        np.array
-            with the frame in the first value and the msd in the second
-        """
-        msd = 0.0
-        positions = np.split(positions, 3)
-        image = np.split(image, 3)
-        meansd = np.zeros(self.natoms, dtype=np.float32)
-        for i in range(3):
-            xx = positions[i] + image[i] * box_size[i] - self.ref[i]
-            meansd += xx * xx
-        msd = np.sum(meansd) / self.natoms
-
-        self.frame_ += 1
-
-        return np.array([self.frame_, msd], dtype=np.float32)
-
-    def unwrapped(self, positions):
-        """If the trajectory is unwrapped outside of the simulation box.
-
-        Parameters
-        ----------
-        positions : np.array
-            the positions in the SoA convention (i.e. first all the x,
-            then y and then z)
-
-        Returns
-        -------
-        np.array
-            with the frame in the first value and the msd in the second
-        """
-        msd = 0.0
-        positions = np.split(positions, 3)
-        meansd = np.zeros(self.natoms, dtype=np.float32)
-        for i in range(3):
-            xx = positions[i] - self.ref[i]
-            meansd += xx * xx
-        msd = np.sum(meansd) / self.natoms
-
-        self.frame_ += 1
-
-        return np.array([self.frame_, msd], dtype=np.float32)
-
-
-class diatomic(msd):
-    """MSD of a diatomic system.
-
-    Parameters
-    ----------
-    natoms : int
-        the number of atoms in the frame
-
-    box_size : np.array
-        with the box lenght in x, y, z
-
-    atom_type : list
-        the type of the atoms
-
-    x_ref : np.array
-        the reference positions in the SoA convention (i.e. first all
-        the x, then y and then z)
-
-    atom_type_a : int
-        one type of atom
-
-    atom_type_b : int
-        another type of atom
-
-    image_ref : np.array, default=None
-        reference image, same as positions
+    The trajectory must be unwrapped outside the simulation cell, if it
+    is wrapped, the image to which it corresponds each atom must be found
+    in the trajectory file.
     """
 
     def __init__(
-        self,
-        natoms,
-        box_size,
-        atom_type,
-        x_ref,
-        atom_type_a,
-        atom_type_b,
-        image_ref=None,
+        self, ftraj, dt, type_e, start=0, stop=-1, step=1, xyztype="xyz"
     ):
-        self.natoms = natoms
+        self.ftraj = ftraj
+        self.xyztype = xyztype
 
-        if image_ref is not None:
-            x, y, z = np.split(x_ref, 3)
-            ix, iy, iz = np.split(image_ref, 3)
-            x += box_size[0] * ix
-            y += box_size[1] * iy
-            z += box_size[2] * iz
-            x_ref = np.concatenate((x, y, z))
+        self.dt = dt
+        self.type_e = type_e
 
-        self.ref = np.split(x_ref, 3)
-        self.atom_type_a = atom_type_a
-        self.atom_type_b = atom_type_b
+        self.start = start
+        self.stop = stop
+        self.step = step
 
-        self.frame_ = 0
-        self.n_a_ = np.count_nonzero(atom_type == atom_type_a)
-        self.n_b_ = np.count_nonzero(atom_type == atom_type_b)
+    @property
+    def _configure(self):
+        """Configure the calculation.
 
-    def wrapped(self, box_size, atom_type, positions, image):
-        """If trajectory is wrapped inside the simulation box.
+        It defines the trajectory reader type (LAMMPS or XYZ) depending on
+        the extension or raises a ValueError.
+        """
+        # configure the frame at which stop the calculation
+        self.stop = np.inf if self.stop == -1 else self.stop
+
+        # define the trajectory reader
+        fextension = self.ftraj.split(".")[-1]
+        if fextension not in ["lammpstrj", "xyz"]:
+            raise ValueError(
+                "The file must have the extension .xyz or .lammpstrj"
+            )
+
+        self.traj_ = (
+            reader.LAMMPS(self.ftraj)
+            if fextension == "lammpstrj"
+            else reader.XYZ(self.ftraj, self.xyztype)
+        )
+
+    def _reference_frame(self, frame):
+        """Define the reference frame."""
+        # mask of atoms of type e
+        self.mask_e_ = frame["type"] == self.type_e
+
+        # reference positions
+        self.xref_ = frame["x"][self.mask_e_]
+        self.yref_ = frame["y"][self.mask_e_]
+        self.zref_ = frame["z"][self.mask_e_]
+        if "ix" in frame.keys():
+            self.xref_ = (
+                self.xref_ + frame["box"][0] * frame["ix"][self.mask_e_]
+            )
+            self.yref_ = (
+                self.yref_ + frame["box"][1] * frame["iy"][self.mask_e_]
+            )
+            self.zref_ = (
+                self.zref_ + frame["box"][2] * frame["iz"][self.mask_e_]
+            )
+
+    def _on_this_frame(self, frame):
+        """Calculate the msd of a single frame."""
+        x = frame["x"][self.mask_e_]
+        y = frame["y"][self.mask_e_]
+        z = frame["z"][self.mask_e_]
+
+        if "ix" in frame.keys():
+            x = x + frame["box"][0] * frame["ix"][self.mask_e_]
+            y = y + frame["box"][1] * frame["iy"][self.mask_e_]
+            z = z + frame["box"][2] * frame["iz"][self.mask_e_]
+
+        x = x - self.xref_
+        y = y - self.yref_
+        z = z - self.zref_
+
+        msd = x * x + y * y + z * z
+        return np.mean(msd)  # np.sum(msd) / self.natoms_e_
+
+    def calculate(self, box=None):
+        """Calculate the MSD.
 
         Parameters
         ----------
-        box_size : np.array
-            with the box lenght in x, y, z
-
-        atom_type : list
-            the type of the atoms
-
-        positions : np.array
-            the positions in the SoA convention (i.e. first all the x,
-            then y and then z)
-
-        image : np.array
-            same as positions
+        box : np.array
+            the lenght of the box in each x, y, z direction, required when
+            the trajectory is in an xyz file.
 
         Returns
         -------
-        np.array
-            with the frame in the first value, the msd of atom type a in the
-            second, the msd of atom type b in the third and the total msd in
-            the fourth.
+        pd.DataFrame
+            a dataframe with the time and the msd as columns.
         """
-        msd_a, msd_b, msd_t = 0.0, 0.0, 0.0
+        imed = 0
+        self._configure
 
-        positions = np.split(positions, 3)
-        image = np.split(image, 3)
-        meansd = np.zeros(self.natoms, dtype=np.float32)
-        for i in range(3):
-            xx = positions[i] + image[i] * box_size[i] - self.ref[i]
-            meansd += xx * xx
+        mean_square_displacement = []
+        try:
+            for _ in range(self.start):
+                self.traj_.read_frame()
 
-        msd_t = np.sum(meansd) / self.natoms
-        msd_a = np.sum(meansd[atom_type == self.atom_type_a]) / self.n_a_
-        msd_b = np.sum(meansd[atom_type == self.atom_type_b]) / self.n_b_
+            frame = self.traj_.read_frame()
 
-        self.frame_ += 1
-        return np.array([self.frame_, msd_a, msd_b, msd_t], dtype=np.float32)
+            # add the box if not in frame
+            frame["box"] = box if box is not None else frame["box"]
 
-    def unwrapped(self, atom_type, positions):
-        """If the trajectory is unwrapped outside of the simulation box.
+            # sort the traj if is not sorted, xyz are sorted by construction
+            if "id" in frame.keys():
+                frame = (
+                    _traj_sorter._sort_traj(frame)
+                    if not _traj_sorter._is_sorted(frame["id"])
+                    else frame
+                )
 
-        Parameters
-        ----------
-        atom_type : list
-            the type of the atoms
+            self._reference_frame(frame)
 
-        positions : np.array
-            the positions in the SoA convention (i.e. first all the x,
-            then y and then z)
+            while imed < self.stop / self.step:
+                if imed % self.step == 0:
+                    # add the box if not in frame
+                    frame["box"] = box if box is not None else frame["box"]
 
-        Returns
-        -------
-        np.array
-            with the frame in the first value, the msd of atom type a in the
-            second, the msd of atom type b in the third and the total msd in
-            the fourth.
-        """
-        msd_a, msd_b, msd_t = 0.0, 0.0, 0.0
+                    # sort the traj if is not sorted
+                    if "id" in frame.keys():
+                        frame = (
+                            _traj_sorter._sort_traj(frame)
+                            if not _traj_sorter._is_sorted(frame["id"])
+                            else frame
+                        )
 
-        positions = np.split(positions, 3)
-        meansd = np.zeros(self.natoms, dtype=np.float32)
-        for i in range(3):
-            xx = positions[i] - self.ref[i]
-            meansd += xx * xx
+                    mean_square_displacement.append(self._on_this_frame(frame))
+                    imed += 1
 
-        msd_t = np.sum(meansd) / self.natoms
-        msd_a = np.sum(meansd[atom_type == self.atom_type_a]) / self.n_a_
-        msd_b = np.sum(meansd[atom_type == self.atom_type_b]) / self.n_b_
+                frame = self.traj_.read_frame()
 
-        self.frame_ += 1
-        return np.array([self.frame_, msd_a, msd_b, msd_t], dtype=np.float32)
+        except EOFError:
+            if self.stop != np.inf:
+                warnings.warn(
+                    f"the trajectory does not read until {self.stop}"
+                )
+
+        finally:
+            self.traj_.file_close()
+
+            self.df_msd_ = pd.DataFrame(
+                {
+                    "t": self.dt * np.arange(0, imed),
+                    "msd": np.array(mean_square_displacement),
+                }
+            )
+
+            return self.df_msd_
+
+    def save(self):
+        """To be implemented soon."""
+        raise NotImplementedError("To be implemented soon.")
+
+    def plot(self):
+        """To be implemented soon."""
+        raise NotImplementedError("To be implemented soon.")

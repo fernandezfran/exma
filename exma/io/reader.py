@@ -124,7 +124,7 @@ class XYZ(TrajectoryReader):
 
         frame = {
             "natoms": natoms,
-            "type": atom_type,
+            "type": np.asarray(atom_type, dtype=str),
             "x": np.asarray(x, dtype=np.float32),
             "y": np.asarray(y, dtype=np.float32),
             "z": np.asarray(z, dtype=np.float32),

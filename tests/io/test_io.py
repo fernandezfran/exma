@@ -41,7 +41,7 @@ TEST_DATA_PATH = pathlib.Path(
         (
             {
                 "natoms": 5,
-                "type": 5 * ["H"],
+                "type": np.array(5 * ["H"]),
                 "x": np.array([2.67583, 0.93241, 1.23424, 4.42636, 3.00023]),
                 "y": np.array([0.05432, 0.89325, 0.43142, 0.23451, 0.55556]),
                 "z": np.array([1.15145, 2.31451, 3.96893, 4.96905, 5.98693]),
@@ -51,7 +51,7 @@ TEST_DATA_PATH = pathlib.Path(
         (
             {
                 "natoms": 5,
-                "type": 5 * ["H"],
+                "type": np.array(5 * ["H"]),
                 "x": np.array([2.67583, 0.93241, 1.23424, 4.42636, 3.00023]),
                 "y": np.array([0.05432, 0.89325, 0.43142, 0.23451, 0.55556]),
                 "z": np.array([1.15145, 2.31451, 3.96893, 4.96905, 5.98693]),
@@ -62,7 +62,7 @@ TEST_DATA_PATH = pathlib.Path(
         (
             {
                 "natoms": 5,
-                "type": 5 * ["H"],
+                "type": np.array(5 * ["H"]),
                 "x": np.array([2.67583, 0.93241, 1.23424, 4.42636, 3.00023]),
                 "y": np.array([0.05432, 0.89325, 0.43142, 0.23451, 0.55556]),
                 "z": np.array([1.15145, 2.31451, 3.96893, 4.96905, 5.98693]),
@@ -87,7 +87,7 @@ def test_XYZ(traj_dict, ftype):
     rxyz.file_close()
 
     assert result["natoms"] == traj_dict["natoms"]
-    assert result["type"] == traj_dict["type"]
+    np.testing.assert_array_equal(result["type"], traj_dict["type"])
     np.testing.assert_array_almost_equal(result["x"], traj_dict["x"])
     np.testing.assert_array_almost_equal(result["y"], traj_dict["y"])
     np.testing.assert_array_almost_equal(result["z"], traj_dict["z"])
