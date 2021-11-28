@@ -461,3 +461,31 @@ def test_MeanSquareDisplacement_calculate(fname, box, msd_res):
 
     np.testing.assert_array_almost_equal(result["t"], 0.005 * np.arange(200))
     np.testing.assert_array_almost_equal(result["msd"], msd_res)
+
+
+@pytest.mark.parametrize(
+    "fname",
+    ["liquid.out", "solid.xtc", "gas.lammsptrj", "dump.asd.123.lammptsrj"],
+)
+def test_MeanSquareDisplacement_raises(fname):
+    """Test the MSD ValueError raise."""
+    with pytest.raises(ValueError):
+        exma.msd.MeanSquareDisplacement(fname, 1000, "H").calculate()
+
+
+@pytest.mark.parametrize(
+    ("fname", "box"),
+    [("liquid.xyz", np.full(3, 8.54988)), ("solid.xyz", np.full(3, 7.46901))],
+)
+def test_MeanSquareDisplacement_warning(fname, box):
+    """Test the MSD EOF warning."""
+    with pytest.warns(UserWarning):
+        result = exma.msd.MeanSquareDisplacement(
+            str(TEST_DATA_PATH / fname),
+            0.005,
+            "Ar",
+            start=190,
+            stop=210,
+            step=5,
+            xyztype="image",
+        ).calculate(box)

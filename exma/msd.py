@@ -45,8 +45,8 @@ class MeanSquareDisplacement:
         dynamics trajectory
 
     dt : int or float
-        the timestep, how separated the frames are from each other in
-        the corresponding time units
+        the timestep, how separated the measured frames are from each
+        other, in the corresponding time units
 
     type_e : int or str
         the type of the element for which the msd is going to be calculated

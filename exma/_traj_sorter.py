@@ -23,19 +23,17 @@ import numpy as np
 # ======================================================================
 
 
-def _is_sorted(x):
-    """Tells if the array x is sorted (-> True) or not (-> False).
-
-    `x` is usually the frame['id'] for .lammpstrj files.
-    """
-    return (np.diff(x) >= 0).all()
+def _is_sorted(idx):
+    """Tells if the array x is sorted (-> True) or not (-> False)."""
+    return (np.diff(idx) >= 0).all()
 
 
-def _sort_traj(frame):
+def _sort_traj(frame, dontsort=("natoms", "box")):
     """Sort all the traj from the sortening of the atoms id."""
     id_argsort = np.argsort(frame["id"])
+
     for key in frame.keys():
-        if key in ["natoms", "box"]:
-            continue
-        frame[key] = frame[key][id_argsort]
+        frame[key] = (
+            frame[key][id_argsort] if key not in dontsort else frame[key]
+        )
     return frame
