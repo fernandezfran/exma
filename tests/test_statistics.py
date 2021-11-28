@@ -21,9 +21,9 @@ import numpy as np
 
 def test_block_average():
     """Test the estimation of an error."""
-    result = exma.statistics.block_average(
+    result = exma.statistics.BlockAverage(
         [3.14, 3.15, 3.13, 3.13, 3.15, 3.15, 3.16, 3.12]
-    )
+    ).calculate()
 
     np.testing.assert_array_equal(result["data_size"], np.array([8, 4]))
     np.testing.assert_array_almost_equal(

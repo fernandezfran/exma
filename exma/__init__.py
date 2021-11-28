@@ -34,4 +34,4 @@ from .en import EffectiveNeighbors  # noqa
 from .cluster import DBSCAN, sro  # noqa
 from .electrochemistry import Electrochemistry  # noqa
 from .positions import Positions, spherical_nanoparticle, replicate  # noqa
-from .statistics import block_average  # noqa
+from .statistics import BlockAverage  # noqa
