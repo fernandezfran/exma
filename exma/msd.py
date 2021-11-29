@@ -218,10 +218,10 @@ class MeanSquareDisplacement:
 
             return self.df_msd_
 
-    def save(self):
+    def plot(self):
         """To be implemented soon."""
         raise NotImplementedError("To be implemented soon.")
 
-    def plot(self):
+    def save(self):
         """To be implemented soon."""
         raise NotImplementedError("To be implemented soon.")

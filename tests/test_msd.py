@@ -454,7 +454,7 @@ TEST_DATA_PATH = pathlib.Path(
     ],
 )
 def test_MeanSquareDisplacement_calculate(fname, box, msd_res):
-    """Test the MSD."""
+    """Test the MSD calculation in LJ liquid and solid."""
     result = exma.msd.MeanSquareDisplacement(
         str(TEST_DATA_PATH / fname), 0.005, "Ar", start=1, xyztype="image"
     ).calculate(box)
@@ -480,7 +480,7 @@ def test_MeanSquareDisplacement_raises(fname):
 def test_MeanSquareDisplacement_warning(fname, box):
     """Test the MSD EOF warning."""
     with pytest.warns(UserWarning):
-        result = exma.msd.MeanSquareDisplacement(
+        exma.msd.MeanSquareDisplacement(
             str(TEST_DATA_PATH / fname),
             0.005,
             "Ar",
@@ -489,3 +489,15 @@ def test_MeanSquareDisplacement_warning(fname, box):
             step=5,
             xyztype="image",
         ).calculate(box)
+
+
+def test_MeanSquareDisplacement_plot():
+    """Test the MSD plot."""
+    with pytest.raises(NotImplementedError):
+        exma.msd.MeanSquareDisplacement("something.xyz", 1000, "H").plot()
+
+
+def test_MeanSquareDisplacement_save():
+    """Test the MSD save."""
+    with pytest.raises(NotImplementedError):
+        exma.msd.MeanSquareDisplacement("something.xyz", 1000, "H").save()

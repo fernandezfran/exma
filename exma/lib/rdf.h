@@ -3,11 +3,9 @@
 
 #include <math.h>
 
-void monoatomic(const int N, const float *box_size, const float *positions,
-                const int pbc, const float dg, const int nbin, int *gr);
-
-void diatomic(const int N, const float *box_size, const int *atom_type,
-              const int atype_a, const int atype_b, const float *positions,
-              const int pbc, const float dg, const int nbin, int *gr);
+void rdf_acumulate(const int natoms_c, const int natoms_i, const float *box,
+                   const float *x_central, const float *x_interact,
+                   const int pbc, const float dg, const float rmax,
+                   const int nbin, int *gr);
 
 #endif

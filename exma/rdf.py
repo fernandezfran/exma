@@ -6,22 +6,27 @@
 # License: MIT
 #   Full Text: https://github.com/fernandezfran/exma/blob/master/LICENSE
 
-# ======================================================================
+# =============================================================================
 # DOCS
-# ======================================================================
+# =============================================================================
 
 """Radial Distribution Function Calculations."""
 
-# ======================================================================
+# =============================================================================
 # IMPORTS
-# ======================================================================
+# =============================================================================
 
 import ctypes as ct
 import os
 import pathlib
 import sysconfig
+import warnings
 
 import numpy as np
+
+import pandas as pd
+
+from .io import reader
 
 # =============================================================================
 # CONSTANTS
@@ -35,282 +40,248 @@ PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
 # ============================================================================
 
 
-class monoatomic:
-    """RDF of a monoatomic system.
+class RadialDistributionFunction:
+    r"""Radial Distribution Function (RDF) implementation.
+
+    The RDF is a descriptor of the variation of density of a system in
+    function of distance from a reference atom. It gives the probability
+    of finding a particle, relative to an ideal gas, at a given distance.
+
+    This microscopic information gives global information about the system,
+    for example, if in an RDF plot the peaks are well defined, it means that
+    the system is behaving like a solid; on the other hand, if the peaks are
+    broadened and decrease in intensity as the distance increases, tending
+    to oscillate around 1, it means that the system behaves like a liquid;
+    a straight line at 1 is an ideal gas.
 
     Parameters
     ----------
-    natoms : int
-        number of atoms
+    ftraj : str
+        the string corresponding with the filename with the molecular
+        dynamics trajectory
 
-    box_size : np.array
-        the box size in x, y, z
-
-    nbin : int
-        number of bins in the histogram
-
-    pbc : bool, default=True
-        True if pbc must be considered, False if not
-    """
-
-    def __init__(self, natoms, box_size, nbin, pbc=True):
-
-        box_size = box_size.astype(np.float32)
-
-        self.natoms = natoms
-        self.nbin = nbin
-        self.pbc = 1 if pbc else 0
-
-        minbox = np.min(box_size)
-        self.volume_ = 0.0
-        self.dg_ = 0.5 * minbox / self.nbin
-        self.gr_ = np.zeros(self.nbin, dtype=np.float32)
-        self.ngr_ = 0
-
-        lib_rdf = ct.CDLL(
-            str(PATH / "lib" / "lib_rdf")
-            + sysconfig.get_config_var("EXT_SUFFIX")
-        )
-        self.rdf_c = lib_rdf.monoatomic
-        self.rdf_c.argtypes = [
-            ct.c_int,
-            ct.c_void_p,
-            ct.c_void_p,
-            ct.c_int,
-            ct.c_float,
-            ct.c_int,
-            ct.c_void_p,
-        ]
-        self.gr_c = (ct.c_int * nbin)()
-
-    def accumulate(self, box_size, positions):
-        """Accumulates the information of each frame.
-
-        Parameters
-        ----------
-        box_size : np.array
-            the box size in x, y, z
-
-        positions : np.array
-            the positions in the SoA convention (i.e. first all the x,
-            then y and then z)
-        """
-        # got to be sure that the box_size and positions type is np.float32
-        # because that is the pointer type in C
-        box_size = box_size.astype(np.float32)
-        self.volume_ += np.prod(box_size)
-        box_size = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
-
-        positions = positions.astype(np.float32)
-        x_c = positions.ctypes.data_as(ct.POINTER(ct.c_void_p))
-
-        self.rdf_c(
-            self.natoms,
-            box_size,
-            x_c,
-            self.pbc,
-            self.dg_,
-            self.nbin,
-            self.gr_c,
-        )
-
-        self.ngr_ += 1
-
-    def end(self, r_mean=None, writes=False, file_rdf="rdf.dat"):
-        """Normalize the accumulated data.
-
-        Parameters
-        ----------
-        r_mean : float, default=None
-            the mean radius of the simulated cluster, only usefull when
-            pbc was passed with a False value.
-
-        writes : bool, default=False
-            if you want (or don't want) to write an output
-
-        file_rdf : str
-            the file were the g(r) is going to be written
-
-        Returns
-        -------
-        tuple of np.array
-            the first np.array is the x of the histogram and the second the
-            g(r)
-        """
-        volume = self.volume_ / self.ngr_
-        if r_mean is not None:
-            volume = 4.0 * np.pi * np.power(r_mean, 3) / 3.0
-        rho = self.natoms / volume
-
-        r = np.zeros(self.nbin)
-        gofr = np.asarray(
-            np.frombuffer(self.gr_c, dtype=np.intc, count=self.nbin)
-        )
-        for i in range(self.nbin):
-            vb = (np.power(i + 1, 3) - np.power(i, 3)) * np.power(self.dg_, 3)
-            nid = 4.0 * np.pi * vb * rho / 3.0
-
-            r[i] = (i + 0.5) * self.dg_
-            self.gr_[i] = np.float32(gofr[i]) / (self.natoms * self.ngr_ * nid)
-
-        if writes is True:
-            file_rdf = open(file_rdf, "w")
-            file_rdf.write("# r, g(r)\n")
-            for i in range(self.nbin):
-                file_rdf.write("{:.4e}\t{:.6e}\n".format(r[i], self.gr_[i]))
-            file_rdf.close()
-
-        return r, self.gr_
-
-
-class diatomic:
-    """RDF of diatomic systems.
-
-    Parameters
-    ----------
-    natoms : int
-        number of atoms
-
-    box_size : np.array
-        the box size in x, y, z
-
-    nbin : int
-        number of bins in the histogram
-
-    atom_type_a : int or str
+    type_c : int or str
         type of central atoms
 
-    atom_type_b : int or str
+    type_i : int or str
         type of interacting atoms
 
+    start : int, default=0
+        the initial frame
+
+    stop : int, default=-1
+        the last frame, by default -1 means the last
+
+    step : int, default=1
+        the incrementation if it is necessary to skip frames
+
+    rmax : float, default=10.0
+        the maximum distance at which to calculate g(r), should not be
+        greater than half of the shortest lenght of the box if pbc are
+        considered
+
+    nbin : int, default=100
+        number of bins in the histogram
+
     pbc : bool, default=True
-        True if pbc must be considered, False if not
+        True if periodic boundary conditions must be considered, False if
+        not.
+
+    Notes
+    -----
+    The definition of `rmax` and `nbin` defines the `dr`, the width of the
+    histogram as
+
+    .. math::
+        dr = \frac{rmax}{nbin}
+
+    for example, the default values give `dr=0.1`.
     """
 
     def __init__(
-        self, natoms, box_size, nbin, atom_type_a, atom_type_b, pbc=True
+        self,
+        ftraj,
+        type_c,
+        type_i,
+        start=0,
+        stop=-1,
+        step=1,
+        rmax=10.0,
+        nbin=100,
+        pbc=True,
     ):
-        self.natoms = natoms
+        self.ftraj = ftraj
+
+        self.type_c = type_c
+        self.type_i = type_i
+
+        self.start = start
+        self.stop = stop
+        self.step = step
+
+        self.rmax = rmax
         self.nbin = nbin
-        self.atom_type_a = atom_type_a
-        self.atom_type_b = atom_type_b
-        self.pbc = 1 if pbc else 0
+        self.pbc = pbc
 
-        minbox = np.min(box_size)
+    @property
+    def _configure(self):
+        """Configure the calculation.
+
+        It defines parameters needed for the calculation of g(r) and the
+        requirements of ctypes.
+        """
+        # configure the frame at which stop the calculation
+        self.stop = np.inf if self.stop == -1 else self.stop
+
+        # define the trajectory reader
+        fextension = self.ftraj.split(".")[-1]
+        if fextension not in ["lammpstrj", "xyz"]:
+            raise ValueError(
+                "The file must have the extension .xyz or .lammpstrj"
+            )
+
+        self.traj_ = (
+            reader.LAMMPS(self.ftraj)
+            if fextension == "lammpstrj"
+            else reader.XYZ(self.ftraj)
+        )  # other xyz info can be ignored in rdf calculations
+
+        # pbc = True -> 1; False -> 0 in C code
+        self.pbc = 1 if self.pbc else 0
+
+        # init volume
         self.volume_ = 0.0
-        self.gr_ = np.zeros(self.nbin, dtype=np.float32)
-        self.dg_ = 0.5 * minbox / self.nbin
-        self.ngr_ = 0
 
+        # parameters of the g(r), the counter and the distance between
+        # points in the histogram
+        self.ngofr_ = 0
+        self.dgofr_ = self.rmax / self.nbin
+
+        # ctypes requirements to interact with C code
         lib_rdf = ct.CDLL(
             str(PATH / "lib" / "lib_rdf")
             + sysconfig.get_config_var("EXT_SUFFIX")
         )
-        self.rdf_c = lib_rdf.diatomic
-        self.rdf_c.argtypes = [
-            ct.c_int,
-            ct.c_void_p,
-            ct.c_void_p,
+        self.rdf_c_ = lib_rdf.rdf_accumulate
+        self.rdf_c_.argtypes = [
             ct.c_int,
             ct.c_int,
             ct.c_void_p,
+            ct.c_void_p,
+            ct.c_void_p,
             ct.c_int,
+            ct.c_float,
             ct.c_float,
             ct.c_int,
             ct.c_void_p,
         ]
-        self.gr_c = (ct.c_int * nbin)()
+        self.gofr_c_ = (ct.c_int * self.nbin)()
 
-    def accumulate(self, box_size, atom_type, positions):
-        """Accumulates the information of each frame.
+    def _accumulate(self, frame):
+        """Accumulates the info of each frame."""
+        box = frame["box"]
+        self.volume_ += np.prod(box)
 
-        Parameters
-        ----------
-        box_size : np.array
-            the box size in x, y, z
+        mask_c = frame["type"] == self.type_c
+        mask_i = frame["type"] == self.type_i
 
-        atom_type : np.array
-            type of atoms
+        xc, yc, zc = frame["x"][mask_c], frame["y"][mask_c], frame["z"][mask_c]
+        xi, yi, zi = frame["x"][mask_i], frame["y"][mask_i], frame["z"][mask_i]
 
-        positions : np.array
-            the positions in the SoA convention (i.e. first all the x,
-            then y and then z)
-        """
-        # got to be sure that the box_size and the positions types are
-        # np.float32 and atom_type is an array of np.intc because those are
-        # the pointers types in C
-        box_size = box_size.astype(np.float32)
-        self.volume_ += np.prod(box_size)
-        box_size = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
+        self.natoms_c_, self.natoms_i_ = len(xc), len(xi)
 
-        atom_type = atom_type.astype(np.intc)
-        atom_c = atom_type.ctypes.data_as(ct.POINTER(ct.c_void_p))
+        # accomodate the data type of pointers to C code
+        box = np.asarray(box, dtype=np.float32)
+        box_c = box.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
-        positions = positions.astype(np.float32)
-        x_c = positions.ctypes.data_as(ct.POINTER(ct.c_void_p))
+        xcentral_c = np.concatenate((xc, yc, zc)).astype(np.float32)
+        xcentral_c = xcentral_c.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
-        self.rdf_c(
-            self.natoms,
-            box_size,
-            atom_c,
-            self.atom_type_a,
-            self.atom_type_b,
-            x_c,
+        xinteract_c = np.concatenate((xi, yi, zi)).astype(np.float32)
+        xinteract_c = xinteract_c.ctypes.data_as(ct.POINTER(ct.c_void_p))
+
+        # run rdf C accumulation
+        self.ngofr_ += 1
+        self.rdf_c_(
+            self.natoms_c_,
+            self.natoms_i_,
+            box_c,
+            xcentral_c,
+            xinteract_c,
             self.pbc,
-            self.dg_,
+            self.dgofr_,
+            self.rmax,
             self.nbin,
-            self.gr_c,
+            self.gofr_c_,
         )
 
-        self.ngr_ += 1
+    def _end(self):
+        """Finish the calculation and normalize the data."""
+        r = np.arange(
+            self.dgofr_ / 2, self.rmax + self.dgofr_ / 2, self.dgofr_
+        )
+        gofr = np.asarray(
+            np.frombuffer(self.gofr_c_, dtype=np.intc, count=self.nbin)
+        )
 
-    def end(self, atom_type, r_mean=None, writes=True, file_rdf="rdf.dat"):
-        """Normalize the accumulated data.
+        volume = self.volume_ / self.ngofr_
+        rho = self.natoms_c_ * self.natoms_i_ / volume
+
+        shell_vols = np.power(self.dgofr_, 3) * np.diff(
+            np.power(range(self.nbin + 1), 3)
+        )
+        ideal = 4.0 * np.pi * shell_vols * rho / 3.0
+
+        rdf = gofr / (self.ngofr_ * ideal)
+
+        return r, rdf
+
+    def calculate(self, box=None):
+        """Calculate the RDF.
 
         Parameters
         ----------
-        atom_type : np.array or list
-            type of atoms
-
-        r_mean : float, default=None
-            the mean radius of the simulated cluster, only usefull when pbc
-            was passed with a False value.
-
-        writes : bool, default=False
-            if you want (or don't want) to write an output
-
-        file_rdf : str
-            the file were the g(r) is going to be written
+        box : np.array
+            the lenght of the box in each x, y, z direction, required when
+            the trajectory is in an xyz file.
 
         Returns
         -------
-        tuple of np.array
-            the first np.array is the x of the histogram and the second the
-            g(r)
+        pd.DataFrame
+            a dataframe with r and g(r) as columns.
         """
-        n_a = np.count_nonzero(atom_type == self.atom_type_a)
-        n_b = np.count_nonzero(atom_type == self.atom_type_b)
-        volume = self.volume_ / self.ngr_
-        if r_mean is not None:
-            volume = 4.0 * np.pi * np.power(r_mean, 3) / 3.0
-        rho = n_a * n_b / volume
+        self._configure
 
-        gofr = np.asarray(
-            np.frombuffer(self.gr_c, dtype=np.intc, count=self.nbin)
-        )
-        r = np.zeros(self.nbin)
-        for i in range(0, self.nbin):
-            vb = (np.power(i + 1, 3) - np.power(i, 3)) * np.power(self.dg_, 3)
-            nid = 4.0 * np.pi * vb * rho / 3.0
+        try:
+            for _ in range(self.start):
+                self.traj_.read_frame()
 
-            r[i] = (i + 0.5) * self.dg_
-            self.gr_[i] = np.float32(gofr[i]) / (self.ngr_ * nid)
+            frame = self.traj_.read_frame()
+            while self.ngofr_ < self.stop / self.step:
+                if self.ngofr_ % self.step == 0:
+                    # add the box if not in frame
+                    frame["box"] = box if box is not None else frame["box"]
+                    self._accumulate(frame)
 
-        if writes is True:
-            file_rdf = open(file_rdf, "w")
-            file_rdf.write("# r, g(r)\n")
-            for i in range(self.nbin):
-                file_rdf.write("{:.4e}\t{:.6e}\n".format(r[i], self.gr_[i]))
-            file_rdf.close()
+                frame = self.traj_.read_frame()
 
-        return r, self.gr_
+        except EOFError:
+            if self.stop != np.inf:
+                warnings.warn(
+                    f"the trajectory does not read until {self.stop}"
+                )
+
+        finally:
+            self.traj_.file_close()
+            r, rdf = self._end()
+
+            self.df_rdf_ = pd.DataFrame({"r": r, "rdf": rdf})
+            return self.df_rdf_
+
+    def plot(self):
+        """To be implemented soon."""
+        raise NotImplementedError("To be implemented soon.")
+
+    def save(self):
+        """To be implemented soon."""
+        raise NotImplementedError("To be implemented soon.")

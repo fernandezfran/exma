@@ -1,83 +1,47 @@
 #include "rdf.h"
 
-void monoatomic(const int N, const float *box_size, const float *positions,
-                const int pbc, const float dg, const int nbin, int *gr) {
-    /* Calculate the rdf of a monoatomic system for the actual frame */
+void rdf_accumulate(const int natoms_c, const int natoms_i, const float *box,
+                    const float *x_central, const float *x_interact,
+                    const int pbc, const float dg, const float rmax,
+                    const int nbin, int *gr) {
+    /* calculate the rdf of central-interact atoms of a single frame.
+     *
+     * the data is accumulated in *gr, that must be initializated in zero
+     * by the python main function.
+     */
     float ri[3], rj[3];
-    float rij, rij2;
-    float rmax = (float)nbin * dg;
+    float rij2, rij;
     int ig;
 
-    for (int i = 0; i < N; i++) {
+    // i'm standing on the central atoms
+    for (int i = 0; i < natoms_c; i++) {
 
-        for (int k = 0; k < 3; k++)
-            ri[k] = positions[k * N + i];
+        // select the vector position of a particular one
+        for (int k = 0; k < 3; k++) {
+            ri[k] = x_central[k * natoms_c + i];
+        }
 
-        for (int j = i + 1; j < N; j++) {
-
+        // computes the distance to all interacting atoms
+        for (int j = 0; j < natoms_i; j++) {
             rij2 = 0.0f;
             for (int k = 0; k < 3; k++) {
-                rj[k] = positions[k * N + j];
+                rj[k] = x_interact[k * natoms_i + j];
+
                 rij = rj[k] - ri[k];
                 if (pbc == 1) {
-                    while (rij > 0.5f * box_size[k])
-                        rij -= box_size[k];
-                    while (rij < -0.5f * box_size[k])
-                        rij += box_size[k];
+                    while (rij > 0.5f * box[k])
+                        rij -= box[k];
+                    while (rij < -0.5f * box[k])
+                        rij += box[k];
                 }
                 rij2 += rij * rij;
             }
             rij = sqrt(rij2);
 
-            if (rij < rmax) {
+            // accumulate in gr if the distance is less than the max
+            if ((rij > 0) & (rij < rmax)) {
                 ig = (int)(rij / dg);
-                gr[ig] += 2;
-            }
-        }
-    }
-}
-
-void diatomic(const int N, const float *box_size, const int *atom_type,
-              const int atype_a, const int atype_b, const float *positions,
-              const int pbc, const float dg, const int nbin, int *gr) {
-    /* Calculate the rdf of a diatomic system for the actual frame */
-    float ri[3], rj[3];
-    float rij, rij2;
-    float rmax = (float)nbin * dg;
-    int ig;
-
-    for (int i = 0; i < N; i++) {
-
-        if (atom_type[i] == atype_a) {
-
-            for (int k = 0; k < 3; k++)
-                ri[k] = positions[k * N + i];
-
-            for (int j = 0; j < N; j++) {
-
-                if (j != i){
-
-                    if (atom_type[j] == atype_b) {
-                        rij2 = 0.0f;
-                        for (int k = 0; k < 3; k++) {
-                            rj[k] = positions[k * N + j];
-                            rij = rj[k] - ri[k];
-                            if (pbc == 1) {
-                                while (rij > 0.5f * box_size[k])
-                                    rij -= box_size[k];
-                                while (rij < -0.5f * box_size[k])
-                                    rij += box_size[k];
-                            }
-                            rij2 += rij * rij;
-                        }
-                        rij = sqrt(rij2);
-
-                        if (rij < rmax) {
-                            ig = (int)(rij / dg);
-                            gr[ig] += 1;
-                        }
-                    }
-                }
+                gr[ig] += 1;
             }
         }
     }
