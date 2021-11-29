@@ -34,7 +34,7 @@ REQUIREMENTS = ["more-itertools", "numpy", "pandas", "scikit-learn", "scipy"]
 
 COMMON = "exma/lib/"
 CFLAGS = sysconfig.get_config_var("CFLAGS").split()
-CFLAGS += ["-O3", "-ffast-math", "-fPIC", "-ftree-vectorize", "-march=native"]
+CFLAGS += ["-O3", "-fPIC", "-ftree-vectorize", "-march=native"]
 C_MODS = [
     Extension(
         COMMON + "lib_" + mod,
