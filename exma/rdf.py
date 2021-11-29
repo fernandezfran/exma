@@ -125,11 +125,7 @@ class RadialDistributionFunction:
 
     @property
     def _configure(self):
-        """Configure the calculation.
-
-        It defines parameters needed for the calculation of g(r) and the
-        requirements of ctypes.
-        """
+        """Defines parameters needed for the calculation of g(r)."""
         # configure the frame at which stop the calculation
         self.stop = np.inf if self.stop == -1 else self.stop
 
@@ -156,6 +152,12 @@ class RadialDistributionFunction:
         # points in the histogram
         self.ngofr_ = 0
         self.dgofr_ = self.rmax / self.nbin
+
+    def _configure_ctypes(self, types):
+        """To calculate natoms and ctypes requires."""
+        # calculate natoms_c_ and natoms_i_
+        self.natoms_c_ = np.count_nonzero(types == self.type_c)
+        self.natoms_i_ = np.count_nonzero(types == self.type_i)
 
         # ctypes requirements to interact with C code
         lib_rdf = ct.CDLL(
@@ -187,8 +189,6 @@ class RadialDistributionFunction:
 
         xc, yc, zc = frame["x"][mask_c], frame["y"][mask_c], frame["z"][mask_c]
         xi, yi, zi = frame["x"][mask_i], frame["y"][mask_i], frame["z"][mask_i]
-
-        self.natoms_c_, self.natoms_i_ = len(xc), len(xi)
 
         # accomodate the data type of pointers to C code
         box = np.asarray(box, dtype=np.float32)
@@ -257,6 +257,9 @@ class RadialDistributionFunction:
                 self.traj_.read_frame()
 
             frame = self.traj_.read_frame()
+
+            self._configure_ctypes(frame["type"])
+
             while self.ngofr_ < self.stop / self.step:
                 if self.ngofr_ % self.step == 0:
                     # add the box if not in frame

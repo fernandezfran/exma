@@ -21,7 +21,7 @@ void rdf_accumulate(const int natoms_c, const int natoms_i, const float *box,
      * rmax : the maximum distance at which calculate the rdf
      * gr : array of ints were the data of the g(r) is accumulated, this must
      *     be initializated in python main function and normalized once it
-     * ends.
+     *     ends.
      */
     float ri[3], rj[3];
     float rij2, rij;

@@ -29,7 +29,7 @@ from .io.reader import XYZ, LAMMPS, read_log_lammps  # noqa
 from .io.writer import XYZ, LAMMPS, in_lammps  # noqa
 from .msd import MeanSquareDisplacement  # noqa
 from .rdf import RadialDistributionFunction  # noqa
-from .cn import monoatomic, diatomic  # noqa
+from .cn import CoordinationNumber  # noqa
 from .en import EffectiveNeighbors  # noqa
 from .cluster import DBSCAN, sro  # noqa
 from .electrochemistry import Electrochemistry  # noqa

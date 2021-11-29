@@ -33,6 +33,10 @@ PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
 # ============================================================================
 # CLASSES
 # ============================================================================
+#
+#
+# también hacer como en los otros métodos de acumular el valor del vecino
+# efectivo y al final dar un promedio.
 
 
 class EffectiveNeighbors:

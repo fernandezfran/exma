@@ -10,50 +10,83 @@
 # IMPORTS
 # ======================================================================
 
+import os
+import pathlib
+
 import exma.cn
-import exma.positions
 
 import numpy as np
+
+import pytest
+
+# ============================================================================
+# CONSTANTS
+# ============================================================================
+
+TEST_DATA_PATH = pathlib.Path(
+    os.path.join(os.path.abspath(os.path.dirname(__file__)), "test_data")
+)
 
 # ======================================================================
 # TESTS
 # ======================================================================
 
 
-def test_monoatomic():
-    """Test the coordination number of a monoatomic simple cubic crystal."""
-    natoms = 27
-    size = np.array([1.0, 1.0, 1.0])
-    rcut = 0.4
+@pytest.mark.parametrize(
+    ("fname", "rcut", "box", "cn_mean", "cn_std"),
+    [
+        ("liquid.xyz", 1.56, np.full(3, 8.54988), 12.21916417, 0.10655101),
+        ("solid.xyz", 1.29, np.full(3, 7.46901), 12.00690547, 0.00765176),
+    ],
+)
+def test_CoordinationNumber_calculate(fname, rcut, box, cn_mean, cn_std):
+    """Test the CN calculation in LJ liquid and solid."""
+    result = exma.cn.CoordinationNumber(
+        str(TEST_DATA_PATH / fname), "Ar", "Ar", rcut
+    ).calculate(box)
 
-    particles = exma.positions.Positions(natoms, size[0]).sc()
-    xyz = np.concatenate((particles["x"], particles["y"], particles["z"]))
-
-    mono = exma.cn.monoatomic(natoms, rcut)
-    mono.accumulate(size, xyz)
-    result = mono.end(0, xyz, writes=False)
-
-    cnref = np.full(natoms, 6.0)
-
-    np.testing.assert_array_equal(result, cnref)
+    np.testing.assert_almost_equal(result[0], cn_mean)
+    np.testing.assert_almost_equal(result[1], cn_std)
 
 
-def test_diatomic():
-    """Test the coordination number of diatomic body-centered cubic crystal."""
-    natoms = 54
-    size = np.array([1.0, 1.0, 1.0])
-    rcut = 0.3
+@pytest.mark.parametrize(
+    "fname",
+    ["liquid.out", "solid.xtc", "gas.lammsptrj", "dump.asd.123.lammptsrj"],
+)
+def test_CoordinationNumber_raises(fname):
+    """Test the CN ValueError raise."""
+    with pytest.raises(ValueError):
+        exma.cn.CoordinationNumber(fname, "H", "H", 1.0).calculate()
 
-    type1 = np.full(np.intc(natoms / 2), 1)
-    type2 = np.full(np.intc(natoms / 2), 2)
-    types = np.concatenate((type1, type2))
-    particles = exma.positions.Positions(natoms, size[0]).bcc()
-    xyz = np.concatenate((particles["x"], particles["y"], particles["z"]))
 
-    di = exma.cn.diatomic(natoms, types, 1, 2, rcut)
-    di.accumulate(size, types, xyz)
-    result = di.end(types, xyz, writes=False)
+@pytest.mark.parametrize(
+    ("fname", "rcut", "box"),
+    [
+        ("liquid.xyz", 1.56, np.full(3, 8.54988)),
+        ("solid.xyz", 1.29, np.full(3, 7.46901)),
+    ],
+)
+def test_CoordinationNumber_warning(fname, rcut, box):
+    """Test the CN EOF warning."""
+    with pytest.warns(UserWarning):
+        exma.cn.CoordinationNumber(
+            str(TEST_DATA_PATH / fname),
+            "Ar",
+            "Ar",
+            rcut,
+            start=190,
+            stop=210,
+            step=5,
+        ).calculate(box)
 
-    cnref = np.full(np.intc(natoms / 2), 8.0)
 
-    np.testing.assert_array_equal(result, cnref)
+def test_CoordinationNumber_plot():
+    """Test the CN plot."""
+    with pytest.raises(NotImplementedError):
+        exma.cn.CoordinationNumber("something.xyz", "H", "H", 1.0).plot()
+
+
+def test_CoordinationNumber_save():
+    """Test the CN save."""
+    with pytest.raises(NotImplementedError):
+        exma.cn.CoordinationNumber("something.xyz", "H", "H", 1.0).save()

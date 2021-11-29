@@ -39,6 +39,28 @@ PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
 # ============================================================================
 
 
+class ClusterCaracterization:
+
+    def __init___(self):
+        pass
+
+    def _accumulate(self):
+        """accumulate simple characterize()"""
+        pass
+
+    def _end(self):
+        pass
+
+    def calculate(self):
+        pass
+
+    def save(self):
+        pass
+
+    def plot(self):
+        pass
+
+
 class DBSCAN:
     """DBSCAN clustering using PBC for the distance matrix calculations.
 
