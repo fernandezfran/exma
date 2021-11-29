@@ -265,8 +265,6 @@ def test_RadialDistributionFunction_calculate(fname, box, rdf_res):
     np.testing.assert_array_almost_equal(
         result["r"], np.arange(dr / 2, rmax + dr / 2, dr)
     )
-    print(np.array(result["rdf"]))
-    print(np.array(rdf_res))
     np.testing.assert_array_almost_equal(result["rdf"], rdf_res)
 
 
