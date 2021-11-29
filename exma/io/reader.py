@@ -83,9 +83,9 @@ class XYZ(TrajectoryReader):
         -------
         dict
             frame with the keys `natoms`, `type`, `x`, `y`, `z`, the number
-            of atoms (int), the element of each atom (str) and the x, y, z
-            positions of the atoms (np.array), respectively. If
-            `ftype="property"` was selected, then the key `property` is
+            of atoms (int), the element of each atom (np array of strings)
+            and the x, y, z positions of the atoms (np.array), respectively.
+            If `ftype="property"` was selected, then the key `property` is
             also a key. On the other hand, if `ftype="image"` was selected,
             then `ix`, `iy` and `iz` are keys and have the positions images
             in each direction (np.array), respectively.
@@ -220,8 +220,6 @@ class LAMMPS(TrajectoryReader):
 def read_log_lammps(logname="log.lammps"):
     """Read log file of lammps.
 
-    It only works if the first thermo parameter is `Step`.
-
     Parameters
     ----------
     logname : str, defalut="log.lammps".
@@ -230,7 +228,13 @@ def read_log_lammps(logname="log.lammps"):
     Returns
     -------
     pd.DataFrame
-        with the columns corresponding to the thermodynamic info.
+        A `pd.DataFrame` with the columns corresponding to the thermodynamic
+        info.
+
+    Notes
+    -----
+    It only works if the first thermo parameter is `Step`.
+
     """
     with open(logname, "r") as flog:
         # ignore all previous info

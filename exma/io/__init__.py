@@ -90,7 +90,7 @@ def xyz2inlmp(xyztraj, inlammps_name, cell_info, nframe=-1, xyzftype="xyz"):
         identification numbers, e.g. {"Sn": 1, "O": 2}
 
     nframe : int, default=-1
-        number of frames to write, by default is -1, that is, the last.
+        number of the frame to write, by default is -1, that is, the last.
 
     xyzftype : str, default="xyz"
         the `ftype` of xyz file.
@@ -173,7 +173,7 @@ def lammpstrj2inlmp(lammpstrjtraj, inlammps_name, nframe=-1):
         the name of the file to write to.
 
     nframe : int, default=-1
-        number of frames to write, by default is -1, that is, the last.
+        number of the frame to write, by default is -1, that is, the last.
     """
     nframe = np.inf if nframe == -1 else nframe
     lmp = reader.LAMMPS(lammpstrjtraj)

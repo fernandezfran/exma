@@ -157,7 +157,7 @@ class MeanSquareDisplacement:
         Returns
         -------
         pd.DataFrame
-            a dataframe with the time and the msd as columns.
+            A `pd.DataFrame` with the time and the msd as columns.
         """
         imed = 0
         self._configure

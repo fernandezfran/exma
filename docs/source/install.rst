@@ -19,6 +19,6 @@ To install exma from sources, you need to clone the
 `GitHub repo <https://github.com/fernandezfran/exma/>`__ on your local machine
 and install: ::
 
-    git clone https://github.com/fernandezfran/exma
+    git clone https://github.com/fernandezfran/exma.git
     cd exma/
     pip install -e .

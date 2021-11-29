@@ -248,7 +248,7 @@ class RadialDistributionFunction:
         Returns
         -------
         pd.DataFrame
-            a dataframe with r and g(r) as columns.
+            A `pd.DataFrame` with r and g(r) as columns.
         """
         self._configure
 

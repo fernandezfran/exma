@@ -281,12 +281,14 @@ def test_spherical_nanoparticle():
     yref = np.array([0.0, -0.5, 0.0, 0.0, 0.0, 0.5, 0.0])
     zref = np.array([0.0, 0.0, -0.5, 0.0, 0.5, 0.0, 0.0])
 
-    x = np.array([0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5])
-    y = np.array([0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.5, 0.5])
-    z = np.array([0.0, 0.5, 0.0, 0.5, 0.0, 0.5, 0.0, 0.5])
-    xyz = np.concatenate((x, y, z))
+    frame = {
+        "box": np.full(3, 1.0),
+        "x": np.array([0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5]),
+        "y": np.array([0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.5, 0.5]),
+        "z": np.array([0.0, 0.5, 0.0, 0.5, 0.0, 0.5, 0.0, 0.5]),
+    }
 
-    result = exma.positions.spherical_nanoparticle(np.full(3, 1.0), xyz, 0.6)
+    result = exma.positions.spherical_nanoparticle(frame, 0.6)
 
     assert result["natoms"] == 7
     np.testing.assert_array_equal(result["x"], xref)
@@ -504,18 +506,20 @@ def test_replicate():
         ]
     )
 
-    x = np.array([0.25, 0.0, 0.25, 0.0, 0.75, 0.5, 0.75, 0.5])
-    y = np.array([0.75, 0.0, 0.25, 0.5, 0.75, 0.0, 0.25, 0.5])
-    z = np.array([0.25, 0.5, 0.75, 0.0, 0.75, 0.0, 0.25, 0.5])
-    xyz = np.concatenate((x, y, z))
+    frame = {
+        "natoms": 8,
+        "box": np.full(3, 5.468728),
+        "type": ["Si"] * 8,
+        "x": np.array([0.25, 0.0, 0.25, 0.0, 0.75, 0.5, 0.75, 0.5]),
+        "y": np.array([0.75, 0.0, 0.25, 0.5, 0.75, 0.0, 0.25, 0.5]),
+        "z": np.array([0.25, 0.5, 0.75, 0.0, 0.75, 0.0, 0.25, 0.5]),
+    }
 
-    result = exma.positions.replicate(
-        8, np.full(3, 5.468728), ["Si"] * 8, xyz, [2, 2, 2]
-    )
+    result = exma.positions.replicate(frame, [2, 2, 2])
 
     assert result["natoms"] == natomsref
     np.testing.assert_array_almost_equal(result["box"], boxref)
-    np.testing.assert_array_equal(result["types"], typesref)
+    np.testing.assert_array_equal(result["type"], typesref)
     np.testing.assert_array_almost_equal(result["x"], xref)
     np.testing.assert_array_almost_equal(result["y"], yref)
     np.testing.assert_array_almost_equal(result["z"], zref)

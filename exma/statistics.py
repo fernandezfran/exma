@@ -30,7 +30,7 @@ class BlockAverage:
 
     This method offers an easy and efficient way to estimate the error of
     correlated data by a renormalization groups, as described by
-    H. Flyvbjerg and H. G. Petersen [4]_.
+    H. Flyvbjerg and H. G. Petersen [1]_.
 
     Parameters
     ----------
@@ -39,7 +39,7 @@ class BlockAverage:
 
     References
     ----------
-    .. [4] Flyvbjerg, H. and Petersen, H.G., 1989. Error estimates on averages
+    .. [1] Flyvbjerg, H. and Petersen, H.G., 1989. Error estimates on averages
        of correlated data. `The Journal of Chemical Physics`, 91(1),
        pp.461-466.
     """
@@ -53,10 +53,10 @@ class BlockAverage:
         Returns
         -------
         pd.DataFrame
-            with `data_size`, `mean`, `var` and `varerr` as columns that
-            gives information about the data size changes, the mean value
-            of each block, the corresponding variance and the error of
-            that variance, respectively.
+            A `pd.DataFrame` with `data_size`, `mean`, `var` and `varerr`
+            as columns that gives information about the data size changes,
+            the mean value of each block, the corresponding variance and the
+            error of that variance, respectively.
         """
         data_size, mean, var, varerr = [], [], [], []
 

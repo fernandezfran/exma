@@ -60,8 +60,8 @@ class Positions:
         Returns
         -------
         dict
-            with the keys `natoms`, `box`, `x`, `y`, `z`, the number of
-            atoms, the box size and the xyz of the atoms, respectively.
+            A `dict` with the keys `natoms`, `box`, `x`, `y`, `z`, the number
+            of atoms, the box size and the xyz of the atoms, respectively.
 
         Raises
         ------
@@ -97,8 +97,8 @@ class Positions:
         Returns
         -------
         dict
-            with the keys `natoms`, `box`, `x`, `y`, `z`, the number of
-            atoms, the box size and the xyz of the atoms, respectively.
+            A `dict` with the keys `natoms`, `box`, `x`, `y`, `z`, the number
+            of atoms, the box size and the xyz of the atoms, respectively.
 
         Raises
         ------
@@ -140,8 +140,8 @@ class Positions:
         Returns
         -------
         dict
-            with the keys `natoms`, `box`, `x`, `y`, `z`, the number of
-            atoms, the box size and the xyz of the atoms, respectively.
+            A `dict` with the keys `natoms`, `box`, `x`, `y`, `z`, the number
+            of atoms, the box size and the xyz of the atoms, respectively.
 
         Raises
         ------
@@ -185,8 +185,8 @@ class Positions:
         Returns
         -------
         dict
-            with the keys `natoms`, `box`, `x`, `y`, `z`, the number of
-            atoms, the box size and the xyz of the atoms, respectively.
+            A `dict` with the keys `natoms`, `box`, `x`, `y`, `z`, the number
+            of atoms, the box size and the xyz of the atoms, respectively.
 
         Raises
         ------
@@ -231,18 +231,14 @@ class Positions:
 # ============================================================================
 
 
-def spherical_nanoparticle(box_size, positions, rcut):
+def spherical_nanoparticle(frame, rcut):
     """Cut a defined structure to give a spherical nanoparticle.
 
     Parameters
     ----------
-    box_size : np.array
-        box size in each direction x, y, z.
-
-    positions : np.array
-        the positions of the atoms in a lattice that wants to be
-        replicated. It must first have all the x's of the atoms,
-        then the y's and then the z's concatenated.
+    frame : dict
+        with at least the keys `box`, with the box size in each direction,
+        and `x`, `y` and `z`.
 
     rcut : float
         the radius of the nanoparticle.
@@ -250,15 +246,16 @@ def spherical_nanoparticle(box_size, positions, rcut):
     Returns
     -------
     dict
-        with the keys `natoms`, `x`, `y`, `z`, the number of atoms and
-        the xyz of the atoms, respectively.
+        A `dict` with the keys `natoms`, `x`, `y`, `z`, the number of atoms
+        and the xyz of the atoms, respectively.
 
     Notes
     -----
     If `rcut` is greater than half the cell length, the cell will be
     replicated to give a nanoparticle of the desired radius.
     """
-    x, y, z = np.split(positions, 3)
+    box_size = frame["box"]
+    x, y, z = frame["x"], frame["y"], frame["z"]
 
     n = np.intc(np.ceil(rcut / np.max(box_size)))
     boxes = list(it.product(range(-n, n + 1), repeat=3))
@@ -283,24 +280,14 @@ def spherical_nanoparticle(box_size, positions, rcut):
     }
 
 
-def replicate(natoms, box_size, atom_type, positions, nrf):
+def replicate(frame, nrf):
     """Replicate a crystalline system in each direction.
 
     Parameters
     ----------
-    natoms : int
-        number of atoms
-
-    box_size : np.array
-        box size in each direction x, y, z.
-
-    atom_type : list
-        the type of the atoms.
-
-    positions : np.array
-        the positions of the atoms in a lattice that wants to be
-        replicated. It must first have all the x's of the atoms,
-        then the y's and then the z's concatenated.
+    frame : dict
+        with the keys `natoms`, `box`, the box size in each direction,
+        `type` (a list with the types of atoms), `x`, `y` and `z`
 
     nrf : list
         three integers that must be greater than or equal to 1 and
@@ -311,11 +298,14 @@ def replicate(natoms, box_size, atom_type, positions, nrf):
     Returns
     -------
     dict
-        with the keys `natoms`, `box`, `types`, `x`, `y`, `z`, the number
-        of atoms, the box size, the types of the atoms and the xyz of the
-        atoms, respectively.
+        A `dict` with the keys `natoms`, `box`, `type`, `x`, `y`, `z`, the
+        number of atoms, the box size, the types of the atoms and the xyz
+        of the atoms, respectively.
     """
-    x, y, z = np.split(positions, 3)
+    natoms = frame["natoms"]
+    box_size = frame["box"]
+    x, y, z = frame["x"], frame["y"], frame["z"]
+
     boxes = list(it.product(range(np.max(nrf)), repeat=3))
     newx, newy, newz = [], [], []
     for box in boxes:
@@ -331,12 +321,12 @@ def replicate(natoms, box_size, atom_type, positions, nrf):
     box_size = np.array(
         [nrf[0] * box_size[0], nrf[1] * box_size[1], nrf[2] * box_size[2]]
     )
-    atom_type *= np.prod(nrf)
+    atom_type = frame["type"] * np.prod(nrf)
 
     return {
         "natoms": natoms,
         "box": box_size,
-        "types": atom_type,
+        "type": atom_type,
         "x": np.asarray(newx, dtype=np.float32),
         "y": np.asarray(newy, dtype=np.float32),
         "z": np.asarray(newz, dtype=np.float32),

@@ -7,6 +7,19 @@
 exma
 ====
 
+.. image:: https://github.com/fernandezfran/exmap/actions/workflows/exma_ci.yml/badge.svg
+   :target: https://github.com/fernandezfran/exmap/actions/workflows/exma_ci.yml
+   :alt: GitHub Actions CI
+
+.. image:: https://readthedocs.org/projects/exma/badge/?version=latest
+   :target: https://exma.readthedocs.io/
+   :alt: ReadTheDocs
+
+.. image:: https://img.shields.io/pypi/v/exma
+   :target: https://pypi.org/project/exma/
+   :alt: PyPI Version
+
+
 **exma** is a Python module with C extensions that allows to analyze 
 molecular dynamics trajectories with different tools.
 

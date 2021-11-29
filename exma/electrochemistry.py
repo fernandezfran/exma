@@ -33,7 +33,7 @@ class Electrochemistry:
     Parameters
     ----------
     df : pd.DataFrame
-        a pandas dataframe with the values of `x` (concentrations) in
+        a `pd.DataFrame` with the values of `x` (concentrations) in
         the first column and then columns with different thermodynamic
         equilibrium values, optionally with their respective errors,
         corresponding to each `x` value.
@@ -104,8 +104,9 @@ class Electrochemistry:
         Returns
         -------
         pd.DataFrame
-            The fractional volume change corresponding values to each `x`
-            values and the respective error if it was possible to calculate.
+            A `pd.DataFrame` with the fractional volume change corresponding
+            values to each `x` values and the respective error if it was
+            possible to calculate.
 
         Raises
         ------
@@ -138,7 +139,7 @@ class Electrochemistry:
         return self.dffvc_
 
     def formation_energy(self, reference_energy_a, reference_energy_b):
-        r"""Ideal approximation to the formation energy (fe).
+        r"""Ideal approximation to the formation energy (FE).
 
         .. math::
             E_f(x) = E_x - (x \cdot E_b + E_a)
@@ -158,8 +159,9 @@ class Electrochemistry:
         Returns
         -------
         pd.DataFrame
-            The formation energy corresponding values to each x values
-            and the respective error if it was possible to calculate.
+            A `pd.DataFrame` with the formation energy corresponding values
+            to each `x` values and the respective error if it was possible
+            to calculate.
 
         Raises
         ------
@@ -212,8 +214,9 @@ class Electrochemistry:
         Returns
         -------
         pd.DataFrame
-            The value of the formation energy after the spline and the
-            estimated value to the voltage for each x value.
+            A `pd.DataFrame` with the value of the formation energy after
+            the spline and the estimated value to the voltage in function of
+            `x`.
 
         Raises
         ------

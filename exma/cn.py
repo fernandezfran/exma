@@ -214,7 +214,7 @@ class CoordinationNumber:
 
         Parameters
         ----------
-        box : np.array
+        box : np.array, default=None
             the lenght of the box in each x, y, z direction, required when
             the trajectory is in an xyz file.
 
