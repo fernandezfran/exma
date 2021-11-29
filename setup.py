@@ -42,7 +42,7 @@ C_MODS = [
         depends=[COMMON + mod + ".h"],
         extra_compile_args=CFLAGS,
     )
-    for mod in ["cluster", "cn", "en", "rdf"]
+    for mod in ["cn", "pbc_distances", "rdf"]
 ]
 
 with open(PATH / "exma" / "__init__.py") as fp:

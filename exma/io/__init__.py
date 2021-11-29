@@ -196,13 +196,3 @@ def lammpstrj2inlmp(lammpstrjtraj, inlammps_name, nframe=-1):
     finally:
         lmp.file_close()
         writer.in_lammps(inlammps_name, dframe)
-
-
-def cif2xyz():
-    """Not implemented yet."""
-    raise NotImplementedError("To be implemented soon.")
-
-
-def cif2inlmp():
-    """Not implemented yet."""
-    raise NotImplementedError("To be implemented soon.")

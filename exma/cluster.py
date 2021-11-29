@@ -89,13 +89,15 @@ class DBSCAN:
         self.eps = eps
         self.min_samples = min_samples
 
-        lib_cluster = ct.CDLL(
-            str(PATH / "lib" / "lib_cluster")
+        lib_pbc_distances = ct.CDLL(
+            str(PATH / "lib" / "lib_pbc_distances")
             + sysconfig.get_config_var("EXT_SUFFIX")
         )
-        self.distance_matrix_c = lib_cluster.distance_matrix
+        self.distance_matrix_c = lib_pbc_distances.distance_matrix
         self.distance_matrix_c.argtypes = [
             ct.c_int,
+            ct.c_int,
+            ct.c_void_p,
             ct.c_void_p,
             ct.c_void_p,
             ct.c_void_p,
@@ -155,7 +157,7 @@ class DBSCAN:
         distrix_c = distrix.ctypes.data_as(ct.POINTER(ct.c_void_p))
 
         # a void function that modifies the values of distrix
-        self.distance_matrix_c(natoms_c, box_c, x_c, distrix_c)
+        self.distance_matrix_c(natoms_c, natoms_c, box_c, x_c, x_c, distrix_c)
 
         distrix = distrix.reshape((natoms_c, natoms_c))
         db = sklearn.cluster.DBSCAN(

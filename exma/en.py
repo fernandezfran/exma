@@ -75,11 +75,11 @@ class EffectiveNeighbors:
         self.atom_type_central = atom_type_central
         self.atom_type_interact = atom_type_interact
 
-        lib_en = ct.CDLL(
-            str(PATH / "lib" / "lib_en")
+        lib_pbc_distances = ct.CDLL(
+            str(PATH / "lib" / "lib_pbc_distances")
             + sysconfig.get_config_var("EXT_SUFFIX")
         )
-        self.distance_matrix_c = lib_en.distance_matrix
+        self.distance_matrix_c = lib_pbc_distances.distance_matrix
         self.distance_matrix_c.argtypes = [
             ct.c_int,
             ct.c_int,
@@ -125,7 +125,6 @@ class EffectiveNeighbors:
         n_interact = np.intc(len(x_interact) / 3)
 
         distrix = np.zeros(n_central * n_interact, dtype=np.float32)
-        weitrix = distrix
 
         box_size = box_size.astype(np.float32)
         box_c = box_size.ctypes.data_as(ct.POINTER(ct.c_void_p))
@@ -140,21 +139,20 @@ class EffectiveNeighbors:
         )
 
         # calculate the weigth of the ith neighbor of the interact atom
-        bondmin = np.min(distrix)  # the smallest bond lenght
+        bondmin = np.min(distrix)
         matrix_a = np.exp(1.0 - np.power(distrix / bondmin, 6))
-        bondavg = np.sum(distrix * matrix_a) / np.sum(
-            matrix_a
-        )  # average bond length
+        bondavg = np.sum(distrix * matrix_a) / np.sum(matrix_a)
+
         weitrix = np.exp(1.0 - np.power(distrix / bondavg, 6))
 
-        # split the weight matrix to obtain an interact atom in every row and
-        #   normalize the weigths
-        weitrix = np.split(weitrix, n_interact)
+        # reshape the weight matrix and transpose it to obtain an interact
+        # atom in every row and normalize their weights
+        weitrix = np.reshape(weitrix, (n_central, n_interact)).T
         weitrix = [weitrix[i] / np.sum(weitrix[i]) for i in range(n_interact)]
 
-        # the matrix is transpose so now we have central atoms in each row and
-        #   each fraction of every interact neighbor is added to obtain the
-        #   effective (interact) neighbor
+        # the matrix is transpose again so now we have central atoms in each
+        # row an each fraction of every interact neighbor is added to obtain
+        # the effective (interact) neighbor
         weitrix = np.transpose(weitrix)
         effnei = [np.sum(weitrix[i]) for i in range(n_central)]
 
