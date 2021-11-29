@@ -1,3 +1,7 @@
+// This file is part of exma (https://github.com/fernandezfran/exma/)
+// Copyright (c) 2021, Francisco Fernandez
+// License: MIT
+//     Full Text: https://github.com/fernandezfran/exma/blob/master/LICENSE
 #include "rdf.h"
 
 void rdf_accumulate(const int natoms_c, const int natoms_i, const float *box,
@@ -6,8 +10,18 @@ void rdf_accumulate(const int natoms_c, const int natoms_i, const float *box,
                     const int nbin, int *gr) {
     /* calculate the rdf of central-interact atoms of a single frame.
      *
-     * the data is accumulated in *gr, that must be initializated in zero
-     * by the python main function.
+     * natoms_c : number of central atoms
+     * natoms_i : number of interact atoms
+     * box : array with the box lenght in each x, y, z direction
+     * x_central : positions of the central atoms arranged as SoA (i.e. first
+     *     all the x, then all y, and finally all z coordinates)
+     * x_interact : positions of the interacting atoms arranged as SoA
+     * pbc : 1 if periodic boundary condition must be considered
+     * dg : the width of each bin of the histogram
+     * rmax : the maximum distance at which calculate the rdf
+     * gr : array of ints were the data of the g(r) is accumulated, this must
+     *     be initializated in python main function and normalized once it
+     * ends.
      */
     float ri[3], rj[3];
     float rij2, rij;
@@ -38,7 +52,9 @@ void rdf_accumulate(const int natoms_c, const int natoms_i, const float *box,
             }
             rij = sqrt(rij2);
 
-            // accumulate in gr if the distance is less than the max
+            // accumulate in gr if the distance is less than the max and
+            // greater than zero (this is required if the central and interact
+            // type of atoms are the same)
             if ((rij > 0) & (rij < rmax)) {
                 ig = (int)(rij / dg);
                 gr[ig] += 1;

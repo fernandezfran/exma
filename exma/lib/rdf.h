@@ -1,3 +1,7 @@
+// This file is part of exma (https://github.com/fernandezfran/exma/)
+// Copyright (c) 2021, Francisco Fernandez
+// License: MIT
+//     Full Text: https://github.com/fernandezfran/exma/blob/master/LICENSE
 #ifndef RDF_H
 #define RDF_H
 

@@ -45,7 +45,7 @@ class RadialDistributionFunction:
 
     The RDF is a descriptor of the variation of density of a system in
     function of distance from a reference atom. It gives the probability
-    of finding a particle, relative to an ideal gas, at a given distance.
+    of finding an atom, relative to an ideal gas, at a given distance.
 
     This microscopic information gives global information about the system,
     for example, if in an RDF plot the peaks are well defined, it means that
