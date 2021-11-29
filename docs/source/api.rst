@@ -4,15 +4,6 @@ exma API
 .. toctree::
    :maxdepth: 4
 
-``exma.cluster`` module
------------------------
-
-.. automodule:: exma.cluster
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :member-order: bysource
-
 ``exma.cn`` module
 ------------------
 
