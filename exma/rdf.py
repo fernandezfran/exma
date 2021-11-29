@@ -125,7 +125,7 @@ class RadialDistributionFunction:
 
     @property
     def _configure(self):
-        """Defines parameters needed for the calculation of g(r)."""
+        """Define parameters needed for the calculation of g(r)."""
         # configure the frame at which stop the calculation
         self.stop = np.inf if self.stop == -1 else self.stop
 

@@ -24,8 +24,6 @@ import warnings
 
 import numpy as np
 
-import pandas as pd
-
 from . import _traj_sorter
 from .io import reader
 
@@ -276,7 +274,7 @@ class CoordinationNumber:
             return np.mean(cn), np.std(cn)
 
     def plot(self):
-        """To be implemented soon. BlockAverage plot?"""
+        """To be implemented soon."""
         raise NotImplementedError("To be implemented soon.")
 
     def save(self):

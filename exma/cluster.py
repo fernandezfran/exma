@@ -40,25 +40,30 @@ PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
 
 
 class ClusterCaracterization:
+    """Cluster Characterization implementation."""
 
     def __init___(self):
+        """Por que."""
         pass
 
     def _accumulate(self):
-        """accumulate simple characterize()"""
+        """Accumulate simple characterize()."""
         pass
 
     def _end(self):
         pass
 
     def calculate(self):
-        pass
-
-    def save(self):
+        """Calculate the ClusterCaracterization."""
         pass
 
     def plot(self):
-        pass
+        """To be implemented soon."""
+        raise NotImplementedError("To be implemented soon.")
+
+    def save(self):
+        """To be implemented soon."""
+        raise NotImplementedError("To be implemented soon.")
 
 
 class DBSCAN:
