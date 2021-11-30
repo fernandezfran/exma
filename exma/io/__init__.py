@@ -22,6 +22,7 @@ import numpy as np
 
 from . import reader
 from . import writer
+from .. import _traj_sorter
 
 # ======================================================================
 # FUNCTIONS
@@ -147,6 +148,11 @@ def lammpstrj2xyz(lammpstrjtraj, xyz_name, type_info):
     try:
         while True:
             lmp_frame = lmp.read_frame()
+            lmp_frame = (
+                _traj_sorter._sort_traj(lmp_frame)
+                if not _traj_sorter._is_sorted(lmp_frame["id"])
+                else lmp_frame
+            )
             lmp_frame["type"] = [type_info[t] for t in lmp_frame["type"]]
 
             xyz_frame = {
@@ -195,4 +201,9 @@ def lammpstrj2inlmp(lammpstrjtraj, inlammps_name, nframe=-1):
 
     finally:
         lmp.file_close()
+        dframe = (
+            _traj_sorter._sort_traj(dframe)
+            if not _traj_sorter._is_sorted(dframe["id"])
+            else dframe
+        )
         writer.in_lammps(inlammps_name, dframe)
