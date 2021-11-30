@@ -263,7 +263,7 @@ class RadialDistributionFunction:
 
             nmed = self.stop - self.start
             while self.ngofr_ < nmed:
-                if self.ngofr_ % self.step == 0:
+                if imed % self.step == 0:
                     # add the box if not in frame
                     frame["box"] = box if box is not None else frame["box"]
                     self._accumulate(frame)

@@ -247,7 +247,7 @@ class CoordinationNumber:
 
             nmed = self.stop - self.start
             while self.ncn_ < nmed:
-                if self.ncn_ % self.step == 0:
+                if imed % self.step == 0:
                     # add the box if not in frame
                     frame["box"] = box if box is not None else frame["box"]
 
