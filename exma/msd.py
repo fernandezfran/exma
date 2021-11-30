@@ -182,7 +182,8 @@ class MeanSquareDisplacement:
 
             self._reference_frame(frame)
 
-            while imed < self.stop / self.step:
+            nmed = self.stop - self.start
+            while imed < (nmed):
                 if imed % self.step == 0:
                     # add the box if not in frame
                     frame["box"] = box if box is not None else frame["box"]
@@ -196,8 +197,8 @@ class MeanSquareDisplacement:
                         )
 
                     mean_square_displacement.append(self._on_this_frame(frame))
-                    imed += 1
 
+                imed += 1
                 frame = self.traj_.read_frame()
 
         except EOFError:
@@ -211,7 +212,7 @@ class MeanSquareDisplacement:
 
             self.df_msd_ = pd.DataFrame(
                 {
-                    "t": self.dt * np.arange(0, imed),
+                    "t": self.dt * np.arange(0, imed, self.step),
                     "msd": np.array(mean_square_displacement),
                 }
             )

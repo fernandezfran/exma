@@ -154,10 +154,14 @@ class LAMMPS(TrajectoryReader):
     ----------
     file_traj : str
         name of the file where the trajectories of lammps are
+
+    headerint : list, default=["id", "type", "ix", "iy", "iz"]
+        the columns that have int data types, the others are considered floats.
     """
 
-    def __init__(self, file_traj, ftype="custom"):
+    def __init__(self, file_traj, headerint=["id", "type", "ix", "iy", "iz"]):
         super(LAMMPS, self).__init__(file_traj, None)
+        self.headerint = headerint
 
     def read_frame(self):
         """Read the actual frame of an .lammpstrj file.
@@ -199,9 +203,11 @@ class LAMMPS(TrajectoryReader):
             for j, element in enumerate(line):
                 frame[keys[j]].append(element)
 
-        # automatic way to know the type of data (between int or float)
+        # a way to know the type of data (always a np.float32 except when the
+        # data corresponds with integers: `id`, `type`, `ix`, `ìy`, `iz`)
         dtypes = [
-            np.float32 if "." in element else np.intc for element in line
+            np.float32 if key not in self.headerint else np.intc
+            for key in keys
         ]
 
         frame = {
