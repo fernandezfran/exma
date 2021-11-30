@@ -246,7 +246,7 @@ class CoordinationNumber:
             self._configure_ctypes(frame["type"])
 
             nmed = self.stop - self.start
-            while self.ncn_ < nmed:
+            while imed < nmed:
                 if imed % self.step == 0:
                     # add the box if not in frame
                     frame["box"] = box if box is not None else frame["box"]
