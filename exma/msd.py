@@ -183,7 +183,7 @@ class MeanSquareDisplacement:
             self._reference_frame(frame)
 
             nmed = self.stop - self.start
-            while imed < (nmed):
+            while imed < nmed:
                 if imed % self.step == 0:
                     # add the box if not in frame
                     frame["box"] = box if box is not None else frame["box"]

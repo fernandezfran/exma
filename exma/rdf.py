@@ -250,6 +250,7 @@ class RadialDistributionFunction:
         pd.DataFrame
             A `pd.DataFrame` with r and g(r) as columns.
         """
+        imed = 0
         self._configure
 
         try:
@@ -260,12 +261,14 @@ class RadialDistributionFunction:
 
             self._configure_ctypes(frame["type"])
 
-            while self.ngofr_ < self.stop / self.step:
+            nmed = self.stop - self.start
+            while self.ngofr_ < nmed:
                 if self.ngofr_ % self.step == 0:
                     # add the box if not in frame
                     frame["box"] = box if box is not None else frame["box"]
                     self._accumulate(frame)
 
+                imed += 1
                 frame = self.traj_.read_frame()
 
         except EOFError:

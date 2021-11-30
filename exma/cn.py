@@ -223,6 +223,7 @@ class CoordinationNumber:
         tuple
             a tuple with the average cn number and its standard deviation.
         """
+        imed = 0
         self._configure
 
         try:
@@ -244,7 +245,8 @@ class CoordinationNumber:
 
             self._configure_ctypes(frame["type"])
 
-            while self.ncn_ < self.stop / self.step:
+            nmed = self.stop - self.start
+            while self.ncn_ < nmed:
                 if self.ncn_ % self.step == 0:
                     # add the box if not in frame
                     frame["box"] = box if box is not None else frame["box"]
@@ -259,6 +261,7 @@ class CoordinationNumber:
 
                     self._accumulate(frame)
 
+                imed += 1
                 frame = self.traj_.read_frame()
 
         except EOFError:
