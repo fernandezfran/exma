@@ -142,8 +142,8 @@ class MeanSquareDisplacement:
         y = y - self.yref_
         z = z - self.zref_
 
-        msd = x * x + y * y + z * z
-        return np.mean(msd)  # np.sum(msd) / self.natoms_e_
+        msd = np.square(x) + np.square(y) + np.square(z)
+        return np.mean(msd)
 
     def calculate(self, box=None):
         """Calculate the MSD.
