@@ -1,8 +1,31 @@
+========
 exma API
 ========
 
 .. toctree::
    :maxdepth: 4
+
+
+Pair Analyzer
+=============
+
+``exma.msd`` module
+-------------------
+
+.. automodule:: exma.msd
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :member-order: bysource
+
+``exma.rdf`` module
+-------------------
+
+.. automodule:: exma.rdf
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :member-order: bysource
 
 ``exma.cn`` module
 ------------------
@@ -13,14 +36,9 @@ exma API
    :show-inheritance:
    :member-order: bysource
 
-``exma.electrochemistry`` module
---------------------------------
 
-.. automodule:: exma.electrochemistry
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :member-order: bysource
+IO
+==
 
 ``exma.io`` module
 ------------------
@@ -37,6 +55,7 @@ exma API
 .. automodule:: exma.io.reader
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:
    :member-order: bysource
 
@@ -46,13 +65,18 @@ exma API
 .. automodule:: exma.io.writer
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:
    :member-order: bysource
 
-``exma.msd`` module
--------------------
 
-.. automodule:: exma.msd
+Other features
+==============
+
+``exma.electrochemistry`` module
+--------------------------------
+
+.. automodule:: exma.electrochemistry
    :members:
    :undoc-members:
    :show-inheritance:
@@ -67,19 +91,46 @@ exma API
    :show-inheritance:
    :member-order: bysource
 
-``exma.rdf`` module
--------------------
+``exma.statistics`` module
+--------------------------
 
-.. automodule:: exma.rdf
+.. automodule:: exma.statistics
    :members:
    :undoc-members:
    :show-inheritance:
    :member-order: bysource
 
-``exma.statistics`` module
+
+Modules under development
+=========================
+
+``exma._cluster`` module
 --------------------------
 
-.. automodule:: exma.statistics
+.. automodule:: exma._cluster
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :member-order: bysource
+
+
+Core modules
+============
+
+``exma._traj_sorter`` module
+----------------------------
+
+.. automodule:: exma._traj_sorter
+   :members:
+   :private-members:
+   :undoc-members:
+   :show-inheritance:
+   :member-order: bysource
+
+``exma.core`` module
+--------------------
+
+.. automodule:: exma.core
    :members:
    :undoc-members:
    :show-inheritance:

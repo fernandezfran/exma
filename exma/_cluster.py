@@ -46,10 +46,10 @@ PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
 class EffectiveNeighbors:
     """Emipirical way to describe charge transfer and coordination in solids.
 
-    The empirical effective coordination model [1]_, used to calculate the
+    The empirical effective coordination model [2]_, used to calculate the
     effective neighbors, assumes that the interact atoms donate more of its
     electron to the closest central atoms. Then, fractions of the interact
-    atom can be assigned to the various central neighbors atoms [2]_.
+    atom can be assigned to the various central neighbors atoms [3]_.
 
     Parameters
     ----------
@@ -61,10 +61,10 @@ class EffectiveNeighbors:
 
     References
     ----------
-    .. [1] Hoppe, R., Voigt, S., Glaum, H., Kissel, J., Müller, H.P. and
+    .. [2] Hoppe, R., Voigt, S., Glaum, H., Kissel, J., Müller, H.P. and
        Bernet, K., 1988. A new route to charge distributions in ionic solids.
        `Journal of the Less Common Metals`, 156(1-2), pp.105-122.
-    .. [2] Chevrier, V.L. and Dahn, J.R., 2010. First principles studies of
+    .. [3] Chevrier, V.L. and Dahn, J.R., 2010. First principles studies of
        disordered lithiated silicon. `Journal of the Electrochemical Society`,
        157(4), p.A392.
 
@@ -281,8 +281,8 @@ def sro(rdf_x, rdf_y, rcut, **kwargs):
     """Short range order parameter.
 
     To characterize the short range ordering of amorphous structures, defined
-    in this work [3]_, using the itegration of the
-    radial distribution function for diatomic systems.
+    in this work [4]_, using the itegration of the radial distribution
+    function for diatomic systems.
 
     This parameter indicates complete randomness if it is equal to zero,
     preference for unlike neighbors if it is less than zero, and preference
@@ -310,7 +310,7 @@ def sro(rdf_x, rdf_y, rcut, **kwargs):
 
     References
     ----------
-    .. [3] Fernandez, F., Paz, S.A., Otero, M., Barraco, D. and Leiva, E.P.,
+    .. [4] Fernandez, F., Paz, S.A., Otero, M., Barraco, D. and Leiva, E.P.,
        2021. Characterization of amorphous Li x Si structures from ReaxFF via
        accelerated exploration of local minima. `Physical Chemistry Chemical
        Physics`, 23(31), pp.16776-16784.
