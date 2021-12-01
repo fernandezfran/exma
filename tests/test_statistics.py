@@ -12,6 +12,8 @@
 
 import exma.statistics
 
+from matplotlib.testing.decorators import check_figures_equal
+
 import numpy as np
 
 # ======================================================================
@@ -34,4 +36,30 @@ def test_block_average():
     )
     np.testing.assert_array_almost_equal(
         result["varerr"], np.array([1.228932e-05, 2.168837e-05])
+    )
+
+
+@check_figures_equal(extensions=["pdf", "png"])
+def test_block_average_plot(fig_test, fig_ref):
+    """Test the variance plot."""
+    arr = np.random.rand(1000)
+
+    block = exma.statistics.BlockAverage(arr)
+    result = block.calculate()
+
+    # test
+    test_ax = fig_test.subplots()
+    block.plot(ax=test_ax)
+
+    # expected
+    exp_ax = fig_ref.subplots()
+
+    exp_ax.set_xlabel("number of blocks operations")
+    exp_ax.set_ylabel("block average variance")
+    exp_ax.errorbar(
+        list(result.index),
+        np.asarray(result["var"]),
+        yerr=np.asarray(result["varerr"]),
+        marker="o",
+        ls="",
     )

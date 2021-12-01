@@ -1,11 +1,12 @@
 __pycache___/
 */__pycache__/
 */*/__pycache__/
+*gnu.so
 
 /docs/build/
 
-*gnu.so
 .tox/
+result_images/
 .coverage
 
 /build/

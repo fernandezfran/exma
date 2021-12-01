@@ -16,6 +16,8 @@
 # IMPORTS
 # =============================================================================
 
+import matplotlib.pyplot as plt
+
 import numpy as np
 
 import pandas as pd
@@ -81,7 +83,7 @@ class BlockAverage:
 
             oldx = newx
 
-        self.df = pd.DataFrame(
+        self.df_ = pd.DataFrame(
             data={
                 "data_size": np.array(data_size),
                 "mean": np.array(mean),
@@ -90,11 +92,46 @@ class BlockAverage:
             }
         )
 
-        return self.df
+        return self.df_
 
-    def plot(self):
+    def plot(self, ax=None, errorbar_kws=None):
         """Flyvbjerg & Petersen plot.
 
-        Not implemented yet.
+        Parameters
+        ----------
+        ax : matplotlib.pyplot.Axis, default=None
+            current metplotlib axis
+
+        errorbar_kws : dict, defualt=None
+            additional keyword arguments that are passed and are documented
+            in `matplotlib.pyplot.errorbar_kws`.
+
+        Returns
+        -------
+        matplotlib.pyplot.Axis
+            the axis with the plot
         """
-        raise NotImplementedError("To be implemented soon.")
+        ax = plt.gca() if ax is None else ax
+
+        errorbar_kws = {} if errorbar_kws is None else errorbar_kws
+        for key, value in zip(["marker", "ls"], ["o", ""]):
+            errorbar_kws.setdefault(key, value)
+
+        ax.set_xlabel("number of blocks operations")
+        ax.set_ylabel("block average variance")
+
+        # print(list(self.df_.index))
+        # print(np.array(self.df_["var"]))
+        print(np.asarray(self.df_.varerr))
+        ax.errorbar(
+            list(self.df_.index),
+            np.asarray(self.df_["var"]),
+            yerr=np.asarray(self.df_["varerr"]),
+            **errorbar_kws,
+        )
+
+        return ax
+
+    def save(self):
+        """Save the block average info to a file."""
+        raise NotImplementedError

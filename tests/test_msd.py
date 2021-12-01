@@ -15,6 +15,8 @@ import pathlib
 
 import exma.msd
 
+from matplotlib.testing.decorators import check_figures_equal
+
 import numpy as np
 
 import pytest
@@ -491,10 +493,36 @@ def test_MeanSquareDisplacement_warning(fname, box):
         ).calculate(box)
 
 
-def test_MeanSquareDisplacement_plot():
+@check_figures_equal(extensions=["pdf", "png"])
+def test_MeanSquareDisplacement_plot(fig_test, fig_ref):
     """Test the MSD plot."""
-    with pytest.raises(NotImplementedError):
-        exma.msd.MeanSquareDisplacement("something.xyz", 1000, "H").plot()
+    files = ["liquid.xyz", "solid.xyz"]
+    boxes = [np.full(3, 8.54988), np.full(3, 7.46901)]
+    msds = []
+    for fname, box in zip(files, boxes):
+        msd = exma.msd.MeanSquareDisplacement(
+            str(TEST_DATA_PATH / fname),
+            0.005,
+            "Ar",
+            start=10,
+            stop=20,
+            xyztype="image",
+        )
+        msd.calculate(box)
+        msds.append(msd)
+
+    # test
+    test_ax = fig_test.subplots()
+    for msd in msds:
+        msd.plot(ax=test_ax)
+
+    # expected
+    exp_ax = fig_ref.subplots()
+
+    exp_ax.set_xlabel("t")
+    exp_ax.set_ylabel("msd")
+    for msd in msds:
+        exp_ax.plot(msd.df_msd_["t"], msd.df_msd_["msd"])
 
 
 def test_MeanSquareDisplacement_save():

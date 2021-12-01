@@ -18,6 +18,8 @@
 
 import warnings
 
+import matplotlib.pyplot as plt
+
 import numpy as np
 
 import pandas as pd
@@ -219,9 +221,32 @@ class MeanSquareDisplacement:
 
             return self.df_msd_
 
-    def plot(self):
-        """To be implemented soon."""
-        raise NotImplementedError("To be implemented soon.")
+    def plot(self, ax=None, plot_kws=None):
+        """Plot the calculated MSD.
+
+        Parameters
+        ----------
+        ax : matplotlib.pyplot.Axis, default=None
+            current metplotlib axis
+
+        plot_kws : dict, defualt=None
+            additional keyword arguments that are passed and are documented
+            in `matplotlib.pyplot.plot`.
+
+        Returns
+        -------
+        matplotlib.pyplot.Axis
+            the axis with the plot
+        """
+        ax = plt.gca() if ax is None else ax
+
+        plot_kws = {} if plot_kws is None else plot_kws
+
+        ax.set_xlabel("t")
+        ax.set_ylabel("msd")
+        ax.plot(self.df_msd_["t"], self.df_msd_["msd"], **plot_kws)
+
+        return ax
 
     def save(self):
         """To be implemented soon."""

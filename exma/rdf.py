@@ -22,6 +22,8 @@ import pathlib
 import sysconfig
 import warnings
 
+import matplotlib.pyplot as plt
+
 import numpy as np
 
 import pandas as pd
@@ -284,9 +286,32 @@ class RadialDistributionFunction:
             self.df_rdf_ = pd.DataFrame({"r": r, "rdf": rdf})
             return self.df_rdf_
 
-    def plot(self):
-        """To be implemented soon."""
-        raise NotImplementedError("To be implemented soon.")
+    def plot(self, ax=None, plot_kws=None):
+        """Plot the calculated RDF.
+
+        Parameters
+        ----------
+        ax : matplotlib.pyplot.Axis, default=None
+            current metplotlib axis
+
+        plot_kws : dict, defualt=None
+            additional keyword arguments that are passed and are documented
+            in `matplotlib.pyplot.plot`.
+
+        Returns
+        -------
+        matplotlib.pyplot.Axis
+            the axis with the plot
+        """
+        ax = plt.gca() if ax is None else ax
+
+        plot_kws = {} if plot_kws is None else plot_kws
+
+        ax.set_xlabel("r")
+        ax.set_ylabel("g(r)")
+        ax.plot(self.df_rdf_["r"], self.df_rdf_["rdf"], **plot_kws)
+
+        return ax
 
     def save(self):
         """To be implemented soon."""

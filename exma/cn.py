@@ -276,10 +276,6 @@ class CoordinationNumber:
 
             return np.mean(cn), np.std(cn)
 
-    def plot(self):
-        """To be implemented soon."""
-        raise NotImplementedError("To be implemented soon.")
-
     def save(self):
         """To be implemented soon."""
         raise NotImplementedError("To be implemented soon.")

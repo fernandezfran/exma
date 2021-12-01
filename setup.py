@@ -30,7 +30,14 @@ from distutils.core import Extension, setup  # noqa: I100
 
 PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
 
-REQUIREMENTS = ["more-itertools", "numpy", "pandas", "scikit-learn", "scipy"]
+REQUIREMENTS = [
+    "more-itertools",
+    "matplotlib",
+    "numpy",
+    "pandas",
+    "scikit-learn",
+    "scipy",
+]
 
 COMMON = "exma/lib/"
 CFLAGS = sysconfig.get_config_var("CFLAGS").split()

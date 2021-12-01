@@ -15,6 +15,8 @@ import pathlib
 
 import exma.rdf
 
+from matplotlib.testing.decorators import check_figures_equal
+
 import numpy as np
 
 import pytest
@@ -295,10 +297,36 @@ def test_RadialDistributionFunction_warning(fname, box):
         ).calculate(box)
 
 
-def test_RadialDistributionFunction_plot():
+@check_figures_equal(extensions=["pdf", "png"])
+def test_RadialDistributionFunction_plot(fig_test, fig_ref):
     """Test the RDF plot."""
-    with pytest.raises(NotImplementedError):
-        exma.rdf.RadialDistributionFunction("something.xyz", "H", "H").plot()
+    files = ["liquid.xyz", "solid.xyz"]
+    boxes = [np.full(3, 8.54988), np.full(3, 7.46901)]
+    rdfs = []
+    for fname, box in zip(files, boxes):
+        rdf = exma.rdf.RadialDistributionFunction(
+            str(TEST_DATA_PATH / fname),
+            "Ar",
+            "Ar",
+            start=10,
+            stop=20,
+            rmax=np.min(box) / 2,
+        )
+        rdf.calculate(box)
+        rdfs.append(rdf)
+
+    # test
+    test_ax = fig_test.subplots()
+    for rdf in rdfs:
+        rdf.plot(ax=test_ax)
+
+    # expected
+    exp_ax = fig_ref.subplots()
+
+    exp_ax.set_xlabel("r")
+    exp_ax.set_ylabel("g(r)")
+    for rdf in rdfs:
+        exp_ax.plot(rdf.df_rdf_["r"], rdf.df_rdf_["rdf"])
 
 
 def test_RadialDistributionFunction_save():
