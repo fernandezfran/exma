@@ -80,12 +80,6 @@ def test_CoordinationNumber_warning(fname, rcut, box):
         ).calculate(box)
 
 
-def test_CoordinationNumber_plot():
-    """Test the CN plot."""
-    with pytest.raises(NotImplementedError):
-        exma.cn.CoordinationNumber("something.xyz", "H", "H", 1.0).plot()
-
-
 def test_CoordinationNumber_save():
     """Test the CN save."""
     with pytest.raises(NotImplementedError):
