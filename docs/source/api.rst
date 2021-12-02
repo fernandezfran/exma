@@ -49,10 +49,10 @@ Pair Analyzer
 Electrochemistry
 ================
 
-``exma.electrochemistry.electrochemistry`` module
--------------------------------------------------
+``exma.electrochemistry`` module
+--------------------------------
 
-.. automodule:: exma.electrochemistry.electrochemistry
+.. automodule:: exma.electrochemistry
    :members:
    :undoc-members:
    :show-inheritance:

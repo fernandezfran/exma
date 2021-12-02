@@ -32,7 +32,11 @@ from .cn import CoordinationNumber  # noqa
 from ._cluster import EffectiveNeighbors, DBSCAN, sro  # noqa
 
 # electrochemistry
-from .electrochemistry.electrochemistry import Electrochemistry  # noqa
+from .electrochemistry import (  # noqa
+    fractional_volume_change,  # noqa
+    formation_energy,  # noqa
+    voltage,  # noqa
+)  # noqa
 from .electrochemistry.statistics import BlockAverage  # noqa
 
 # io
