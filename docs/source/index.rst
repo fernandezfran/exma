@@ -7,8 +7,8 @@
 exma
 ====
 
-.. image:: https://github.com/fernandezfran/exmap/actions/workflows/exma_ci.yml/badge.svg
-   :target: https://github.com/fernandezfran/exmap/actions/workflows/exma_ci.yml
+.. image:: https://github.com/fernandezfran/exma/actions/workflows/exma_ci.yml/badge.svg
+   :target: https://github.com/fernandezfran/exma/actions/workflows/exma_ci.yml
    :alt: GitHub Actions CI
 
 .. image:: https://readthedocs.org/projects/exma/badge/?version=latest
@@ -46,7 +46,7 @@ Contents
    :maxdepth: 2
 
    install
-   tutorial
+   tutorial.ipynb
    api
 
 Indices and tables
