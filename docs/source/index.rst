@@ -21,7 +21,7 @@ exma
 
 
 **exma** is a Python module with C extensions that allows to analyze 
-molecular dynamics trajectories with different tools.
+molecular dynamics trajectories and thermodynamic data with different tools.
 
 | **Authors**
 | Francisco Fernandez (E-mail: fernandezfrancisco2195@gmail.com)
