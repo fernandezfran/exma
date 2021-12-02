@@ -527,5 +527,33 @@ def test_MeanSquareDisplacement_plot(fig_test, fig_ref):
 
 def test_MeanSquareDisplacement_save():
     """Test the MSD save."""
-    with pytest.raises(NotImplementedError):
-        exma.msd.MeanSquareDisplacement("something.xyz", 1000, "H").save()
+    file = "solid.xyz"
+    box = np.full(3, 7.46901)
+
+    msd = exma.msd.MeanSquareDisplacement(
+        str(TEST_DATA_PATH / file),
+        0.005,
+        "Ar",
+        stop=10,
+        xyztype="image",
+    )
+    msd.calculate(box)
+    msd.save()
+
+    with open("msd.dat", "r") as fin:
+        readed = fin.read()
+    os.remove("msd.dat")
+
+    assert readed == (
+        "# t, msd\n"
+        "0.000000e+00  0.000000e+00\n"
+        "5.000000e-03  6.600316e-03\n"
+        "1.000000e-02  7.384185e-03\n"
+        "1.500000e-02  7.153627e-03\n"
+        "2.000000e-02  7.385612e-03\n"
+        "2.500000e-02  6.853187e-03\n"
+        "3.000000e-02  7.544578e-03\n"
+        "3.500000e-02  6.790672e-03\n"
+        "4.000000e-02  7.472885e-03\n"
+        "4.500000e-02  7.378332e-03\n"
+    )

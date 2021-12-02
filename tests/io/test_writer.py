@@ -17,8 +17,6 @@ import exma.io.writer
 
 import numpy as np
 
-import pytest
-
 
 # ============================================================================
 # CONSTANTS
@@ -32,15 +30,6 @@ TEST_DATA_PATH = pathlib.Path(
 # ======================================================================
 # TESTS
 # ======================================================================
-
-
-def test_TrajectoryWriter_raises():
-    fxyz = TEST_DATA_PATH / "exma_test.xyz"
-    with pytest.raises(NotImplementedError):
-        tw = exma.io.writer.TrajectoryWriter(fxyz, "error")
-        tw.write_frame()
-
-    os.remove(fxyz)
 
 
 def test_in_lammps():

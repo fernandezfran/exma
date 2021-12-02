@@ -82,5 +82,20 @@ def test_CoordinationNumber_warning(fname, rcut, box):
 
 def test_CoordinationNumber_save():
     """Test the CN save."""
-    with pytest.raises(NotImplementedError):
-        exma.cn.CoordinationNumber("something.xyz", "H", "H", 1.0).save()
+    cn = exma.cn.CoordinationNumber(
+        str(TEST_DATA_PATH / "solid.xyz"),
+        "Ar",
+        "Ar",
+        1.29,
+        stop=1,
+    )
+    cn.calculate(np.full(3, 7.46901))
+    cn.save()
+
+    with open("cn.dat", "r") as fin:
+        readed = fin.read()
+    os.remove("cn.dat")
+
+    result = np.asarray(readed.split()[2:], dtype=np.float32).mean()
+
+    np.testing.assert_almost_equal(result, 12.0)

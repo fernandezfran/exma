@@ -10,15 +10,43 @@
 # IMPORTS
 # ======================================================================
 
-import exma._traj_sorter
+import os
+import pathlib
+
+import exma.core
 
 import numpy as np
 
 import pytest
 
-# ======================================================================
+# ============================================================================
+# CONSTANTS
+# ============================================================================
+
+TEST_DATA_PATH = pathlib.Path(
+    os.path.join(os.path.abspath(os.path.dirname(__file__)), "io")
+)
+
+# ============================================================================
 # TESTS
-# ======================================================================
+# ============================================================================
+
+
+def test_TrajectoryReader_raises():
+    with pytest.raises(NotImplementedError):
+        tr = exma.core.TrajectoryReader(
+            TEST_DATA_PATH / "test_data" / "test_ref.xyz", "error"
+        )
+        tr.read_frame()
+
+
+def test_TrajectoryWriter_raises():
+    fxyz = TEST_DATA_PATH / "test_data" / "exma_test.xyz"
+    with pytest.raises(NotImplementedError):
+        tw = exma.core.TrajectoryWriter(fxyz, "error")
+        tw.write_frame()
+
+    os.remove(fxyz)
 
 
 @pytest.mark.parametrize(
@@ -33,7 +61,7 @@ import pytest
 )
 def test__is_sorted(arr, res):
     """Test the check if an array is sorted."""
-    assert exma._traj_sorter._is_sorted(arr) == res
+    assert exma.core._is_sorted(arr) == res
 
 
 @pytest.mark.parametrize(
@@ -87,6 +115,6 @@ def test__is_sorted(arr, res):
 )
 def test__sort_traj(frame, sorted_frame):
     """Test the check sorting of a traj."""
-    res = exma._traj_sorter._sort_traj(frame)
+    res = exma.core._sort_traj(frame)
     for key in sorted_frame.keys():
         np.testing.assert_array_almost_equal(res[key], sorted_frame[key])

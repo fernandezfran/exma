@@ -102,7 +102,7 @@ class BlockAverage:
         ax : matplotlib.pyplot.Axis, default=None
             current metplotlib axis
 
-        errorbar_kws : dict, defualt=None
+        errorbar_kws : dict, default={"marker": "o", "ls": ""}
             additional keyword arguments that are passed and are documented
             in `matplotlib.pyplot.errorbar_kws`.
 
@@ -120,9 +120,6 @@ class BlockAverage:
         ax.set_xlabel("number of blocks operations")
         ax.set_ylabel("block average variance")
 
-        # print(list(self.df_.index))
-        # print(np.array(self.df_["var"]))
-        print(np.asarray(self.df_.varerr))
         ax.errorbar(
             list(self.df_.index),
             np.asarray(self.df_["var"]),
@@ -132,6 +129,19 @@ class BlockAverage:
 
         return ax
 
-    def save(self):
-        """Save the block average info to a file."""
-        raise NotImplementedError
+    def save(self, filename="block_average.csv", **kwargs):
+        """Save the block average info to a csv file.
+
+        Parameters
+        ----------
+        filename : str, default="block_average.csv"
+            name of the file as str to write the output
+
+        kwargs : dict, default={"index": False, "float_format": "%.6e"}
+            additional keyword arguments that are passed and are documented
+            in `pandas.DataFrame.to_csv`.
+        """
+        kwargs.setdefault("index", False)
+        kwargs.setdefault("float_format", "%.6e")
+
+        self.df_.to_csv(filename, **kwargs)

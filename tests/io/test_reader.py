@@ -17,9 +17,6 @@ import exma.io.reader
 
 import numpy as np
 
-import pytest
-
-
 # ============================================================================
 # CONSTANTS
 # ============================================================================
@@ -32,14 +29,6 @@ TEST_DATA_PATH = pathlib.Path(
 # ======================================================================
 # TESTS
 # ======================================================================
-
-
-def test_TrajectoryReader_raises():
-    with pytest.raises(NotImplementedError):
-        tr = exma.io.reader.TrajectoryReader(
-            TEST_DATA_PATH / "test_ref.xyz", "error"
-        )
-        tr.read_frame()
 
 
 def test_read_log_lammps():

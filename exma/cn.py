@@ -24,7 +24,7 @@ import warnings
 
 import numpy as np
 
-from . import _traj_sorter
+from .core import _is_sorted, _sort_traj
 from .io import reader
 
 # =============================================================================
@@ -238,9 +238,7 @@ class CoordinationNumber:
             # sort the traj if is not sorted, xyz are sorted by construction
             if "id" in frame.keys():
                 frame = (
-                    _traj_sorter._sort_traj(frame)
-                    if not _traj_sorter._is_sorted(frame["id"])
-                    else frame
+                    _sort_traj(frame) if not _is_sorted(frame["id"]) else frame
                 )
 
             self._configure_ctypes(frame["type"])
@@ -254,8 +252,8 @@ class CoordinationNumber:
                     # sort the traj if is not sorted
                     if "id" in frame.keys():
                         frame = (
-                            _traj_sorter._sort_traj(frame)
-                            if not _traj_sorter._is_sorted(frame["id"])
+                            _sort_traj(frame)
+                            if not _is_sorted(frame["id"])
                             else frame
                         )
 
@@ -272,10 +270,29 @@ class CoordinationNumber:
 
         finally:
             self.traj_.file_close()
-            cn = self._end()
+            self.cn_ = self._end()
 
-            return np.mean(cn), np.std(cn)
+            return np.mean(self.cn_), np.std(self.cn_)
 
-    def save(self):
-        """To be implemented soon."""
-        raise NotImplementedError("To be implemented soon.")
+    def save(self, filename="cn.dat"):
+        """Write an output file.
+
+        A one-column file where for the central atoms the corresponding
+        coordination number averaged over the frames in which it was
+        calculated is given and for the interacting atoms (which was not
+        calculated) a nan.
+
+        Parameters
+        ----------
+        filename : str, default="cn.dat"
+            name of the file as str to write the output
+        """
+        with open(filename, "w") as fout:
+            fout.write("# CN \n")
+            j = 0
+            for i, value in enumerate(self.mask_c_):
+                if value:
+                    fout.write(f"{self.cn_[j]:.6e}\n")
+                    j += 1
+                else:
+                    fout.write(f"{np.nan} \n")

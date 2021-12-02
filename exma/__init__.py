@@ -25,13 +25,14 @@ __version__ = "0.3.0"
 # IMPORTS
 # ======================================================================
 
-from .io.reader import XYZ, LAMMPS, read_log_lammps  # noqa
-from .io.writer import XYZ, LAMMPS, in_lammps  # noqa
-from ._cluster import EffectiveNeighbors, DBSCAN, sro  # noqa
-from ._traj_sorter import _is_sorted, _sort_traj  # noqa
 from .msd import MeanSquareDisplacement  # noqa
 from .rdf import RadialDistributionFunction  # noqa
 from .cn import CoordinationNumber  # noqa
+from .io import *  # noqa
+from .io.reader import XYZ, LAMMPS, read_log_lammps  # noqa
+from .io.writer import XYZ, LAMMPS, in_lammps  # noqa
 from .electrochemistry import Electrochemistry  # noqa
 from .positions import Positions, spherical_nanoparticle, replicate  # noqa
 from .statistics import BlockAverage  # noqa
+from ._cluster import EffectiveNeighbors, DBSCAN, sro  # noqa
+from .core import _is_sorted, _sort_traj  # noqa

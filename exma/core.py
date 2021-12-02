@@ -10,10 +10,16 @@
 # DOCS
 # ============================================================================
 
-"""Core classes of exma."""
+"""Core classes and functions of exma."""
+
+# ======================================================================
+# IMPORTS
+# ======================================================================
+
+import numpy as np
 
 # ============================================================================
-# CLASSES
+# IO CLASSES
 # ============================================================================
 
 
@@ -66,3 +72,24 @@ class TrajectoryWriter:
     def file_close(self):
         """Close the trayectory file."""
         self.file_traj.close()
+
+
+# ======================================================================
+# FUNCTIONS
+# ======================================================================
+
+
+def _is_sorted(idx):
+    """Tells if the array x is sorted (-> True) or not (-> False)."""
+    return (np.diff(idx) >= 0).all()
+
+
+def _sort_traj(frame, dontsort=("natoms", "box")):
+    """Sort all the traj from the sortening of the atoms id."""
+    id_argsort = np.argsort(frame["id"])
+
+    for key in frame.keys():
+        frame[key] = (
+            frame[key][id_argsort] if key not in dontsort else frame[key]
+        )
+    return frame

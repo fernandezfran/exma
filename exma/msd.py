@@ -24,7 +24,7 @@ import numpy as np
 
 import pandas as pd
 
-from . import _traj_sorter
+from .core import _is_sorted, _sort_traj
 from .io import reader
 
 # ======================================================================
@@ -177,9 +177,7 @@ class MeanSquareDisplacement:
             # sort the traj if is not sorted, xyz are sorted by construction
             if "id" in frame.keys():
                 frame = (
-                    _traj_sorter._sort_traj(frame)
-                    if not _traj_sorter._is_sorted(frame["id"])
-                    else frame
+                    _sort_traj(frame) if not _is_sorted(frame["id"]) else frame
                 )
 
             self._reference_frame(frame)
@@ -193,8 +191,8 @@ class MeanSquareDisplacement:
                     # sort the traj if is not sorted
                     if "id" in frame.keys():
                         frame = (
-                            _traj_sorter._sort_traj(frame)
-                            if not _traj_sorter._is_sorted(frame["id"])
+                            _sort_traj(frame)
+                            if not _is_sorted(frame["id"])
                             else frame
                         )
 
@@ -248,6 +246,17 @@ class MeanSquareDisplacement:
 
         return ax
 
-    def save(self):
-        """To be implemented soon."""
-        raise NotImplementedError("To be implemented soon.")
+    def save(self, filename="msd.dat"):
+        """Write an output file.
+
+        The time in the first column and the msd in the second.
+
+        Parameters
+        ----------
+        filename : str, default="msd.dat"
+            name of the file as str to write the output
+        """
+        with open(filename, "w") as fout:
+            fout.write("# t, msd\n")
+            for t, msd in zip(self.df_msd_["t"], self.df_msd_["msd"]):
+                fout.write(f"{t:.6e}  {msd:.6e}\n")

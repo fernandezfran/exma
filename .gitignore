@@ -4,6 +4,7 @@ __pycache___/
 *gnu.so
 
 /docs/build/
+.ipynb_checkpoints/
 
 .tox/
 result_images/

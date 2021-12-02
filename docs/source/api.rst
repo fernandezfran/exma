@@ -117,21 +117,12 @@ Modules under development
 Core modules
 ============
 
-``exma._traj_sorter`` module
-----------------------------
-
-.. automodule:: exma._traj_sorter
-   :members:
-   :private-members:
-   :undoc-members:
-   :show-inheritance:
-   :member-order: bysource
-
 ``exma.core`` module
 --------------------
 
 .. automodule:: exma.core
    :members:
+   :private-members:
    :undoc-members:
    :show-inheritance:
    :member-order: bysource

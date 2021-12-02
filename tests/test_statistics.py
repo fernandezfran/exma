@@ -10,6 +10,8 @@
 # IMPORTS
 # ======================================================================
 
+import os
+
 import exma.statistics
 
 from matplotlib.testing.decorators import check_figures_equal
@@ -62,4 +64,23 @@ def test_block_average_plot(fig_test, fig_ref):
         yerr=np.asarray(result["varerr"]),
         marker="o",
         ls="",
+    )
+
+
+def test_block_average_save():
+    """Test the save of a file."""
+    block = exma.statistics.BlockAverage(
+        [3.14, 3.15, 3.13, 3.13, 3.15, 3.15, 3.16, 3.12]
+    )
+    block.calculate()
+    block.save()
+
+    with open("block_average.csv", "r") as fin:
+        readed = fin.read()
+    os.remove("block_average.csv")
+
+    assert readed == (
+        "data_size,mean,var,varerr\n"
+        "8,3.141250e+00,2.299107e-05,1.228924e-05\n"
+        "4,3.141250e+00,2.656250e-05,2.168819e-05\n"
     )
