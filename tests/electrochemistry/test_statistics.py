@@ -12,7 +12,7 @@
 
 import os
 
-import exma.statistics
+import exma.electrochemistry.statistics
 
 from matplotlib.testing.decorators import check_figures_equal
 
@@ -25,7 +25,7 @@ import numpy as np
 
 def test_block_average():
     """Test the estimation of an error."""
-    result = exma.statistics.BlockAverage(
+    result = exma.electrochemistry.statistics.BlockAverage(
         [3.14, 3.15, 3.13, 3.13, 3.15, 3.15, 3.16, 3.12]
     ).calculate()
 
@@ -46,7 +46,7 @@ def test_block_average_plot(fig_test, fig_ref):
     """Test the variance plot."""
     arr = np.random.rand(1000)
 
-    block = exma.statistics.BlockAverage(arr)
+    block = exma.electrochemistry.statistics.BlockAverage(arr)
     result = block.calculate()
 
     # test
@@ -69,7 +69,7 @@ def test_block_average_plot(fig_test, fig_ref):
 
 def test_block_average_save():
     """Test the save of a file."""
-    block = exma.statistics.BlockAverage(
+    block = exma.electrochemistry.statistics.BlockAverage(
         [3.14, 3.15, 3.13, 3.13, 3.15, 3.15, 3.16, 3.12]
     )
     block.calculate()

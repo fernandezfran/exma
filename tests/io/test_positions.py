@@ -10,7 +10,7 @@
 # IMPORTS
 # ======================================================================
 
-import exma.positions
+import exma.io.positions
 
 import numpy as np
 
@@ -28,7 +28,7 @@ def test_sc():
     yref = np.array([0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.5, 0.5])
     zref = np.array([0.0, 0.5, 0.0, 0.5, 0.0, 0.5, 0.0, 0.5])
 
-    result = exma.positions.Positions(8, 1.0).sc()
+    result = exma.io.positions.Positions(8, 1.0).sc()
 
     assert result["natoms"] == 8
     np.testing.assert_array_equal(result["box"], boxref)
@@ -101,7 +101,7 @@ def test_bcc():
         ]
     )
 
-    result = exma.positions.Positions(16, 1.0).bcc()
+    result = exma.io.positions.Positions(16, 1.0).bcc()
 
     assert result["natoms"] == 16
     np.testing.assert_array_equal(result["box"], boxref)
@@ -222,7 +222,7 @@ def test_fcc():
         ]
     )
 
-    result = exma.positions.Positions(32, 1.0).fcc()
+    result = exma.io.positions.Positions(32, 1.0).fcc()
 
     assert result["natoms"] == 32
     np.testing.assert_array_equal(result["box"], boxref)
@@ -238,7 +238,7 @@ def test_dc():
     yref = np.array([0.75, 0.0, 0.25, 0.5, 0.75, 0.0, 0.25, 0.5])
     zref = np.array([0.25, 0.5, 0.75, 0.0, 0.75, 0.0, 0.25, 0.5])
 
-    result = exma.positions.Positions(8, 1.0).dc()
+    result = exma.io.positions.Positions(8, 1.0).dc()
 
     assert result["natoms"] == 8
     np.testing.assert_array_equal(result["box"], boxref)
@@ -249,28 +249,28 @@ def test_dc():
 
 def test_sc_raise():
     """Test the raise of sc."""
-    particles = exma.positions.Positions(7, 1.0)
+    particles = exma.io.positions.Positions(7, 1.0)
     with pytest.raises(ValueError):
         particles.sc()
 
 
 def test_bcc_raise():
     """Test the raise of the bcc."""
-    particles = exma.positions.Positions(19, 1.0)
+    particles = exma.io.positions.Positions(19, 1.0)
     with pytest.raises(ValueError):
         particles.bcc()
 
 
 def test_fcc_raise():
     """Test the raise of the fcc."""
-    particles = exma.positions.Positions(37, 1.0)
+    particles = exma.io.positions.Positions(37, 1.0)
     with pytest.raises(ValueError):
         particles.fcc()
 
 
 def test_dc_raise():
     """Test the raise of the dc."""
-    particles = exma.positions.Positions(9, 1.0)
+    particles = exma.io.positions.Positions(9, 1.0)
     with pytest.raises(ValueError):
         particles.dc()
 
@@ -288,7 +288,7 @@ def test_spherical_nanoparticle():
         "z": np.array([0.0, 0.5, 0.0, 0.5, 0.0, 0.5, 0.0, 0.5]),
     }
 
-    result = exma.positions.spherical_nanoparticle(frame, 0.6)
+    result = exma.io.positions.spherical_nanoparticle(frame, 0.6)
 
     assert result["natoms"] == 7
     np.testing.assert_array_equal(result["x"], xref)
@@ -515,7 +515,7 @@ def test_replicate():
         "z": np.array([0.25, 0.5, 0.75, 0.0, 0.75, 0.0, 0.25, 0.5]),
     }
 
-    result = exma.positions.replicate(frame, [2, 2, 2])
+    result = exma.io.positions.replicate(frame, [2, 2, 2])
 
     assert result["natoms"] == natomsref
     np.testing.assert_array_almost_equal(result["box"], boxref)

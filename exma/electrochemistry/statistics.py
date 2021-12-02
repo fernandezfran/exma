@@ -10,7 +10,11 @@
 # DOCS
 # ============================================================================
 
-"""An estimator of the error of a serie of data."""
+"""An estimator of the error of a serie of data.
+
+It is intended to facilitate the estimation of the error of thermodynamic
+quantities before using them to calculate electrochemical properties.
+"""
 
 # =============================================================================
 # IMPORTS

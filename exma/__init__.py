@@ -25,14 +25,21 @@ __version__ = "0.3.0"
 # IMPORTS
 # ======================================================================
 
+# pair analyzer
 from .msd import MeanSquareDisplacement  # noqa
 from .rdf import RadialDistributionFunction  # noqa
 from .cn import CoordinationNumber  # noqa
+from ._cluster import EffectiveNeighbors, DBSCAN, sro  # noqa
+
+# electrochemistry
+from .electrochemistry.electrochemistry import Electrochemistry  # noqa
+from .electrochemistry.statistics import BlockAverage  # noqa
+
+# io
 from .io import *  # noqa
 from .io.reader import XYZ, LAMMPS, read_log_lammps  # noqa
 from .io.writer import XYZ, LAMMPS, in_lammps  # noqa
-from .electrochemistry import Electrochemistry  # noqa
-from .positions import Positions, spherical_nanoparticle, replicate  # noqa
-from .statistics import BlockAverage  # noqa
-from ._cluster import EffectiveNeighbors, DBSCAN, sro  # noqa
+from .io.positions import Positions, spherical_nanoparticle, replicate  # noqa
+
+# core private
 from .core import _is_sorted, _sort_traj  # noqa

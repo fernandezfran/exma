@@ -10,7 +10,7 @@
 # IMPORTS
 # ======================================================================
 
-import exma.electrochemistry
+import exma.electrochemistry.electrochemistry
 
 import numpy as np
 
@@ -32,7 +32,7 @@ def test_fractional_volume_change():
     volume = np.array([150, 175, 200, 225, 250])
     df = pd.DataFrame({"x": x, "NA": natomsa, "Vol": volume})
 
-    result = exma.electrochemistry.Electrochemistry(
+    result = exma.electrochemistry.electrochemistry.Electrochemistry(
         df
     ).fractional_volume_change(8, 125)
 
@@ -53,7 +53,7 @@ def test_fractional_volume_change_err():
         {"x": x, "NA": natomsa, "Vol": volume, "errVol": volume_error}
     )
 
-    result = exma.electrochemistry.Electrochemistry(
+    result = exma.electrochemistry.electrochemistry.Electrochemistry(
         df
     ).fractional_volume_change(8, 125)
 
@@ -71,9 +71,9 @@ def test_formation_energy():
     potential_energy = np.array([-1.0, -0.825, -0.75, -0.625, -0.5])
     df = pd.DataFrame({"x": x, "NA": natomsa, "PotEng": potential_energy})
 
-    result = exma.electrochemistry.Electrochemistry(df).formation_energy(
-        -1.0, -0.5
-    )
+    result = exma.electrochemistry.electrochemistry.Electrochemistry(
+        df
+    ).formation_energy(-1.0, -0.5)
 
     np.testing.assert_almost_equal(result.x, x)
     np.testing.assert_almost_equal(result.fe, reffe)
@@ -96,9 +96,9 @@ def test_formation_energy_error():
         }
     )
 
-    result = exma.electrochemistry.Electrochemistry(df).formation_energy(
-        -1.0, -0.5
-    )
+    result = exma.electrochemistry.electrochemistry.Electrochemistry(
+        df
+    ).formation_energy(-1.0, -0.5)
 
     np.testing.assert_almost_equal(result.x, x)
     np.testing.assert_almost_equal(result.fe, reffe)
@@ -222,7 +222,7 @@ def test_voltage():
     potential_energy = np.array([-1.0, -0.825, -0.75, -0.625, -0.5])
     df = pd.DataFrame({"x": x, "NA": natomsa, "PotEng": potential_energy})
 
-    electro = exma.electrochemistry.Electrochemistry(df)
+    electro = exma.electrochemistry.electrochemistry.Electrochemistry(df)
     electro.formation_energy(-1.0, -0.5)
     result = electro.voltage(k=2)
 
@@ -238,9 +238,9 @@ def test_raise_fvc():
     df = pd.DataFrame({"x": x, "NA": natomsa})
 
     with pytest.raises(KeyError):
-        exma.electrochemistry.Electrochemistry(df).fractional_volume_change(
-            8, 125
-        )
+        exma.electrochemistry.electrochemistry.Electrochemistry(
+            df
+        ).fractional_volume_change(8, 125)
 
 
 def test_raise_fe():
@@ -250,7 +250,9 @@ def test_raise_fe():
     df = pd.DataFrame({"x": x, "NA": natomsa})
 
     with pytest.raises(KeyError):
-        exma.electrochemistry.Electrochemistry(df).formation_energy(-1.0, -0.5)
+        exma.electrochemistry.electrochemistry.Electrochemistry(
+            df
+        ).formation_energy(-1.0, -0.5)
 
 
 def test_raise_voltage():
@@ -259,6 +261,6 @@ def test_raise_voltage():
     potential_energy = np.array([-1.0, -0.825, -0.75, -0.625, -0.5])
     df = pd.DataFrame({"x": x, "PotEng": potential_energy})
 
-    electro = exma.electrochemistry.Electrochemistry(df)
+    electro = exma.electrochemistry.electrochemistry.Electrochemistry(df)
     with pytest.raises(NameError):
         electro.voltage(k=2)

@@ -10,7 +10,12 @@
 # DOCS
 # ============================================================================
 
-"""The exma.positions module include a class to define atom positions."""
+"""Includes class and functions to define atom positions.
+
+It is primarily developed to generate initial structures returned in the
+form of a `frame` dictionary for writing to output files with the writer
+classes/function that serve as initial conditions for simulations.
+"""
 
 # =============================================================================
 # IMPORTS

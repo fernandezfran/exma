@@ -36,6 +36,37 @@ Pair Analyzer
    :show-inheritance:
    :member-order: bysource
 
+``exma._cluster`` module
+--------------------------
+
+.. automodule:: exma._cluster
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :member-order: bysource
+
+
+Electrochemistry
+================
+
+``exma.electrochemistry.electrochemistry`` module
+-------------------------------------------------
+
+.. automodule:: exma.electrochemistry.electrochemistry
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :member-order: bysource
+
+``exma.electrochemistry.statistics`` module
+-------------------------------------------
+
+.. automodule:: exma.electrochemistry.statistics
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :member-order: bysource
+
 
 IO
 ==
@@ -69,50 +100,14 @@ IO
    :show-inheritance:
    :member-order: bysource
 
+``exma.io.positions`` module
+----------------------------
 
-Other features
-==============
-
-``exma.electrochemistry`` module
---------------------------------
-
-.. automodule:: exma.electrochemistry
+.. automodule:: exma.io.positions
    :members:
    :undoc-members:
    :show-inheritance:
    :member-order: bysource
-
-``exma.positions`` module
--------------------------
-
-.. automodule:: exma.positions
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :member-order: bysource
-
-``exma.statistics`` module
---------------------------
-
-.. automodule:: exma.statistics
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :member-order: bysource
-
-
-Modules under development
-=========================
-
-``exma._cluster`` module
---------------------------
-
-.. automodule:: exma._cluster
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :member-order: bysource
-
 
 Core modules
 ============
