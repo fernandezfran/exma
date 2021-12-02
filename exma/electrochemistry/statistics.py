@@ -16,9 +16,9 @@ It is intended to facilitate the estimation of the error of thermodynamic
 quantities before using them to calculate electrochemical properties.
 """
 
-# =============================================================================
+# ============================================================================
 # IMPORTS
-# =============================================================================
+# ============================================================================
 
 import matplotlib.pyplot as plt
 
