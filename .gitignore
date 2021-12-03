@@ -1,0 +1,15 @@
+__pycache___/
+*/__pycache__/
+*/*/__pycache__/
+*gnu.so
+
+/docs/build/
+.ipynb_checkpoints/
+
+.tox/
+result_images/
+.coverage
+
+/build/
+/dist/
+/exma.egg-info/

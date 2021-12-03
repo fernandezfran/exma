@@ -1,0 +1,30 @@
+LAMMPS (29 Oct 2020)
+Here is
+    the input of lammps commands
+    the
+WARNINGS
+and
+
+ some
+ {other info}
+that might have
+       some spaces
+                     like this 
+                     and
+            some different characters { }\\} \\^`
+            `
+    that exma ignores...
+Step Press PotEng TotEng Volume 
+       0         15761.772   -6847.1768     -6847.1768    1308.4268 
+       1          15545.12   -6847.3068     -6847.3068    1308.8194 
+       2         15328.428   -6847.4361     -6847.4361     1309.212 
+       3         15111.698   -6847.5648     -6847.5648    1309.6047 
+       4         14894.929   -6847.6927     -6847.6927    1309.9975 
+       5         14678.121     -6847.82       -6847.82    1310.3904 
+       6         14461.274   -6847.9466     -6847.9466    1310.7834 
+       7         14244.389   -6848.0726     -6848.0726    1311.1764 
+       8         14027.466    -6848.198      -6848.198    1311.5695 
+       9         13810.503   -6848.3227     -6848.3227    1311.9627 
+      10         13593.496   -6848.4469     -6848.4469     1312.356 
+Loop time : how much time it takes in many processor and atoms
+This info does not matter, exma does not read it
