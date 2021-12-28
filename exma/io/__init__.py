@@ -116,16 +116,31 @@ def xyz2inlmp(xyztraj, inlammps_name, cell_info, nframe=-1, xyzftype="xyz"):
 
     finally:
         xyz.file_close()
+
         dframe["type"] = [cell_info["type"][t] for t in dframe["type"]]
         dframe = {
             key: value
             for key, value in zip(dframe.keys(), dframe.values())
             if value is not None
         }
+
+        newframe = dframe
+        if "q" in cell_info.keys():
+            keys = list(dframe.keys())
+            keys.insert(2, "q")
+
+            newframe = {}
+            for k in keys:
+                if k == "q":
+                    newframe[k] = cell_info[k]
+                else:
+                    newframe[k] = dframe[k]
+            del cell_info["q"]
+
         cell_info["id"] = np.arange(1, dframe["natoms"] + 1)
         del cell_info["type"]
 
-        writer.in_lammps(inlammps_name, dict(cell_info, **dframe))
+        writer.in_lammps(inlammps_name, dict(cell_info, **newframe))
 
 
 def lammpstrj2xyz(lammpstrjtraj, xyz_name, type_info):
