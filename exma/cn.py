@@ -226,53 +226,55 @@ class CoordinationNumber:
         imed = 0
         self._configure
 
-        try:
-            for _ in range(self.start):
-                self.traj_.read_frame()
+        with self.traj_ as traj:
+            try:
+                for _ in range(self.start):
+                    traj.read_frame()
 
-            frame = self.traj_.read_frame()
+                frame = traj.read_frame()
 
-            # add the box if not in frame
-            frame["box"] = box if box is not None else frame["box"]
+                # add the box if not in frame
+                frame["box"] = box if box is not None else frame["box"]
 
-            # sort the traj if is not sorted, xyz are sorted by construction
-            if "id" in frame.keys():
-                frame = (
-                    _sort_traj(frame) if not _is_sorted(frame["id"]) else frame
-                )
+                # sort the traj if is not sorted, xyz are sorted by default
+                if "id" in frame.keys():
+                    frame = (
+                        _sort_traj(frame)
+                        if not _is_sorted(frame["id"])
+                        else frame
+                    )
 
-            self._configure_ctypes(frame["type"])
+                self._configure_ctypes(frame["type"])
 
-            nmed = self.stop - self.start
-            while imed < nmed:
-                if imed % self.step == 0:
-                    # add the box if not in frame
-                    frame["box"] = box if box is not None else frame["box"]
+                nmed = self.stop - self.start
+                while imed < nmed:
+                    if imed % self.step == 0:
+                        # add the box if not in frame
+                        frame["box"] = box if box is not None else frame["box"]
 
-                    # sort the traj if is not sorted
-                    if "id" in frame.keys():
-                        frame = (
-                            _sort_traj(frame)
-                            if not _is_sorted(frame["id"])
-                            else frame
-                        )
+                        # sort the traj if is not sorted
+                        if "id" in frame.keys():
+                            frame = (
+                                _sort_traj(frame)
+                                if not _is_sorted(frame["id"])
+                                else frame
+                            )
 
-                    self._accumulate(frame)
+                        self._accumulate(frame)
 
-                imed += 1
-                frame = self.traj_.read_frame()
+                    imed += 1
+                    frame = traj.read_frame()
 
-        except EOFError:
-            if self.stop != np.inf:
-                warnings.warn(
-                    f"the trajectory does not read until {self.stop}"
-                )
+            except EOFError:
+                if self.stop != np.inf:
+                    warnings.warn(
+                        f"the trajectory does not read until {self.stop}"
+                    )
 
-        finally:
-            self.traj_.file_close()
-            self.cn_ = self._end()
+            finally:
+                self.cn_ = self._end()
 
-            return np.mean(self.cn_), np.std(self.cn_)
+        return np.mean(self.cn_), np.std(self.cn_)
 
     def save(self, filename="cn.dat"):
         """Write an output file.

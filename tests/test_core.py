@@ -34,17 +34,17 @@ TEST_DATA_PATH = pathlib.Path(
 
 def test_TrajectoryReader_raises():
     with pytest.raises(NotImplementedError):
-        tr = exma.core.TrajectoryReader(
+        with exma.core.TrajectoryReader(
             TEST_DATA_PATH / "test_data" / "test_ref.xyz", "error"
-        )
-        tr.read_frame()
+        ) as tr:
+            tr.read_frame()
 
 
 def test_TrajectoryWriter_raises():
     fxyz = TEST_DATA_PATH / "test_data" / "exma_test.xyz"
     with pytest.raises(NotImplementedError):
-        tw = exma.core.TrajectoryWriter(fxyz, "error")
-        tw.write_frame()
+        with exma.core.TrajectoryWriter(fxyz, "error") as tw:
+            tw.write_frame()
 
     os.remove(fxyz)
 

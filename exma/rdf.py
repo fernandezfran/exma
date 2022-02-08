@@ -255,36 +255,37 @@ class RadialDistributionFunction:
         imed = 0
         self._configure
 
-        try:
-            for _ in range(self.start):
-                self.traj_.read_frame()
+        with self.traj_ as traj:
+            try:
+                for _ in range(self.start):
+                    traj.read_frame()
 
-            frame = self.traj_.read_frame()
+                frame = traj.read_frame()
 
-            self._configure_ctypes(frame["type"])
+                self._configure_ctypes(frame["type"])
 
-            nmed = self.stop - self.start
-            while imed < nmed:
-                if imed % self.step == 0:
-                    # add the box if not in frame
-                    frame["box"] = box if box is not None else frame["box"]
-                    self._accumulate(frame)
+                nmed = self.stop - self.start
+                while imed < nmed:
+                    if imed % self.step == 0:
+                        # add the box if not in frame
+                        frame["box"] = box if box is not None else frame["box"]
+                        self._accumulate(frame)
 
-                imed += 1
-                frame = self.traj_.read_frame()
+                    imed += 1
+                    frame = traj.read_frame()
 
-        except EOFError:
-            if self.stop != np.inf:
-                warnings.warn(
-                    f"the trajectory does not read until {self.stop}"
-                )
+            except EOFError:
+                if self.stop != np.inf:
+                    warnings.warn(
+                        f"the trajectory does not read until {self.stop}"
+                    )
 
-        finally:
-            self.traj_.file_close()
-            r, rdf = self._end()
+            finally:
+                r, rdf = self._end()
 
-            self.df_rdf_ = pd.DataFrame({"r": r, "rdf": rdf})
-            return self.df_rdf_
+                self.df_rdf_ = pd.DataFrame({"r": r, "rdf": rdf})
+
+        return self.df_rdf_
 
     def plot(self, ax=None, plot_kws=None):
         """Plot the calculated RDF.

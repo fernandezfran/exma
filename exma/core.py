@@ -36,16 +36,21 @@ class TrajectoryReader:
     """
 
     def __init__(self, file_traj, ftype):
-        self.file_traj = open(file_traj, "r")
+        self.file_traj = file_traj
         self.ftype = ftype
+
+    def __enter__(self):
+        """Use the open() method."""
+        self.file_traj = open(self.file_traj, "r")
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        """Use the close() method."""
+        self.file_traj.close()
 
     def read_frame(self):
         """Read the actual frame of the file."""
         raise NotImplementedError("Implemented in child classes.")
-
-    def file_close(self):
-        """Close the trayectory file."""
-        self.file_traj.close()
 
 
 class TrajectoryWriter:
@@ -62,16 +67,21 @@ class TrajectoryWriter:
     """
 
     def __init__(self, file_traj, ftype):
-        self.file_traj = open(file_traj, "w")
+        self.file_traj = file_traj
         self.ftype = ftype
+
+    def __enter__(self):
+        """Use the open() method."""
+        self.file_traj = open(self.file_traj, "w")
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        """Use the close() method."""
+        self.file_traj.close()
 
     def write_frame(self):
         """Write the actual frame on the file."""
         raise NotImplementedError("Implemented in child classes.")
-
-    def file_close(self):
-        """Close the trayectory file."""
-        self.file_traj.close()
 
 
 # ============================================================================

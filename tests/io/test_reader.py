@@ -78,9 +78,8 @@ def test_XYZ(traj_dict, fname, ftype):
     """Test the write of an xyz file."""
     fxyz = TEST_DATA_PATH / fname
 
-    rxyz = exma.io.reader.XYZ(fxyz, ftype)
-    result = rxyz.read_frame()
-    rxyz.file_close()
+    with exma.io.reader.XYZ(fxyz, ftype) as rxyz:
+        result = rxyz.read_frame()
 
     assert result["natoms"] == traj_dict["natoms"]
     np.testing.assert_array_equal(result["type"], traj_dict["type"])
@@ -110,11 +109,10 @@ def test_XYZ_raise_EOFError():
     """Test the EOFError raise of read xyz file."""
     fxyz = TEST_DATA_PATH / "test_ref.xyz"
 
-    rxyz = exma.io.reader.XYZ(fxyz)
-    rxyz.read_frame()
     with pytest.raises(EOFError):
-        rxyz.read_frame()
-    rxyz.file_close()
+        with exma.io.reader.XYZ(fxyz) as rxyz:
+            rxyz.read_frame()
+            rxyz.read_frame()
 
 
 @pytest.mark.parametrize(
@@ -182,9 +180,8 @@ def test_LAMMPS(fname, frame_dict):
     """Test the read of an .lammpstrj file."""
     flmp = TEST_DATA_PATH / fname
 
-    rlmp = exma.io.reader.LAMMPS(flmp)
-    result = rlmp.read_frame()
-    rlmp.file_close()
+    with exma.io.reader.LAMMPS(flmp) as rlmp:
+        result = rlmp.read_frame()
 
     for key in frame_dict.keys():
         np.testing.assert_array_almost_equal(result[key], frame_dict[key])
@@ -193,11 +190,10 @@ def test_LAMMPS(fname, frame_dict):
 def test_LAMMPS_raises():
     """Test the ValueError raise of write .lammpstrj file."""
     flmp = TEST_DATA_PATH / "exma_ref.lammpstrj"
-    rlmp = exma.io.reader.LAMMPS(flmp)
-    rlmp.read_frame()
     with pytest.raises(EOFError):
-        rlmp.read_frame()
-    rlmp.file_close()
+        with exma.io.reader.LAMMPS(flmp) as rlmp:
+            rlmp.read_frame()
+            rlmp.read_frame()
 
 
 def test_read_log_lammps():

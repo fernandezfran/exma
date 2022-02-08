@@ -80,9 +80,8 @@ def test_XYZ(traj_dict, fname, ftype):
     """Test the write of an xyz file."""
     fxyz = TEST_DATA_PATH / fname
 
-    wxyz = exma.io.writer.XYZ(fxyz, ftype)
-    wxyz.write_frame(traj_dict)
-    wxyz.file_close()
+    with exma.io.writer.XYZ(fxyz, ftype) as wxyz:
+        wxyz.write_frame(traj_dict)
 
     with open(fxyz, "r") as f:
         writed = f.read()
@@ -168,9 +167,8 @@ def test_LAMMPS(fname, frame_dict):
     """Test the write of an .lammpstrj file."""
     flmp = TEST_DATA_PATH / fname
 
-    wlmp = exma.io.writer.LAMMPS(flmp)
-    wlmp.write_frame(frame_dict)
-    wlmp.file_close()
+    with exma.io.writer.LAMMPS(flmp) as wlmp:
+        wlmp.write_frame(frame_dict)
 
     with open(flmp, "r") as f:
         writed = f.read()

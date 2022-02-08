@@ -165,59 +165,62 @@ class MeanSquareDisplacement:
         self._configure
 
         mean_square_displacement = []
-        try:
-            for _ in range(self.start):
-                self.traj_.read_frame()
+        with self.traj_ as traj:
+            try:
+                for _ in range(self.start):
+                    traj.read_frame()
 
-            frame = self.traj_.read_frame()
+                frame = traj.read_frame()
 
-            # add the box if not in frame
-            frame["box"] = box if box is not None else frame["box"]
+                # add the box if not in frame
+                frame["box"] = box if box is not None else frame["box"]
 
-            # sort the traj if is not sorted, xyz are sorted by construction
-            if "id" in frame.keys():
-                frame = (
-                    _sort_traj(frame) if not _is_sorted(frame["id"]) else frame
-                )
+                # sort the traj if is not sorted, xyz are sorted by default
+                if "id" in frame.keys():
+                    frame = (
+                        _sort_traj(frame)
+                        if not _is_sorted(frame["id"])
+                        else frame
+                    )
 
-            self._reference_frame(frame)
+                self._reference_frame(frame)
 
-            nmed = self.stop - self.start
-            while imed < nmed:
-                if imed % self.step == 0:
-                    # add the box if not in frame
-                    frame["box"] = box if box is not None else frame["box"]
+                nmed = self.stop - self.start
+                while imed < nmed:
+                    if imed % self.step == 0:
+                        # add the box if not in frame
+                        frame["box"] = box if box is not None else frame["box"]
 
-                    # sort the traj if is not sorted
-                    if "id" in frame.keys():
-                        frame = (
-                            _sort_traj(frame)
-                            if not _is_sorted(frame["id"])
-                            else frame
+                        # sort the traj if is not sorted
+                        if "id" in frame.keys():
+                            frame = (
+                                _sort_traj(frame)
+                                if not _is_sorted(frame["id"])
+                                else frame
+                            )
+
+                        mean_square_displacement.append(
+                            self._on_this_frame(frame)
                         )
 
-                    mean_square_displacement.append(self._on_this_frame(frame))
+                    imed += 1
+                    frame = traj.read_frame()
 
-                imed += 1
-                frame = self.traj_.read_frame()
+            except EOFError:
+                if self.stop != np.inf:
+                    warnings.warn(
+                        f"the trajectory does not read until {self.stop}"
+                    )
 
-        except EOFError:
-            if self.stop != np.inf:
-                warnings.warn(
-                    f"the trajectory does not read until {self.stop}"
+            finally:
+                self.df_msd_ = pd.DataFrame(
+                    {
+                        "t": self.dt * np.arange(0, imed, self.step),
+                        "msd": np.array(mean_square_displacement),
+                    }
                 )
 
-        finally:
-            self.traj_.file_close()
-
-            self.df_msd_ = pd.DataFrame(
-                {
-                    "t": self.dt * np.arange(0, imed, self.step),
-                    "msd": np.array(mean_square_displacement),
-                }
-            )
-
-            return self.df_msd_
+        return self.df_msd_
 
     def plot(self, ax=None, plot_kws=None):
         """Plot the calculated MSD.

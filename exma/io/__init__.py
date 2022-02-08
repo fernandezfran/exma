@@ -51,26 +51,22 @@ def xyz2lammpstrj(xyztraj, lammpstrj_name, cell_info, xyzftype="xyz"):
     """
     xyz = reader.XYZ(xyztraj, xyzftype)
     lmp = writer.LAMMPS(lammpstrj_name)
-    try:
-        while True:
-            xyz_frame = xyz.read_frame()
 
-            xyz_frame["type"] = [
-                cell_info["type"][t] for t in xyz_frame["type"]
-            ]
-            xyz_frame = {
-                key: value
-                for key, value in zip(xyz_frame.keys(), xyz_frame.values())
-                if value is not None
-            }
-            cell_info["id"] = np.arange(1, xyz_frame["natoms"] + 1)
-            del cell_info["type"]
+    with reader.XYZ(xyztraj, xyzftype) as xyz, writer.LAMMPS(
+        lammpstrj_name
+    ) as lmp:
+        xyz_frame = xyz.read_frame()
 
-            lmp.write_frame(dict(cell_info, **xyz_frame))
+        xyz_frame["type"] = [cell_info["type"][t] for t in xyz_frame["type"]]
+        xyz_frame = {
+            key: value
+            for key, value in zip(xyz_frame.keys(), xyz_frame.values())
+            if value is not None
+        }
+        cell_info["id"] = np.arange(1, xyz_frame["natoms"] + 1)
+        del cell_info["type"]
 
-    except EOFError:
-        xyz.file_close()
-        lmp.file_close()
+        lmp.write_frame(dict(cell_info, **xyz_frame))
 
 
 def xyz2inlmp(xyztraj, inlammps_name, cell_info, nframe=-1, xyzftype="xyz"):
@@ -97,50 +93,47 @@ def xyz2inlmp(xyztraj, inlammps_name, cell_info, nframe=-1, xyzftype="xyz"):
         the `ftype` of xyz file.
     """
     nframe = np.inf if nframe == -1 else nframe
-    xyz = reader.XYZ(xyztraj, xyzftype)
-    try:
-        iframe = 0
-        dframe = xyz.read_frame()
-        while iframe < nframe:
-            xyz_frame = xyz.read_frame()
+    with reader.XYZ(xyztraj, xyzftype) as xyz:
+        try:
+            iframe = 0
+            dframe = xyz.read_frame()
+            while iframe < nframe:
+                xyz_frame = xyz.read_frame()
 
-            iframe += 1
-            dframe = xyz_frame
+                iframe += 1
+                dframe = xyz_frame
 
-    except EOFError:
-        if nframe != np.inf:
-            warnings.warn(
-                f"frame {nframe} does not exist in the trajectory file, "
-                f"therefore the last frame ({iframe}) was written."
-            )
+        except EOFError:
+            if nframe != np.inf:
+                warnings.warn(
+                    f"frame {nframe} does not exist in the trajectory file, "
+                    f"therefore the last frame ({iframe}) was written."
+                )
 
-    finally:
-        xyz.file_close()
+    dframe["type"] = [cell_info["type"][t] for t in dframe["type"]]
+    dframe = {
+        key: value
+        for key, value in zip(dframe.keys(), dframe.values())
+        if value is not None
+    }
 
-        dframe["type"] = [cell_info["type"][t] for t in dframe["type"]]
-        dframe = {
-            key: value
-            for key, value in zip(dframe.keys(), dframe.values())
-            if value is not None
-        }
+    newframe = dframe
+    if "q" in cell_info.keys():
+        keys = list(dframe.keys())
+        keys.insert(2, "q")
 
-        newframe = dframe
-        if "q" in cell_info.keys():
-            keys = list(dframe.keys())
-            keys.insert(2, "q")
+        newframe = {}
+        for k in keys:
+            if k == "q":
+                newframe[k] = cell_info[k]
+            else:
+                newframe[k] = dframe[k]
+        del cell_info["q"]
 
-            newframe = {}
-            for k in keys:
-                if k == "q":
-                    newframe[k] = cell_info[k]
-                else:
-                    newframe[k] = dframe[k]
-            del cell_info["q"]
+    cell_info["id"] = np.arange(1, dframe["natoms"] + 1)
+    del cell_info["type"]
 
-        cell_info["id"] = np.arange(1, dframe["natoms"] + 1)
-        del cell_info["type"]
-
-        writer.in_lammps(inlammps_name, dict(cell_info, **newframe))
+    writer.in_lammps(inlammps_name, dict(cell_info, **newframe))
 
 
 def lammpstrj2xyz(lammpstrjtraj, xyz_name, type_info):
@@ -158,28 +151,22 @@ def lammpstrj2xyz(lammpstrjtraj, xyz_name, type_info):
         a correspondence between the elements id present in lammpstrj file
         with str element, e.g. {1: "Sn", 2: "O"}
     """
-    lmp = reader.LAMMPS(lammpstrjtraj)
-    xyz = writer.XYZ(xyz_name)
-    try:
-        while True:
-            lmp_frame = lmp.read_frame()
-            lmp_frame = (
-                _sort_traj(lmp_frame)
-                if not _is_sorted(lmp_frame["id"])
-                else lmp_frame
-            )
-            lmp_frame["type"] = [type_info[t] for t in lmp_frame["type"]]
+    with reader.LAMMPS(lammpstrjtraj) as lmp, writer.XYZ(xyz_name) as xyz:
+        lmp_frame = lmp.read_frame()
+        lmp_frame = (
+            _sort_traj(lmp_frame)
+            if not _is_sorted(lmp_frame["id"])
+            else lmp_frame
+        )
+        lmp_frame["type"] = [type_info[t] for t in lmp_frame["type"]]
 
-            xyz_frame = {
-                key: value
-                for key, value in zip(lmp_frame.keys(), lmp_frame.values())
-                if key in ["natoms", "type", "x", "y", "z", "ix", "iy", "iz"]
-            }
-            xyz.write_frame(xyz_frame)
+        xyz_frame = {
+            key: value
+            for key, value in zip(lmp_frame.keys(), lmp_frame.values())
+            if key in ["natoms", "type", "x", "y", "z", "ix", "iy", "iz"]
+        }
 
-    except EOFError:
-        lmp.file_close()
-        xyz.file_close()
+        xyz.write_frame(xyz_frame)
 
 
 def lammpstrj2inlmp(lammpstrjtraj, inlammps_name, nframe=-1):
@@ -197,24 +184,22 @@ def lammpstrj2inlmp(lammpstrjtraj, inlammps_name, nframe=-1):
         number of the frame to write, by default is -1, that is, the last.
     """
     nframe = np.inf if nframe == -1 else nframe
-    lmp = reader.LAMMPS(lammpstrjtraj)
-    try:
-        iframe = 0
-        dframe = lmp.read_frame()
-        while iframe < nframe:
-            lmp_frame = lmp.read_frame()
+    with reader.LAMMPS(lammpstrjtraj) as lmp:
+        try:
+            iframe = 0
+            dframe = lmp.read_frame()
+            while iframe < nframe:
+                lmp_frame = lmp.read_frame()
 
-            iframe += 1
-            dframe = lmp_frame
+                iframe += 1
+                dframe = lmp_frame
 
-    except EOFError:
-        if nframe != np.inf:
-            warnings.warn(
-                f"frame {nframe} does not exist in the trajectory file, "
-                f"therefore the last frame ({iframe}) was written."
-            )
+        except EOFError:
+            if nframe != np.inf:
+                warnings.warn(
+                    f"frame {nframe} does not exist in the trajectory file, "
+                    f"therefore the last frame ({iframe}) was written."
+                )
 
-    finally:
-        lmp.file_close()
-        dframe = _sort_traj(dframe) if not _is_sorted(dframe["id"]) else dframe
-        writer.in_lammps(inlammps_name, dframe)
+    dframe = _sort_traj(dframe) if not _is_sorted(dframe["id"]) else dframe
+    writer.in_lammps(inlammps_name, dframe)
