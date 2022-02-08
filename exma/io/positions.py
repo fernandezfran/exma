@@ -292,7 +292,8 @@ def replicate(frame, nrf):
     ----------
     frame : dict
         with the keys `natoms`, `box`, the box size in each direction,
-        `type` (a list with the types of atoms), `x`, `y` and `z`
+        `type` (a list with the types of atoms), `x`, `y` and `z`, the
+        scaled atom coordinates.
 
     nrf : list
         three integers that must be greater than or equal to 1 and
