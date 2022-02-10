@@ -30,7 +30,7 @@ class XYZ(TrajectoryWriter):
 
     Parameters
     ----------
-    file_traj : str
+    filename : str
         name of the file where the trajectories in xyz format are going to
         be written
 
@@ -46,11 +46,11 @@ class XYZ(TrajectoryWriter):
         If xyz file type is not among the possible values
     """
 
-    def __init__(self, file_traj, ftype="xyz"):
+    def __init__(self, filename, ftype="xyz"):
         if ftype not in ["xyz", "property", "image"]:
             raise ValueError("ftype must be 'xyz', 'property' or 'image'")
 
-        super(XYZ, self).__init__(file_traj, ftype)
+        super(XYZ, self).__init__(filename, ftype)
 
     def write_frame(self, frame):
         """Write the actual frame in an .xyz file.
@@ -67,7 +67,7 @@ class XYZ(TrajectoryWriter):
             in each direction (np.array), respectively.
         """
         natoms = frame["natoms"]
-        self.file_traj.write(f"{natoms}\n\n")
+        self.file_traj_.write(f"{natoms}\n\n")
 
         for i in range(natoms):
             line = f"{frame['type'][i]:s}  "
@@ -83,7 +83,7 @@ class XYZ(TrajectoryWriter):
                 line += f"  {frame['iz'][i]:d}"
 
             line += "\n"
-            self.file_traj.write(line)
+            self.file_traj_.write(line)
 
 
 class LAMMPS(TrajectoryWriter):
@@ -91,13 +91,13 @@ class LAMMPS(TrajectoryWriter):
 
     Parameters
     ----------
-    file_traj : str
+    filename : str
         name of the file where the trajectories of lammps are going to be
         written
     """
 
-    def __init__(self, file_traj, ftype="custom"):
-        super(LAMMPS, self).__init__(file_traj, ftype)
+    def __init__(self, filename, ftype="custom"):
+        super(LAMMPS, self).__init__(filename, ftype)
         self.timestep = 0
 
     def write_frame(self, frame):
@@ -111,13 +111,13 @@ class LAMMPS(TrajectoryWriter):
             as `np.array`; except the number of atoms, which is an `int`.
             `natoms` and `box` must be defined in the dict.
         """
-        self.file_traj.write("ITEM: TIMESTEP\n")
-        self.file_traj.write(f"{self.timestep:d}\n")
-        self.file_traj.write("ITEM: NUMBER OF ATOMS\n")
-        self.file_traj.write(f"{frame['natoms']:d}\n")
-        self.file_traj.write("ITEM: BOX BOUNDS pp pp pp\n")
+        self.file_traj_.write("ITEM: TIMESTEP\n")
+        self.file_traj_.write(f"{self.timestep:d}\n")
+        self.file_traj_.write("ITEM: NUMBER OF ATOMS\n")
+        self.file_traj_.write(f"{frame['natoms']:d}\n")
+        self.file_traj_.write("ITEM: BOX BOUNDS pp pp pp\n")
         for i in range(0, 3):
-            self.file_traj.write(f"0.0\t{frame['box'][i]:.6e}\n")
+            self.file_traj_.write(f"0.0\t{frame['box'][i]:.6e}\n")
 
         self.timestep += 1
 
@@ -127,7 +127,7 @@ class LAMMPS(TrajectoryWriter):
                 continue
             traj_header += " " + str(key)
         traj_header += "\n"
-        self.file_traj.write(traj_header)
+        self.file_traj_.write(traj_header)
 
         for i in range(frame["natoms"]):
             line = ""
@@ -142,7 +142,7 @@ class LAMMPS(TrajectoryWriter):
                 )
             line = line.rstrip()
             line += "\n"
-            self.file_traj.write(line)
+            self.file_traj_.write(line)
 
 
 # ============================================================================

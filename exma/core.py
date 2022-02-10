@@ -28,25 +28,25 @@ class TrajectoryReader:
 
     Parameters
     ----------
-    file_traj : str
+    filename : str
         name of the file where the trajectories in xyz format are
 
     ftype : str
         different type of files depending on the child class.
     """
 
-    def __init__(self, file_traj, ftype):
-        self.file_traj = file_traj
+    def __init__(self, filename, ftype):
+        self.filename = filename
         self.ftype = ftype
 
     def __enter__(self):
         """Use the open() method."""
-        self.file_traj = open(self.file_traj, "r")
+        self.file_traj_ = open(self.filename, "r")
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
         """Use the close() method."""
-        self.file_traj.close()
+        self.file_traj_.close()
 
     def read_frame(self):
         """Read the actual frame of the file."""
@@ -58,7 +58,7 @@ class TrajectoryWriter:
 
     Parameters
     ----------
-    file_traj : str
+    filename : str
         name of the file where the trajectories in xyz format are going to
         be written
 
@@ -66,18 +66,18 @@ class TrajectoryWriter:
         different type of files depending on the child class.
     """
 
-    def __init__(self, file_traj, ftype):
-        self.file_traj = file_traj
+    def __init__(self, filename, ftype):
+        self.filename = filename
         self.ftype = ftype
 
     def __enter__(self):
         """Use the open() method."""
-        self.file_traj = open(self.file_traj, "w")
+        self.file_traj_ = open(self.filename, "w")
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
         """Use the close() method."""
-        self.file_traj.close()
+        self.file_traj_.close()
 
     def write_frame(self):
         """Write the actual frame on the file."""

@@ -32,7 +32,7 @@ class XYZ(TrajectoryReader):
 
     Parameters
     ----------
-    file_traj : str
+    filename : str
         name of the file where the trajectories in xyz format are
 
     ftype : str, default="xyz"
@@ -47,11 +47,11 @@ class XYZ(TrajectoryReader):
         If xyz file type is not among the possible values
     """
 
-    def __init__(self, file_traj, ftype="xyz"):
+    def __init__(self, filename, ftype="xyz"):
         if ftype not in ["xyz", "property", "image"]:
             raise ValueError("ftype must be 'xyz', 'property' or 'image'")
 
-        super(XYZ, self).__init__(file_traj, ftype)
+        super(XYZ, self).__init__(filename, ftype)
 
     def read_frame(self):
         """Read the actual frame of an .xyz file.
@@ -72,19 +72,19 @@ class XYZ(TrajectoryReader):
         EOFError
             If there are no more frames to read
         """
-        natoms = self.file_traj.readline()
+        natoms = self.file_traj_.readline()
         if not natoms:
             raise EOFError("There is no more frames to read")
 
         natoms = np.intc(natoms)
-        self.file_traj.readline()  # usually a comment in .xyz files
+        self.file_traj_.readline()  # usually a comment in .xyz files
 
         atom_type = []
         x, y, z = [], [], []
         prop = [] if self.ftype == "property" else None
         ix, iy, iz = [], [], [] if self.ftype == "image" else None
         for i in range(natoms):
-            xyzline = self.file_traj.readline().split()
+            xyzline = self.file_traj_.readline().split()
 
             atom_type.append(xyzline[0])
 
@@ -129,15 +129,15 @@ class LAMMPS(TrajectoryReader):
 
     Parameters
     ----------
-    file_traj : str
+    filename : str
         name of the file where the trajectories of lammps are
 
     headerint : list, default=["id", "type", "ix", "iy", "iz"]
         the columns that have int data types, the others are considered floats.
     """
 
-    def __init__(self, file_traj, headerint=["id", "type", "ix", "iy", "iz"]):
-        super(LAMMPS, self).__init__(file_traj, None)
+    def __init__(self, filename, headerint=["id", "type", "ix", "iy", "iz"]):
+        super(LAMMPS, self).__init__(filename, None)
         self.headerint = headerint
 
     def read_frame(self):
@@ -155,28 +155,28 @@ class LAMMPS(TrajectoryReader):
         EOFError
             If there are no more frames to read
         """
-        comment = self.file_traj.readline()
+        comment = self.file_traj_.readline()
         if not comment:
             raise EOFError("There is no more frames to read")
-        self.file_traj.readline()
-        self.file_traj.readline()
+        self.file_traj_.readline()
+        self.file_traj_.readline()
 
-        natoms = np.intc(self.file_traj.readline())
+        natoms = np.intc(self.file_traj_.readline())
 
-        self.file_traj.readline()
+        self.file_traj_.readline()
 
         box_size = []
         for _ in range(3):
-            lohi = self.file_traj.readline().split()
+            lohi = self.file_traj_.readline().split()
             box_size.append(np.float32(lohi[1]) - np.float32(lohi[0]))
         box = np.array(box_size)
 
         cell = {"natoms": natoms, "box": box}
 
-        keys = self.file_traj.readline().split()[2:]
+        keys = self.file_traj_.readline().split()[2:]
         frame = {key: list() for key in keys}
         for _ in range(natoms):
-            line = self.file_traj.readline().split()
+            line = self.file_traj_.readline().split()
             for j, element in enumerate(line):
                 frame[keys[j]].append(element)
 

@@ -10,6 +10,7 @@ __pycache___/
 result_images/
 .coverage
 
-/build/
-/dist/
-/exma.egg-info/
+build/
+dist/
+exma.egg-info/
+.eggs/
