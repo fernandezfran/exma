@@ -523,37 +523,3 @@ def test_MeanSquareDisplacement_plot(fig_test, fig_ref):
     exp_ax.set_ylabel("msd")
     for msd in msds:
         exp_ax.plot(msd.df_msd_["t"], msd.df_msd_["msd"])
-
-
-def test_MeanSquareDisplacement_save():
-    """Test the MSD save."""
-    file = "solid.xyz"
-    box = np.full(3, 7.46901)
-
-    msd = exma.msd.MeanSquareDisplacement(
-        str(TEST_DATA_PATH / file),
-        0.005,
-        "Ar",
-        stop=10,
-        xyztype="image",
-    )
-    msd.calculate(box)
-    msd.save()
-
-    with open("msd.dat", "r") as fin:
-        readed = fin.read()
-    os.remove("msd.dat")
-
-    assert readed == (
-        "# t, msd\n"
-        "0.000000e+00  0.000000e+00\n"
-        "5.000000e-03  6.600316e-03\n"
-        "1.000000e-02  7.384185e-03\n"
-        "1.500000e-02  7.153627e-03\n"
-        "2.000000e-02  7.385612e-03\n"
-        "2.500000e-02  6.853187e-03\n"
-        "3.000000e-02  7.544578e-03\n"
-        "3.500000e-02  6.790672e-03\n"
-        "4.000000e-02  7.472885e-03\n"
-        "4.500000e-02  7.378332e-03\n"
-    )

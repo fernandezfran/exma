@@ -248,18 +248,3 @@ class MeanSquareDisplacement:
         ax.plot(self.df_msd_["t"], self.df_msd_["msd"], **plot_kws)
 
         return ax
-
-    def save(self, filename="msd.dat"):
-        """Write an output file.
-
-        The time in the first column and the msd in the second.
-
-        Parameters
-        ----------
-        filename : str, default="msd.dat"
-            name of the file as str to write the output
-        """
-        with open(filename, "w") as fout:
-            fout.write("# t, msd\n")
-            for t, msd in zip(self.df_msd_["t"], self.df_msd_["msd"]):
-                fout.write(f"{t:.6e}  {msd:.6e}\n")

@@ -313,18 +313,3 @@ class RadialDistributionFunction:
         ax.plot(self.df_rdf_["r"], self.df_rdf_["rdf"], **plot_kws)
 
         return ax
-
-    def save(self, filename="rdf.dat"):
-        """Write an output file.
-
-        The distance in the first column and the rdf in the second.
-
-        Parameters
-        ----------
-        filename : str, default="rdf.dat"
-            name of the file as str to write the output
-        """
-        with open(filename, "w") as fout:
-            fout.write("# r, rdf\n")
-            for r, rdf in zip(self.df_rdf_["r"], self.df_rdf_["rdf"]):
-                fout.write(f"{r:.6e}  {rdf:.6e}\n")

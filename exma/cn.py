@@ -24,6 +24,8 @@ import warnings
 
 import numpy as np
 
+import pandas as pd
+
 from .core import _is_sorted, _sort_traj
 from .io import reader
 
@@ -276,25 +278,28 @@ class CoordinationNumber:
 
         return np.mean(self.cn_), np.std(self.cn_)
 
-    def save(self, filename="cn.dat"):
-        """Write an output file.
+    def to_dataframe(self):
+        """Convert the results to a pandas.DataFrame.
 
-        A one-column file where for the central atoms the corresponding
+        A one-column DataFrame where for the central atoms the corresponding
         coordination number averaged over the frames in which it was
         calculated is given and for the interacting atoms (which was not
-        calculated) a nan.
+        calculated) a np.nan.
 
-        Parameters
-        ----------
-        filename : str, default="cn.dat"
-            name of the file as str to write the output
+        Returns
+        -------
+        df : pd.DataFrame
+            DataFrame with the coordination number data in the column "cn".
         """
-        with open(filename, "w") as fout:
-            fout.write("# CN \n")
-            j = 0
-            for i, value in enumerate(self.mask_c_):
-                if value:
-                    fout.write(f"{self.cn_[j]:.6e}\n")
-                    j += 1
-                else:
-                    fout.write(f"{np.nan} \n")
+        j = 0
+        cn = []
+        for _, value in enumerate(self.mask_c_):
+            if value:
+                cn.append(self.cn_[j])
+                j += 1
+            else:
+                cn.append(np.nan)
+
+        dict_ = {"cn": np.asarray(cn)}
+
+        return pd.DataFrame(dict_)

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/envpython
 # -*- coding: utf-8 -*-
 
 # This file is part of exma (https://github.com/fernandezfran/exma/).
@@ -16,6 +16,8 @@ import pathlib
 import exma.cn
 
 import numpy as np
+
+import pandas as pd
 
 import pytest
 
@@ -80,22 +82,18 @@ def test_CoordinationNumber_warning(fname, rcut, box):
         ).calculate(box)
 
 
-def test_CoordinationNumber_save():
-    """Test the CN save."""
+def test_CoordinationNumber_to_dataframe():
+    """Test the CN to_dataframe."""
     cn = exma.cn.CoordinationNumber(
         str(TEST_DATA_PATH / "solid.xyz"),
         "Ar",
         "Ar",
         1.29,
-        stop=1,
+        stop=5,
     )
     cn.calculate(np.full(3, 7.46901))
-    cn.save()
+    df = cn.to_dataframe()
 
-    with open("cn.dat", "r") as fin:
-        readed = fin.read()
-    os.remove("cn.dat")
+    df_ref = pd.read_csv(str(TEST_DATA_PATH / "cn.csv"))
 
-    result = np.asarray(readed.split()[2:], dtype=np.float32).mean()
-
-    np.testing.assert_almost_equal(result, 12.0)
+    pd.testing.assert_frame_equal(df, df_ref)
