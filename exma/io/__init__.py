@@ -55,18 +55,31 @@ def xyz2lammpstrj(xyztraj, lammpstrj_name, cell_info, xyzftype="xyz"):
     with reader.XYZ(xyztraj, xyzftype) as xyz, writer.LAMMPS(
         lammpstrj_name
     ) as lmp:
-        xyz_frame = xyz.read_frame()
+        try:
+            while True:
+                xyz_frame = xyz.read_frame()
 
-        xyz_frame["type"] = [cell_info["type"][t] for t in xyz_frame["type"]]
-        xyz_frame = {
-            key: value
-            for key, value in zip(xyz_frame.keys(), xyz_frame.values())
-            if value is not None
-        }
-        cell_info["id"] = np.arange(1, xyz_frame["natoms"] + 1)
-        del cell_info["type"]
+                xyz_frame["type"] = [
+                    cell_info["type"][t] for t in xyz_frame["type"]
+                ]
+                xyz_frame = {
+                    key: value
+                    for key, value in zip(xyz_frame.keys(), xyz_frame.values())
+                    if value is not None
+                }
 
-        lmp.write_frame(dict(cell_info, **xyz_frame))
+                lmp.write_frame(
+                    dict(
+                        {
+                            "box": cell_info["box"],
+                            "id": np.arange(1, xyz_frame["natoms"] + 1),
+                        },
+                        **xyz_frame,
+                    )
+                )
+
+        except EOFError:
+            ...
 
 
 def xyz2inlmp(xyztraj, inlammps_name, cell_info, nframe=-1, xyzftype="xyz"):
@@ -136,7 +149,7 @@ def xyz2inlmp(xyztraj, inlammps_name, cell_info, nframe=-1, xyzftype="xyz"):
     writer.in_lammps(inlammps_name, dict(cell_info, **newframe))
 
 
-def lammpstrj2xyz(lammpstrjtraj, xyz_name, type_info):
+def lammpstrj2xyz(lammpstrjtraj, xyz_name, type_info, xyzftype="xyz"):
     """Rewrite a lammpstrj file to an xyz file.
 
     Parameters
@@ -150,23 +163,34 @@ def lammpstrj2xyz(lammpstrjtraj, xyz_name, type_info):
     type_info : dict
         a correspondence between the elements id present in lammpstrj file
         with str element, e.g. {1: "Sn", 2: "O"}
+
+    xyzftype : str, default="xyz"
+        the `ftype` of xyz file.
     """
-    with reader.LAMMPS(lammpstrjtraj) as lmp, writer.XYZ(xyz_name) as xyz:
-        lmp_frame = lmp.read_frame()
-        lmp_frame = (
-            _sort_traj(lmp_frame)
-            if not _is_sorted(lmp_frame["id"])
-            else lmp_frame
-        )
-        lmp_frame["type"] = [type_info[t] for t in lmp_frame["type"]]
+    with reader.LAMMPS(lammpstrjtraj) as lmp, writer.XYZ(
+        xyz_name, xyzftype
+    ) as xyz:
+        try:
+            while True:
+                lmp_frame = lmp.read_frame()
+                lmp_frame = (
+                    _sort_traj(lmp_frame)
+                    if not _is_sorted(lmp_frame["id"])
+                    else lmp_frame
+                )
+                lmp_frame["type"] = [type_info[t] for t in lmp_frame["type"]]
 
-        xyz_frame = {
-            key: value
-            for key, value in zip(lmp_frame.keys(), lmp_frame.values())
-            if key in ["natoms", "type", "x", "y", "z", "ix", "iy", "iz"]
-        }
+                xyz_frame = {
+                    key: value
+                    for key, value in zip(lmp_frame.keys(), lmp_frame.values())
+                    if key
+                    in ["natoms", "type", "x", "y", "z", "ix", "iy", "iz"]
+                }
 
-        xyz.write_frame(xyz_frame)
+                xyz.write_frame(xyz_frame)
+
+        except EOFError:
+            ...
 
 
 def lammpstrj2inlmp(lammpstrjtraj, inlammps_name, nframe=-1):
