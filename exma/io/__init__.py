@@ -49,9 +49,6 @@ def xyz2lammpstrj(xyztraj, lammpstrj_name, cell_info, xyzftype="xyz"):
     xyzftype : str, default="xyz"
         the `ftype` of xyz file.
     """
-    xyz = reader.XYZ(xyztraj, xyzftype)
-    lmp = writer.LAMMPS(lammpstrj_name)
-
     with reader.XYZ(xyztraj, xyzftype) as xyz, writer.LAMMPS(
         lammpstrj_name
     ) as lmp:
