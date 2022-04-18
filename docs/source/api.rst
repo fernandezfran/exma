@@ -9,6 +9,15 @@ exma API
 Pair Analyzer
 =============
 
+``exma.distances`` module
+-------------------------
+
+.. automodule:: exma.distances
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :member-order: bysource
+
 ``exma.msd`` module
 -------------------
 

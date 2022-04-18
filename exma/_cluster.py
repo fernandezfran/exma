@@ -20,16 +20,16 @@ development.
 # IMPORTS
 # ============================================================================
 
-import ctypes as ct
 import os
 import pathlib
-import sysconfig
 
 import numpy as np
 
 import scipy.integrate
 
 import sklearn.cluster
+
+from .distances import pbc as pbc_distances
 
 # ============================================================================
 # CONSTANTS
@@ -74,20 +74,6 @@ class EffectiveNeighbors:
         self.type_c = type_c
         self.type_i = type_i
 
-        lib_pbc_distances = ct.CDLL(
-            str(PATH / "lib" / "lib_pbc_distances")
-            + sysconfig.get_config_var("EXT_SUFFIX")
-        )
-        self.distance_matrix_c = lib_pbc_distances.distance_matrix
-        self.distance_matrix_c.argtypes = [
-            ct.c_int,
-            ct.c_int,
-            ct.c_void_p,
-            ct.c_void_p,
-            ct.c_void_p,
-            ct.c_void_p,
-        ]
-
     def of_this_frame(self, frame):
         """Obtain the efective (interact) neighbors of the actual frame.
 
@@ -102,33 +88,10 @@ class EffectiveNeighbors:
             effective (interact) neighbor of the central atoms in the same
             order that are in the positions vector
         """
-        mask_c = frame["type"] == self.type_c
-        mask_i = frame["type"] == self.type_i
-        natoms_c = np.count_nonzero(mask_c)
-        natoms_i = np.count_nonzero(mask_i)
+        natoms_c = np.count_nonzero(frame["type"] == self.type_c)
+        natoms_i = np.count_nonzero(frame["type"] == self.type_i)
 
-        box = frame["box"]
-        xc, yc, zc = frame["x"][mask_c], frame["y"][mask_c], frame["z"][mask_c]
-        xi, yi, zi = frame["x"][mask_i], frame["y"][mask_i], frame["z"][mask_i]
-
-        distrix = np.zeros(natoms_c * natoms_i, dtype=np.float32)
-
-        # prepare data for C code
-        box = np.asarray(box, dtype=np.float32)
-        box_c = box.ctypes.data_as(ct.POINTER(ct.c_void_p))
-
-        xcentral_c = np.concatenate((xc, yc, zc)).astype(np.float32)
-        xcentral_c = xcentral_c.ctypes.data_as(ct.POINTER(ct.c_void_p))
-
-        xinteract_c = np.concatenate((xi, yi, zi)).astype(np.float32)
-        xinteract_c = xinteract_c.ctypes.data_as(ct.POINTER(ct.c_void_p))
-
-        distrix_c = distrix.ctypes.data_as(ct.POINTER(ct.c_void_p))
-
-        # calculates the distance matrix between interact and central atoms
-        self.distance_matrix_c(
-            natoms_c, natoms_i, box_c, xcentral_c, xinteract_c, distrix_c
-        )
+        distrix = pbc_distances(frame, frame, self.type_c, self.type_i)
 
         # calculate the weigth of the ith neighbor of the interact atom
         bondmin = np.min(distrix)
@@ -182,20 +145,6 @@ class DBSCAN:
         self.eps = eps
         self.min_samples = min_samples
 
-        lib_pbc_distances = ct.CDLL(
-            str(PATH / "lib" / "lib_pbc_distances")
-            + sysconfig.get_config_var("EXT_SUFFIX")
-        )
-        self.distance_matrix_c = lib_pbc_distances.distance_matrix
-        self.distance_matrix_c.argtypes = [
-            ct.c_int,
-            ct.c_int,
-            ct.c_void_p,
-            ct.c_void_p,
-            ct.c_void_p,
-            ct.c_void_p,
-        ]
-
     def of_this_frame(self, frame, **kwargs):
         """Obtain the labels of the DBSCAN clustering the actual frame.
 
@@ -216,35 +165,12 @@ class DBSCAN:
             (the array is sorted). A value of -1 means that the atom is
             isolated.
         """
-        mask_c = frame["type"] == self.type_c
-        mask_i = frame["type"] == self.type_i
-        natoms_c = np.count_nonzero(mask_c)
-        natoms_i = np.count_nonzero(mask_i)
+        natoms_c = np.count_nonzero(frame["type"] == self.type_c)
+        natoms_i = np.count_nonzero(frame["type"] == self.type_i)
 
-        box = frame["box"]
-        xc, yc, zc = frame["x"][mask_c], frame["y"][mask_c], frame["z"][mask_c]
-        xi, yi, zi = frame["x"][mask_i], frame["y"][mask_i], frame["z"][mask_i]
+        distrix = pbc_distances(frame, frame, self.type_c, self.type_i)
 
-        distrix = np.zeros(natoms_c * natoms_i, dtype=np.float32)
-
-        # prepare data for C code
-        box = np.asarray(box, dtype=np.float32)
-        box_c = box.ctypes.data_as(ct.POINTER(ct.c_void_p))
-
-        xcentral_c = np.concatenate((xc, yc, zc)).astype(np.float32)
-        xcentral_c = xcentral_c.ctypes.data_as(ct.POINTER(ct.c_void_p))
-
-        xinteract_c = np.concatenate((xi, yi, zi)).astype(np.float32)
-        xinteract_c = xinteract_c.ctypes.data_as(ct.POINTER(ct.c_void_p))
-
-        distrix_c = distrix.ctypes.data_as(ct.POINTER(ct.c_void_p))
-
-        # a void function that modifies the values of distrix
-        self.distance_matrix_c(
-            natoms_c, natoms_i, box_c, xcentral_c, xinteract_c, distrix_c
-        )
-
-        distrix = distrix.reshape((natoms_c, natoms_c))
+        distrix = distrix.reshape((natoms_c, natoms_i))
         db = sklearn.cluster.DBSCAN(
             eps=self.eps,
             min_samples=self.min_samples,

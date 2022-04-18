@@ -18,7 +18,7 @@
 
 __author__ = """Francisco Fernandez"""
 __email__ = "fernandezfrancisco2195@gmail.com"
-__version__ = "0.3.4"
+__version__ = "0.3.5"
 
 
 # ============================================================================
@@ -26,6 +26,7 @@ __version__ = "0.3.4"
 # ============================================================================
 
 # pair analyzer
+from .distances import pbc  # noqa
 from .msd import MeanSquareDisplacement  # noqa
 from .rdf import RadialDistributionFunction  # noqa
 from .cn import CoordinationNumber  # noqa
