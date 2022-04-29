@@ -261,11 +261,18 @@ def spherical_nanoparticle(frame, rcut):
     """
     box_size = frame["box"]
     x, y, z = frame["x"], frame["y"], frame["z"]
+    types = frame["type"]
+
+    # scale the positions if they are not in fractions of the box size
+    if np.max(x) > 0.5 * box_size[0]:
+        x = x / box_size[0]
+        y = y / box_size[1]
+        z = z / box_size[2]
 
     n = np.intc(np.ceil(rcut / np.max(box_size)))
     boxes = list(it.product(range(-n, n + 1), repeat=3))
 
-    npx, npy, npz = [], [], []
+    npty, npx, npy, npz = [], [], [], []
     for box in boxes:
         for i in range(len(x)):
             xx = box_size[0] * (x[i] + box[0])
@@ -273,12 +280,15 @@ def spherical_nanoparticle(frame, rcut):
             zz = box_size[2] * (z[i] + box[2])
 
             if np.linalg.norm([xx, yy, zz]) <= rcut:
+                npty.append(types[i])
+
                 npx.append(xx)
                 npy.append(yy)
                 npz.append(zz)
 
     return {
         "natoms": len(npx),
+        "type": npty,
         "x": np.asarray(npx, dtype=np.float32),
         "y": np.asarray(npy, dtype=np.float32),
         "z": np.asarray(npz, dtype=np.float32),

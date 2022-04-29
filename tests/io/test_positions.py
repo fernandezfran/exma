@@ -280,9 +280,11 @@ def test_spherical_nanoparticle():
     xref = np.array([-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5])
     yref = np.array([0.0, -0.5, 0.0, 0.0, 0.0, 0.5, 0.0])
     zref = np.array([0.0, 0.0, -0.5, 0.0, 0.5, 0.0, 0.0])
+    typeref = [0, 0, 0, 0, 0, 0, 0]
 
     frame = {
         "box": np.full(3, 1.0),
+        "type": [0, 0, 0, 0, 0, 0, 0, 0],
         "x": np.array([0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5]),
         "y": np.array([0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.5, 0.5]),
         "z": np.array([0.0, 0.5, 0.0, 0.5, 0.0, 0.5, 0.0, 0.5]),
@@ -291,6 +293,7 @@ def test_spherical_nanoparticle():
     result = exma.io.positions.spherical_nanoparticle(frame, 0.6)
 
     assert result["natoms"] == 7
+    assert result["type"] == typeref
     np.testing.assert_array_equal(result["x"], xref)
     np.testing.assert_array_equal(result["y"], yref)
     np.testing.assert_array_equal(result["z"], zref)
