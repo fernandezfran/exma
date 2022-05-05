@@ -16,22 +16,20 @@
 # IMPORTS
 # ============================================================================
 
-import warnings
-
 import matplotlib.pyplot as plt
 
 import numpy as np
 
 import pandas as pd
 
-from .io import reader
+from ._mdobservable import MDObservable
 
 # ============================================================================
 # CLASSES
 # ============================================================================
 
 
-class MeanSquareDisplacement:
+class MeanSquareDisplacement(MDObservable):
     """Mean Square Displacement (MSD) implementation.
 
     The MSD is a measure of the deviation of the position of an atom
@@ -75,40 +73,12 @@ class MeanSquareDisplacement:
     def __init__(
         self, ftraj, dt, type_e, start=0, stop=-1, step=1, xyztype="xyz"
     ):
-        self.ftraj = ftraj
-        self.xyztype = xyztype
+        super().__init__(ftraj, start, stop, step, xyztype)
 
         self.dt = dt
         self.type_e = type_e
 
-        self.start = start
-        self.stop = stop
-        self.step = step
-
-    @property
-    def _configure(self):
-        """Configure the calculation.
-
-        It defines the trajectory reader type (LAMMPS or XYZ) depending on
-        the extension or raises a ValueError.
-        """
-        # configure the frame at which stop the calculation
-        self.stop = np.inf if self.stop == -1 else self.stop
-
-        # define the trajectory reader
-        fextension = self.ftraj.split(".")[-1]
-        if fextension not in ["lammpstrj", "xyz"]:
-            raise ValueError(
-                "The file must have the extension .xyz or .lammpstrj"
-            )
-
-        self.traj_ = (
-            reader.LAMMPS(self.ftraj)
-            if fextension == "lammpstrj"
-            else reader.XYZ(self.ftraj, self.xyztype)
-        )
-
-    def _reference_frame(self, frame):
+    def _local_configure(self, frame):
         """Define the reference frame."""
         # mask of atoms of type e
         self.mask_e_ = frame.types == self.type_e
@@ -122,7 +92,9 @@ class MeanSquareDisplacement:
             self.yref_ = self.yref_ + frame.box[1] * frame.iy[self.mask_e_]
             self.zref_ = self.zref_ + frame.box[2] * frame.iz[self.mask_e_]
 
-    def _on_this_frame(self, frame):
+        self.mean_square_displacement = []
+
+    def _accumulate(self, frame):
         """Calculate the msd of a single frame."""
         x = frame.x[self.mask_e_]
         y = frame.y[self.mask_e_]
@@ -138,7 +110,8 @@ class MeanSquareDisplacement:
         z = z - self.zref_
 
         msd = np.square(x) + np.square(y) + np.square(z)
-        return np.mean(msd)
+
+        self.mean_square_displacement.append(np.mean(msd))
 
     def calculate(self, box=None):
         """Calculate the MSD.
@@ -154,62 +127,13 @@ class MeanSquareDisplacement:
         pd.DataFrame
             A `pd.DataFrame` with the time and the msd as columns.
         """
-        imed = 0
-        self._configure
-
-        mean_square_displacement = []
-        with self.traj_ as traj:
-            try:
-                for _ in range(self.start):
-                    traj.read_frame()
-
-                frame = traj.read_frame()
-
-                # add the box if not in frame
-                frame.box = box if box is not None else frame.box
-
-                # sort the traj if is not sorted, xyz are sorted by default
-                if frame.idx is not None:
-                    frame = (
-                        frame._sort_traj() if not frame._is_sorted() else frame
-                    )
-
-                self._reference_frame(frame)
-
-                nmed = self.stop - self.start
-                while imed < nmed:
-                    if imed % self.step == 0:
-                        # add the box if not in frame
-                        frame.box = box if box is not None else frame.box
-
-                        # sort the traj if is not sorted
-                        if frame.idx is not None:
-                            frame = (
-                                frame._sort_traj()
-                                if not frame._is_sorted()
-                                else frame
-                            )
-
-                        mean_square_displacement.append(
-                            self._on_this_frame(frame)
-                        )
-
-                    imed += 1
-                    frame = traj.read_frame()
-
-            except EOFError:
-                if self.stop != np.inf:
-                    warnings.warn(
-                        f"the trajectory does not read until {self.stop}"
-                    )
-
-            finally:
-                self.df_msd_ = pd.DataFrame(
-                    {
-                        "t": self.dt * np.arange(0, imed, self.step),
-                        "msd": np.array(mean_square_displacement),
-                    }
-                )
+        super()._calculate(box)
+        self.df_msd_ = pd.DataFrame(
+            {
+                "t": self.dt * np.arange(0, self.imed, self.step),
+                "msd": np.array(self.mean_square_displacement),
+            }
+        )
 
         return self.df_msd_
 

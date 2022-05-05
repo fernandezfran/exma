@@ -20,7 +20,6 @@ import ctypes as ct
 import os
 import pathlib
 import sysconfig
-import warnings
 
 import matplotlib.pyplot as plt
 
@@ -28,7 +27,7 @@ import numpy as np
 
 import pandas as pd
 
-from .io import reader
+from ._mdobservable import MDObservable
 
 # ============================================================================
 # CONSTANTS
@@ -42,7 +41,7 @@ PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
 # ============================================================================
 
 
-class RadialDistributionFunction:
+class RadialDistributionFunction(MDObservable):
     r"""Radial Distribution Function (RDF) implementation.
 
     The RDF is a descriptor of the variation of density of a system in
@@ -112,37 +111,18 @@ class RadialDistributionFunction:
         nbin=100,
         pbc=True,
     ):
-        self.ftraj = ftraj
+        super().__init__(ftraj, start, stop, step)
 
         self.type_c = type_c
         self.type_i = type_i
-
-        self.start = start
-        self.stop = stop
-        self.step = step
 
         self.rmax = rmax
         self.nbin = nbin
         self.pbc = pbc
 
-    @property
-    def _configure(self):
+    def _global_configure(self):
         """Define parameters needed for the calculation of g(r)."""
-        # configure the frame at which stop the calculation
-        self.stop = np.inf if self.stop == -1 else self.stop
-
-        # define the trajectory reader
-        fextension = self.ftraj.split(".")[-1]
-        if fextension not in ["lammpstrj", "xyz"]:
-            raise ValueError(
-                "The file must have the extension .xyz or .lammpstrj"
-            )
-
-        self.traj_ = (
-            reader.LAMMPS(self.ftraj)
-            if fextension == "lammpstrj"
-            else reader.XYZ(self.ftraj)
-        )  # other xyz info can be ignored in rdf calculations
+        super()._global_configure()
 
         # pbc = True -> 1; False -> 0 in C code
         self.pbc = 1 if self.pbc else 0
@@ -155,8 +135,10 @@ class RadialDistributionFunction:
         self.ngofr_ = 0
         self.dgofr_ = self.rmax / self.nbin
 
-    def _configure_ctypes(self, types):
+    def _local_configure(self, frame):
         """To calculate natoms and ctypes requires."""
+        types = frame.types
+
         # calculate natoms_c_ and natoms_i_
         self.natoms_c_ = np.count_nonzero(types == self.type_c)
         self.natoms_i_ = np.count_nonzero(types == self.type_i)
@@ -252,38 +234,10 @@ class RadialDistributionFunction:
         pd.DataFrame
             A `pd.DataFrame` with r and g(r) as columns.
         """
-        imed = 0
-        self._configure
+        super()._calculate(box)
 
-        with self.traj_ as traj:
-            try:
-                for _ in range(self.start):
-                    traj.read_frame()
-
-                frame = traj.read_frame()
-
-                self._configure_ctypes(frame.types)
-
-                nmed = self.stop - self.start
-                while imed < nmed:
-                    if imed % self.step == 0:
-                        # add the box if not in frame
-                        frame.box = box if box is not None else frame.box
-                        self._accumulate(frame)
-
-                    imed += 1
-                    frame = traj.read_frame()
-
-            except EOFError:
-                if self.stop != np.inf:
-                    warnings.warn(
-                        f"the trajectory does not read until {self.stop}"
-                    )
-
-            finally:
-                r, rdf = self._end()
-
-                self.df_rdf_ = pd.DataFrame({"r": r, "rdf": rdf})
+        r, rdf = self._end()
+        self.df_rdf_ = pd.DataFrame({"r": r, "rdf": rdf})
 
         return self.df_rdf_
 

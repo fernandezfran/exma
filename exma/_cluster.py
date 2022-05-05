@@ -26,7 +26,7 @@ import scipy.integrate
 
 import sklearn.cluster
 
-from .core import pbc_distances
+from .distances import pbc_distances
 
 
 # ============================================================================

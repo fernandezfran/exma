@@ -20,7 +20,7 @@ import numpy as np
 
 import pandas as pd
 
-from ..core import TrajectoryReader
+from ._rw import TrajectoryReader
 
 # ============================================================================
 # CLASSES
@@ -51,7 +51,7 @@ class XYZ(TrajectoryReader):
         if ftype not in ["xyz", "property", "image"]:
             raise ValueError("ftype must be 'xyz', 'property' or 'image'")
 
-        super(XYZ, self).__init__(filename, ftype)
+        super().__init__(filename, ftype)
 
     def read_frame(self):
         """Read the actual frame of an .xyz file.
@@ -131,7 +131,7 @@ class LAMMPS(TrajectoryReader):
     """
 
     def __init__(self, filename, headerint=["idx", "types", "ix", "iy", "iz"]):
-        super(LAMMPS, self).__init__(filename, None)
+        super().__init__(filename, None)
         self.headerint = headerint
 
     def read_frame(self):

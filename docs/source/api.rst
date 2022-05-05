@@ -19,9 +19,19 @@ Core modules
    :show-inheritance:
    :member-order: bysource
 
+``exma.distances`` module
+-------------------------
 
-Pair Analyzer
-=============
+.. automodule:: exma.distances
+   :members:
+   :private-members:
+   :undoc-members:
+   :show-inheritance:
+   :member-order: bysource
+
+
+Molecular Dynamics Observables
+==============================
 
 ``exma.msd`` module
 -------------------
@@ -119,6 +129,28 @@ IO
 
 .. automodule:: exma.io.positions
    :members:
+   :undoc-members:
+   :show-inheritance:
+   :member-order: bysource
+
+
+Dev Core modules
+================
+
+``exma.core`` module
+--------------------
+
+.. automodule:: exma._mdobservable
+   :members:
+   :private-members:
+   :undoc-members:
+   :show-inheritance:
+   :member-order: bysource
+
+.. automodule:: exma.io._rw
+   :noindex:
+   :members:
+   :private-members:
    :undoc-members:
    :show-inheritance:
    :member-order: bysource

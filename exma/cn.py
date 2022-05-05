@@ -20,13 +20,12 @@ import ctypes as ct
 import os
 import pathlib
 import sysconfig
-import warnings
 
 import numpy as np
 
 import pandas as pd
 
-from .io import reader
+from ._mdobservable import MDObservable
 
 # ============================================================================
 # CONSTANTS
@@ -40,7 +39,7 @@ PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
 # ============================================================================
 
 
-class CoordinationNumber:
+class CoordinationNumber(MDObservable):
     """Coordination Number (CN) implementation.
 
     The CN, also called ligancy when we are refearing to the first
@@ -91,7 +90,7 @@ class CoordinationNumber:
         step=1,
         pbc=True,
     ):
-        self.ftraj = ftraj
+        super().__init__(ftraj, start, stop, step)
 
         self.type_c = type_c
         self.type_i = type_i
@@ -99,34 +98,15 @@ class CoordinationNumber:
         self.rcut_i = rcut_i
         self.rcut_e = rcut_e
 
-        self.start = start
-        self.stop = stop
-        self.step = step
-
         self.pbc = pbc
 
-    @property
-    def _configure(self):
+    def _global_configure(self):
         """Configure the calculation.
 
         It defines parameters needed for the calculation of CN and the
         requirements of ctypes.
         """
-        # configure the frame at which stop the calculation
-        self.stop = np.inf if self.stop == -1 else self.stop
-
-        # define the trajectory reader
-        fextension = self.ftraj.split(".")[-1]
-        if fextension not in ["lammpstrj", "xyz"]:
-            raise ValueError(
-                "The file must have the extension .xyz or .lammpstrj"
-            )
-
-        self.traj_ = (
-            reader.LAMMPS(self.ftraj)
-            if fextension == "lammpstrj"
-            else reader.XYZ(self.ftraj)
-        )  # other xyz info can be ignored in cn calculations
+        super()._global_configure()
 
         # pbc = True -> 1; False -> 0 in C code
         self.pbc = 1 if self.pbc else 0
@@ -134,12 +114,14 @@ class CoordinationNumber:
         # frame counter
         self.ncn_ = 0
 
-    def _configure_ctypes(self, types):
+    def _local_configure(self, frame):
         """To calculate natoms_c_ for ctypes requirements.
 
         It receive frame.types as `types`. This is not an actually frame
         accumulation of CN.
         """
+        types = frame.types
+
         # calculate masks, natoms_c_ and natoms_i_
         self.mask_c_ = types == self.type_c
         self.mask_i_ = types == self.type_i
@@ -224,54 +206,8 @@ class CoordinationNumber:
         tuple
             a tuple with the average cn number and its standard deviation.
         """
-        imed = 0
-        self._configure
-
-        with self.traj_ as traj:
-            try:
-                for _ in range(self.start):
-                    traj.read_frame()
-
-                frame = traj.read_frame()
-
-                # add the box if not in frame
-                frame.box = box if box is not None else frame.box
-
-                # sort the traj if is not sorted, xyz are sorted by default
-                if frame.idx is not None:
-                    frame = (
-                        frame._sort_traj() if not frame._is_sorted() else frame
-                    )
-
-                self._configure_ctypes(frame.types)
-
-                nmed = self.stop - self.start
-                while imed < nmed:
-                    if imed % self.step == 0:
-                        # add the box if not in frame
-                        frame.box = box if box is not None else frame.box
-
-                        # sort the traj if is not sorted
-                        if frame.idx is not None:
-                            frame = (
-                                frame._sort_traj()
-                                if not frame._is_sorted()
-                                else frame
-                            )
-
-                        self._accumulate(frame)
-
-                    imed += 1
-                    frame = traj.read_frame()
-
-            except EOFError:
-                if self.stop != np.inf:
-                    warnings.warn(
-                        f"the trajectory does not read until {self.stop}"
-                    )
-
-            finally:
-                self.cn_ = self._end()
+        super()._calculate(box)
+        self.cn_ = self._end()
 
         return np.mean(self.cn_), np.std(self.cn_)
 

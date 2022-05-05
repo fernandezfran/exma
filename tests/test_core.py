@@ -10,9 +10,6 @@
 # IMPORTS
 # ============================================================================
 
-import os
-import pathlib
-
 import exma.core
 
 import numpy as np
@@ -20,33 +17,8 @@ import numpy as np
 import pytest
 
 # ============================================================================
-# CONSTANTS
-# ============================================================================
-
-TEST_DATA_PATH = pathlib.Path(
-    os.path.join(os.path.abspath(os.path.dirname(__file__)), "io")
-)
-
-# ============================================================================
 # TESTS
 # ============================================================================
-
-
-def test_TrajectoryReader_raises():
-    with pytest.raises(NotImplementedError):
-        with exma.core.TrajectoryReader(
-            TEST_DATA_PATH / "test_data" / "test_ref.xyz", "error"
-        ) as tr:
-            tr.read_frame()
-
-
-def test_TrajectoryWriter_raises():
-    fxyz = TEST_DATA_PATH / "test_data" / "exma_test.xyz"
-    with pytest.raises(NotImplementedError):
-        with exma.core.TrajectoryWriter(fxyz, "error") as tw:
-            tw.write_frame()
-
-    os.remove(fxyz)
 
 
 @pytest.mark.parametrize(

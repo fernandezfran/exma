@@ -26,9 +26,12 @@ __version__ = "0.4.0"
 # ============================================================================
 
 # core
-from .core import AtomicSystem, pbc_distances  # noqa
+from .core import AtomicSystem  # noqa
 
-# pair analyzer
+# distances
+from .distances import pbc_distances  # noqa
+
+# molecular dynamics observables
 from .msd import MeanSquareDisplacement  # noqa
 from .rdf import RadialDistributionFunction  # noqa
 from .cn import CoordinationNumber  # noqa
