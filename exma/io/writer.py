@@ -57,30 +57,23 @@ class XYZ(TrajectoryWriter):
 
         Parameters
         ----------
-        frame : dict
-            with the keys `natoms`, `type`, `x`, `y`, `z`, the number of
-            atoms in the frame (int), the element of each atom (str) and
-            the x, y, z positions of the atoms (np.array), respectively. If
-            `ftype="property"` was selected, then the key `property` is
-            also a key. On the other hand, if `ftype="image"` was selected,
-            then `ix`, `iy` and `iz` are keys and have the positions images
-            in each direction (np.array), respectively.
+        frame : `exma.core.AtomicSystem`
+            This have all the information of the configurations of the system.
         """
-        natoms = frame["natoms"]
-        self.file_traj_.write(f"{natoms}\n\n")
+        self.file_traj_.write(f"{frame.natoms}\n\n")
 
-        for i in range(natoms):
-            line = f"{frame['type'][i]:s}  "
-            line += f"{frame['x'][i]:.6e}  "
-            line += f"{frame['y'][i]:.6e}  "
-            line += f"{frame['z'][i]:.6e}"
+        for i in range(frame.natoms):
+            line = f"{frame.types[i]:s}  "
+            line += f"{frame.x[i]:.6e}  "
+            line += f"{frame.y[i]:.6e}  "
+            line += f"{frame.z[i]:.6e}"
 
             if self.ftype == "property":
-                line += f"  {frame['property'][i]:.6e}"
+                line += f"  {frame.q[i]:.6e}"
             if self.ftype == "image":
-                line += f"  {frame['ix'][i]:d}"
-                line += f"  {frame['iy'][i]:d}"
-                line += f"  {frame['iz'][i]:d}"
+                line += f"  {frame.ix[i]:d}"
+                line += f"  {frame.iy[i]:d}"
+                line += f"  {frame.iz[i]:d}"
 
             line += "\n"
             self.file_traj_.write(line)
@@ -105,41 +98,42 @@ class LAMMPS(TrajectoryWriter):
 
         Parameters
         ----------
-        dict
-            with the list of attributes selected by the `dump` command of
-            LAMMPS for each atom as keys and the corresponding frame values
-            as `np.array`; except the number of atoms, which is an `int`.
-            `natoms` and `box` must be defined in the dict.
+        frame : `exma.core.AtomicSystem`
+            This have all the information of the configurations of the system.
         """
         self.file_traj_.write("ITEM: TIMESTEP\n")
         self.file_traj_.write(f"{self.timestep:d}\n")
         self.file_traj_.write("ITEM: NUMBER OF ATOMS\n")
-        self.file_traj_.write(f"{frame['natoms']:d}\n")
+        self.file_traj_.write(f"{frame.natoms:d}\n")
         self.file_traj_.write("ITEM: BOX BOUNDS pp pp pp\n")
         for i in range(0, 3):
-            self.file_traj_.write(f"0.0\t{frame['box'][i]:.6e}\n")
+            self.file_traj_.write(f"0.0\t{frame.box[i]:.6e}\n")
 
         self.timestep += 1
 
         traj_header = "ITEM: ATOMS"
-        for key in frame.keys():
-            if key in ["natoms", "box"]:
+        for key in frame.__dict__.keys():
+            if key.startswith("_") or key in ("natoms", "box"):
                 continue
-            traj_header += " " + str(key)
+            elif frame.__dict__[key] is not None:
+                traj_header += " " + str(key).replace("idx", "id").replace(
+                    "types", "type"
+                )
         traj_header += "\n"
         self.file_traj_.write(traj_header)
 
-        for i in range(frame["natoms"]):
+        for i in range(frame.natoms):
             line = ""
-            for key in frame.keys():
-                if key in ["natoms", "box"]:
+            for key in frame.__dict__.keys():
+                if key.startswith("_") or key in ("natoms", "box"):
                     continue
-                value = frame[key][i]
-                line += (
-                    f"{value:.6e}  "
-                    if isinstance(value, np.float32)
-                    else f"{value}  "
-                )
+                if frame.__dict__[key] is not None:
+                    value = frame.__dict__[key][i]
+                    line += (
+                        f"{value:.6e}  "
+                        if isinstance(value, np.float32)
+                        else f"{value}  "
+                    )
             line = line.rstrip()
             line += "\n"
             self.file_traj_.write(line)
@@ -158,41 +152,50 @@ def in_lammps(file_in, frame):
     file_in : str
         name of the file where you want to write the input info
 
-    frame : dict
-        with the list of attributes that you want to read with `read_data`
-        in LAMMPS. `natoms` and `box` must be defined in the dict.
+    frame : `exma.core.AtomicSystem`
+        This have all the information of the configurations of the system.
     """
-    header = ["natoms", "box"]
+    header = ("natoms", "box")
     with open(file_in, "w") as f_in:
 
-        keys = [key for key in frame.keys() if key not in header]
-
         f_in.write("# the first three lines are comments...\n")
-        f_in.write(f"# columns in order: {' '.join(keys)}\n")
+
+        f_in_header = "# columns in order:"
+        for key in frame.__dict__.keys():
+            if key.startswith("_") or key in ("natoms", "box"):
+                continue
+            elif frame.__dict__[key] is not None:
+                f_in_header += " " + str(key).replace("idx", "id").replace(
+                    "types", "type"
+                )
+        f_in_header += "\n"
+        f_in.write(f_in_header)
+
         f_in.write("# input file for LAMMPS generated by exma\n")
 
-        f_in.write(f"{frame['natoms']:d} atoms\n")
+        f_in.write(f"{frame.natoms:d} atoms\n")
 
-        noat = np.unique(frame["type"]).size  # number of atom types
+        noat = np.unique(frame.types).size  # number of atom types
         f_in.write(f"{noat:d} atom types\n\n")
 
-        f_in.write(f"0.0 \t {frame['box'][0]:.6e} \t xlo xhi\n")
-        f_in.write(f"0.0 \t {frame['box'][1]:.6e} \t ylo yhi\n")
-        f_in.write(f"0.0 \t {frame['box'][2]:.6e} \t zlo zhi\n\n")
+        f_in.write(f"0.0 \t {frame.box[0]:.6e} \t xlo xhi\n")
+        f_in.write(f"0.0 \t {frame.box[1]:.6e} \t ylo yhi\n")
+        f_in.write(f"0.0 \t {frame.box[2]:.6e} \t zlo zhi\n\n")
 
         f_in.write("Atoms\n\n")
 
-        for i in range(frame["natoms"]):
+        for i in range(frame.natoms):
             line = ""
-            for key in frame.keys():
-                if key in header:
+            for key in frame.__dict__.keys():
+                if key.startswith("_") or key in header:
                     continue
-                value = frame[key][i]
-                line += (
-                    f"{value:.6e}  "
-                    if isinstance(value, np.float32)
-                    else f"{value}  "
-                )
+                if frame.__dict__[key] is not None:
+                    value = frame.__dict__[key][i]
+                    line += (
+                        f"{value:.6e}  "
+                        if isinstance(value, np.float32)
+                        else f"{value}  "
+                    )
             line = line.rstrip()
             line += "\n"
             f_in.write(line)

@@ -24,7 +24,6 @@ import numpy as np
 
 import pandas as pd
 
-from .core import _is_sorted, _sort_traj
 from .io import reader
 
 # ============================================================================
@@ -112,33 +111,27 @@ class MeanSquareDisplacement:
     def _reference_frame(self, frame):
         """Define the reference frame."""
         # mask of atoms of type e
-        self.mask_e_ = frame["type"] == self.type_e
+        self.mask_e_ = frame.types == self.type_e
 
         # reference positions
-        self.xref_ = frame["x"][self.mask_e_]
-        self.yref_ = frame["y"][self.mask_e_]
-        self.zref_ = frame["z"][self.mask_e_]
-        if "ix" in frame.keys():
-            self.xref_ = (
-                self.xref_ + frame["box"][0] * frame["ix"][self.mask_e_]
-            )
-            self.yref_ = (
-                self.yref_ + frame["box"][1] * frame["iy"][self.mask_e_]
-            )
-            self.zref_ = (
-                self.zref_ + frame["box"][2] * frame["iz"][self.mask_e_]
-            )
+        self.xref_ = frame.x[self.mask_e_]
+        self.yref_ = frame.y[self.mask_e_]
+        self.zref_ = frame.z[self.mask_e_]
+        if frame.ix is not None:
+            self.xref_ = self.xref_ + frame.box[0] * frame.ix[self.mask_e_]
+            self.yref_ = self.yref_ + frame.box[1] * frame.iy[self.mask_e_]
+            self.zref_ = self.zref_ + frame.box[2] * frame.iz[self.mask_e_]
 
     def _on_this_frame(self, frame):
         """Calculate the msd of a single frame."""
-        x = frame["x"][self.mask_e_]
-        y = frame["y"][self.mask_e_]
-        z = frame["z"][self.mask_e_]
+        x = frame.x[self.mask_e_]
+        y = frame.y[self.mask_e_]
+        z = frame.z[self.mask_e_]
 
-        if "ix" in frame.keys():
-            x = x + frame["box"][0] * frame["ix"][self.mask_e_]
-            y = y + frame["box"][1] * frame["iy"][self.mask_e_]
-            z = z + frame["box"][2] * frame["iz"][self.mask_e_]
+        if frame.ix is not None:
+            x = x + frame.box[0] * frame.ix[self.mask_e_]
+            y = y + frame.box[1] * frame.iy[self.mask_e_]
+            z = z + frame.box[2] * frame.iz[self.mask_e_]
 
         x = x - self.xref_
         y = y - self.yref_
@@ -173,14 +166,12 @@ class MeanSquareDisplacement:
                 frame = traj.read_frame()
 
                 # add the box if not in frame
-                frame["box"] = box if box is not None else frame["box"]
+                frame.box = box if box is not None else frame.box
 
                 # sort the traj if is not sorted, xyz are sorted by default
-                if "id" in frame.keys():
+                if frame.idx is not None:
                     frame = (
-                        _sort_traj(frame)
-                        if not _is_sorted(frame["id"])
-                        else frame
+                        frame._sort_traj() if not frame._is_sorted() else frame
                     )
 
                 self._reference_frame(frame)
@@ -189,13 +180,13 @@ class MeanSquareDisplacement:
                 while imed < nmed:
                     if imed % self.step == 0:
                         # add the box if not in frame
-                        frame["box"] = box if box is not None else frame["box"]
+                        frame.box = box if box is not None else frame.box
 
                         # sort the traj if is not sorted
-                        if "id" in frame.keys():
+                        if frame.idx is not None:
                             frame = (
-                                _sort_traj(frame)
-                                if not _is_sorted(frame["id"])
+                                frame._sort_traj()
+                                if not frame._is_sorted()
                                 else frame
                             )
 

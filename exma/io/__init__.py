@@ -22,7 +22,6 @@ import numpy as np
 
 from . import reader
 from . import writer
-from ..core import _is_sorted, _sort_traj
 
 # ============================================================================
 # FUNCTIONS
@@ -56,24 +55,13 @@ def xyz2lammpstrj(xyztraj, lammpstrj_name, cell_info, xyzftype="xyz"):
             while True:
                 xyz_frame = xyz.read_frame()
 
-                xyz_frame["type"] = [
-                    cell_info["type"][t] for t in xyz_frame["type"]
+                xyz_frame.box = cell_info["box"]
+                xyz_frame.idx = np.arange(1, xyz_frame.natoms + 1)
+                xyz_frame.types = [
+                    cell_info["type"][t] for t in xyz_frame.types
                 ]
-                xyz_frame = {
-                    key: value
-                    for key, value in zip(xyz_frame.keys(), xyz_frame.values())
-                    if value is not None
-                }
 
-                lmp.write_frame(
-                    dict(
-                        {
-                            "box": cell_info["box"],
-                            "id": np.arange(1, xyz_frame["natoms"] + 1),
-                        },
-                        **xyz_frame,
-                    )
-                )
+                lmp.write_frame(xyz_frame)
 
         except EOFError:
             ...
@@ -120,30 +108,13 @@ def xyz2inlmp(xyztraj, inlammps_name, cell_info, nframe=-1, xyzftype="xyz"):
                     f"therefore the last frame ({iframe}) was written."
                 )
 
-    dframe["type"] = [cell_info["type"][t] for t in dframe["type"]]
-    dframe = {
-        key: value
-        for key, value in zip(dframe.keys(), dframe.values())
-        if value is not None
-    }
-
-    newframe = dframe
+    dframe.box = cell_info["box"]
+    dframe.idx = np.arange(1, dframe.natoms + 1)
+    dframe.types = [cell_info["type"][t] for t in dframe.types]
     if "q" in cell_info.keys():
-        keys = list(dframe.keys())
-        keys.insert(2, "q")
+        dframe.q = cell_info["q"]
 
-        newframe = {}
-        for k in keys:
-            if k == "q":
-                newframe[k] = cell_info[k]
-            else:
-                newframe[k] = dframe[k]
-        del cell_info["q"]
-
-    cell_info["id"] = np.arange(1, dframe["natoms"] + 1)
-    del cell_info["type"]
-
-    writer.in_lammps(inlammps_name, dict(cell_info, **newframe))
+    writer.in_lammps(inlammps_name, dframe)
 
 
 def lammpstrj2xyz(lammpstrjtraj, xyz_name, type_info, xyzftype="xyz"):
@@ -171,20 +142,13 @@ def lammpstrj2xyz(lammpstrjtraj, xyz_name, type_info, xyzftype="xyz"):
             while True:
                 lmp_frame = lmp.read_frame()
                 lmp_frame = (
-                    _sort_traj(lmp_frame)
-                    if not _is_sorted(lmp_frame["id"])
+                    lmp_frame._sort_traj()
+                    if not lmp_frame._is_sorted()
                     else lmp_frame
                 )
-                lmp_frame["type"] = [type_info[t] for t in lmp_frame["type"]]
+                lmp_frame.types = [type_info[t] for t in lmp_frame.types]
 
-                xyz_frame = {
-                    key: value
-                    for key, value in zip(lmp_frame.keys(), lmp_frame.values())
-                    if key
-                    in ["natoms", "type", "x", "y", "z", "ix", "iy", "iz"]
-                }
-
-                xyz.write_frame(xyz_frame)
+                xyz.write_frame(lmp_frame)
 
         except EOFError:
             ...
@@ -222,5 +186,5 @@ def lammpstrj2inlmp(lammpstrjtraj, inlammps_name, nframe=-1):
                     f"therefore the last frame ({iframe}) was written."
                 )
 
-    dframe = _sort_traj(dframe) if not _is_sorted(dframe["id"]) else dframe
+    dframe = dframe._sort_traj() if not dframe._is_sorted() else dframe
     writer.in_lammps(inlammps_name, dframe)

@@ -11,6 +11,7 @@
 # ============================================================================
 
 import exma.io.positions
+from exma.core import AtomicSystem
 
 import numpy as np
 
@@ -30,11 +31,11 @@ def test_sc():
 
     result = exma.io.positions.Positions(8, 1.0).sc()
 
-    assert result["natoms"] == 8
-    np.testing.assert_array_equal(result["box"], boxref)
-    np.testing.assert_array_equal(result["x"], xref)
-    np.testing.assert_array_equal(result["y"], yref)
-    np.testing.assert_array_equal(result["z"], zref)
+    assert result.natoms == 8
+    np.testing.assert_array_equal(result.box, boxref)
+    np.testing.assert_array_equal(result.x, xref)
+    np.testing.assert_array_equal(result.y, yref)
+    np.testing.assert_array_equal(result.z, zref)
 
 
 def test_bcc():
@@ -103,11 +104,11 @@ def test_bcc():
 
     result = exma.io.positions.Positions(16, 1.0).bcc()
 
-    assert result["natoms"] == 16
-    np.testing.assert_array_equal(result["box"], boxref)
-    np.testing.assert_array_equal(result["x"], xref)
-    np.testing.assert_array_equal(result["y"], yref)
-    np.testing.assert_array_equal(result["z"], zref)
+    assert result.natoms == 16
+    np.testing.assert_array_equal(result.box, boxref)
+    np.testing.assert_array_equal(result.x, xref)
+    np.testing.assert_array_equal(result.y, yref)
+    np.testing.assert_array_equal(result.z, zref)
 
 
 def test_fcc():
@@ -224,11 +225,11 @@ def test_fcc():
 
     result = exma.io.positions.Positions(32, 1.0).fcc()
 
-    assert result["natoms"] == 32
-    np.testing.assert_array_equal(result["box"], boxref)
-    np.testing.assert_array_equal(result["x"], xref)
-    np.testing.assert_array_equal(result["y"], yref)
-    np.testing.assert_array_equal(result["z"], zref)
+    assert result.natoms == 32
+    np.testing.assert_array_equal(result.box, boxref)
+    np.testing.assert_array_equal(result.x, xref)
+    np.testing.assert_array_equal(result.y, yref)
+    np.testing.assert_array_equal(result.z, zref)
 
 
 def test_dc():
@@ -240,11 +241,11 @@ def test_dc():
 
     result = exma.io.positions.Positions(8, 1.0).dc()
 
-    assert result["natoms"] == 8
-    np.testing.assert_array_equal(result["box"], boxref)
-    np.testing.assert_array_equal(result["x"], xref)
-    np.testing.assert_array_equal(result["y"], yref)
-    np.testing.assert_array_equal(result["z"], zref)
+    assert result.natoms == 8
+    np.testing.assert_array_equal(result.box, boxref)
+    np.testing.assert_array_equal(result.x, xref)
+    np.testing.assert_array_equal(result.y, yref)
+    np.testing.assert_array_equal(result.z, zref)
 
 
 def test_sc_raise():
@@ -282,21 +283,21 @@ def test_spherical_nanoparticle():
     zref = np.array([0.0, 0.0, -0.5, 0.0, 0.5, 0.0, 0.0])
     typeref = [0, 0, 0, 0, 0, 0, 0]
 
-    frame = {
-        "box": np.full(3, 1.0),
-        "type": [0, 0, 0, 0, 0, 0, 0, 0],
-        "x": np.array([0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5]),
-        "y": np.array([0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.5, 0.5]),
-        "z": np.array([0.0, 0.5, 0.0, 0.5, 0.0, 0.5, 0.0, 0.5]),
-    }
+    frame = AtomicSystem(
+        box=np.full(3, 1.0),
+        types=[0, 0, 0, 0, 0, 0, 0, 0],
+        x=np.array([0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5]),
+        y=np.array([0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.5, 0.5]),
+        z=np.array([0.0, 0.5, 0.0, 0.5, 0.0, 0.5, 0.0, 0.5]),
+    )
 
     result = exma.io.positions.spherical_nanoparticle(frame, 0.6)
 
-    assert result["natoms"] == 7
-    assert result["type"] == typeref
-    np.testing.assert_array_equal(result["x"], xref)
-    np.testing.assert_array_equal(result["y"], yref)
-    np.testing.assert_array_equal(result["z"], zref)
+    assert result.natoms == 7
+    assert result.types == typeref
+    np.testing.assert_array_equal(result.x, xref)
+    np.testing.assert_array_equal(result.y, yref)
+    np.testing.assert_array_equal(result.z, zref)
 
 
 def test_replicate():
@@ -509,20 +510,20 @@ def test_replicate():
         ]
     )
 
-    frame = {
-        "natoms": 8,
-        "box": np.full(3, 5.468728),
-        "type": ["Si"] * 8,
-        "x": np.array([0.25, 0.0, 0.25, 0.0, 0.75, 0.5, 0.75, 0.5]),
-        "y": np.array([0.75, 0.0, 0.25, 0.5, 0.75, 0.0, 0.25, 0.5]),
-        "z": np.array([0.25, 0.5, 0.75, 0.0, 0.75, 0.0, 0.25, 0.5]),
-    }
+    frame = AtomicSystem(
+        natoms=8,
+        box=np.full(3, 5.468728),
+        types=["Si"] * 8,
+        x=np.array([0.25, 0.0, 0.25, 0.0, 0.75, 0.5, 0.75, 0.5]),
+        y=np.array([0.75, 0.0, 0.25, 0.5, 0.75, 0.0, 0.25, 0.5]),
+        z=np.array([0.25, 0.5, 0.75, 0.0, 0.75, 0.0, 0.25, 0.5]),
+    )
 
     result = exma.io.positions.replicate(frame, [2, 2, 2])
 
-    assert result["natoms"] == natomsref
-    np.testing.assert_array_almost_equal(result["box"], boxref)
-    np.testing.assert_array_equal(result["type"], typesref)
-    np.testing.assert_array_almost_equal(result["x"], xref)
-    np.testing.assert_array_almost_equal(result["y"], yref)
-    np.testing.assert_array_almost_equal(result["z"], zref)
+    assert result.natoms == natomsref
+    np.testing.assert_array_almost_equal(result.box, boxref)
+    np.testing.assert_array_equal(result.types, typesref)
+    np.testing.assert_array_almost_equal(result.x, xref)
+    np.testing.assert_array_almost_equal(result.y, yref)
+    np.testing.assert_array_almost_equal(result.z, zref)

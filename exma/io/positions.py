@@ -13,7 +13,7 @@
 """Includes class and functions to define atom positions.
 
 It is primarily developed to generate initial structures returned in the
-form of a `frame` dictionary for writing to output files with the writer
+form of a `exma.core.AtomicSystem` for writing to output files with the writer
 classes/function that serve as initial conditions for simulations.
 """
 
@@ -24,6 +24,8 @@ classes/function that serve as initial conditions for simulations.
 import itertools as it
 
 import numpy as np
+
+from ..core import AtomicSystem
 
 # ============================================================================
 # CLASSES
@@ -64,9 +66,8 @@ class Positions:
 
         Returns
         -------
-        dict
-            A `dict` with the keys `natoms`, `box`, `x`, `y`, `z`, the number
-            of atoms, the box size and the xyz of the atoms, respectively.
+        `exma.core.AtomicSystem`
+            This have all the information of the configurations of the system.
 
         Raises
         ------
@@ -85,13 +86,13 @@ class Positions:
         positions = np.array(positions, dtype=np.float32)
         positions = np.transpose(positions) * (self.box_size / nside)
 
-        return {
-            "natoms": self.natoms,
-            "box": np.full(3, self.box_size, dtype=np.float32),
-            "x": positions[0],
-            "y": positions[1],
-            "z": positions[2],
-        }
+        return AtomicSystem(
+            natoms=self.natoms,
+            box=np.full(3, self.box_size, dtype=np.float32),
+            x=positions[0],
+            y=positions[1],
+            z=positions[2],
+        )
 
     def bcc(self):
         """Body-centered cubic crystal.
@@ -101,9 +102,8 @@ class Positions:
 
         Returns
         -------
-        dict
-            A `dict` with the keys `natoms`, `box`, `x`, `y`, `z`, the number
-            of atoms, the box size and the xyz of the atoms, respectively.
+        `exma.core.AtomicSystem`
+            This have all the information of the configurations of the system.
 
         Raises
         ------
@@ -128,13 +128,13 @@ class Positions:
         positions = np.concatenate((p0, p1), dtype=np.float32)
         positions = np.transpose(positions) * (self.box_size / nside)
 
-        return {
-            "natoms": self.natoms,
-            "box": np.full(3, self.box_size, dtype=np.float32),
-            "x": positions[0],
-            "y": positions[1],
-            "z": positions[2],
-        }
+        return AtomicSystem(
+            natoms=self.natoms,
+            box=np.full(3, self.box_size, dtype=np.float32),
+            x=positions[0],
+            y=positions[1],
+            z=positions[2],
+        )
 
     def fcc(self):
         """Face-centered cubic crystal.
@@ -144,9 +144,8 @@ class Positions:
 
         Returns
         -------
-        dict
-            A `dict` with the keys `natoms`, `box`, `x`, `y`, `z`, the number
-            of atoms, the box size and the xyz of the atoms, respectively.
+        `exma.core.AtomicSystem`
+            This have all the information of the configurations of the system.
 
         Raises
         ------
@@ -174,13 +173,13 @@ class Positions:
         positions = np.concatenate((p0, p1, p2, p3), dtype=np.float32)
         positions = np.transpose(positions) * (self.box_size / nside)
 
-        return {
-            "natoms": self.natoms,
-            "box": np.full(3, self.box_size, dtype=np.float32),
-            "x": positions[0],
-            "y": positions[1],
-            "z": positions[2],
-        }
+        return AtomicSystem(
+            natoms=self.natoms,
+            box=np.full(3, self.box_size, dtype=np.float32),
+            x=positions[0],
+            y=positions[1],
+            z=positions[2],
+        )
 
     def dc(self):
         """Diamond cubic crystal.
@@ -189,9 +188,8 @@ class Positions:
 
         Returns
         -------
-        dict
-            A `dict` with the keys `natoms`, `box`, `x`, `y`, `z`, the number
-            of atoms, the box size and the xyz of the atoms, respectively.
+        `exma.core.AtomicSystem`
+            This have all the information of the configurations of the system.
 
         Raises
         ------
@@ -222,13 +220,13 @@ class Positions:
         )
         positions = np.transpose(positions) * (self.box_size / nside)
 
-        return {
-            "natoms": self.natoms,
-            "box": np.full(3, self.box_size, dtype=np.float32),
-            "x": positions[0],
-            "y": positions[1],
-            "z": positions[2],
-        }
+        return AtomicSystem(
+            natoms=self.natoms,
+            box=np.full(3, self.box_size, dtype=np.float32),
+            x=positions[0],
+            y=positions[1],
+            z=positions[2],
+        )
 
 
 # ============================================================================
@@ -241,30 +239,29 @@ def spherical_nanoparticle(frame, rcut):
 
     Parameters
     ----------
-    frame : dict
-        with at least the keys `box`, with the box size in each direction,
-        and `x`, `y` and `z`.
+    frame : `exma.core.AtomicSystem`
+        This have all the information of the configurations of the system.
 
     rcut : float
         the radius of the nanoparticle.
 
     Returns
     -------
-    dict
-        A `dict` with the keys `natoms`, `x`, `y`, `z`, the number of atoms
-        and the xyz of the atoms, respectively.
+    `exma.core.AtomicSystem`
+        This have all the information of the configurations of the system.
 
     Notes
     -----
     If `rcut` is greater than half the cell length, the cell will be
     replicated to give a nanoparticle of the desired radius.
     """
-    box_size = frame["box"]
-    x, y, z = frame["x"], frame["y"], frame["z"]
-    types = frame["type"]
+    box_size = frame.box
+    x = frame.x
+    y = frame.y
+    z = frame.z
 
     # scale the positions if they are not in fractions of the box size
-    if np.max(x) > 0.5 * box_size[0]:
+    if np.max(frame.x) > 0.5 * box_size[0]:
         x = x / box_size[0]
         y = y / box_size[1]
         z = z / box_size[2]
@@ -280,19 +277,19 @@ def spherical_nanoparticle(frame, rcut):
             zz = box_size[2] * (z[i] + box[2])
 
             if np.linalg.norm([xx, yy, zz]) <= rcut:
-                npty.append(types[i])
+                npty.append(frame.types[i])
 
                 npx.append(xx)
                 npy.append(yy)
                 npz.append(zz)
 
-    return {
-        "natoms": len(npx),
-        "type": npty,
-        "x": np.asarray(npx, dtype=np.float32),
-        "y": np.asarray(npy, dtype=np.float32),
-        "z": np.asarray(npz, dtype=np.float32),
-    }
+    return AtomicSystem(
+        natoms=len(npx),
+        types=npty,
+        x=np.asarray(npx, dtype=np.float32),
+        y=np.asarray(npy, dtype=np.float32),
+        z=np.asarray(npz, dtype=np.float32),
+    )
 
 
 def replicate(frame, nrf):
@@ -300,10 +297,8 @@ def replicate(frame, nrf):
 
     Parameters
     ----------
-    frame : dict
-        with the keys `natoms`, `box`, the box size in each direction,
-        `type` (a list with the types of atoms), `x`, `y` and `z`, the
-        scaled atom coordinates.
+    frame : `exma.core.AtomicSystem`
+        This have all the information of the configurations of the system.
 
     nrf : list
         three integers that must be greater than or equal to 1 and
@@ -313,14 +308,19 @@ def replicate(frame, nrf):
 
     Returns
     -------
-    dict
-        A `dict` with the keys `natoms`, `box`, `type`, `x`, `y`, `z`, the
-        number of atoms, the box size, the types of the atoms and the xyz
-        of the atoms, respectively.
+    `exma.core.AtomicSystem`
+        This have all the information of the configurations of the system.
     """
-    natoms = frame["natoms"]
-    box_size = frame["box"]
-    x, y, z = frame["x"], frame["y"], frame["z"]
+    box_size = frame.box
+    x = frame.x
+    y = frame.y
+    z = frame.z
+
+    # scale the positions if they are not in fractions of the box size
+    if np.max(frame.x) > 0.5 * box_size[0]:
+        x = x / box_size[0]
+        y = y / box_size[1]
+        z = z / box_size[2]
 
     boxes = list(it.product(range(np.max(nrf)), repeat=3))
     newx, newy, newz = [], [], []
@@ -328,7 +328,7 @@ def replicate(frame, nrf):
         if (box[0] >= nrf[0]) or (box[1] >= nrf[1]) or (box[2] >= nrf[2]):
             continue
 
-        for i in range(natoms):
+        for i in range(frame.natoms):
             newx.append(box_size[0] * (x[i] + box[0]))
             newy.append(box_size[1] * (y[i] + box[1]))
             newz.append(box_size[2] * (z[i] + box[2]))
@@ -337,13 +337,13 @@ def replicate(frame, nrf):
     box_size = np.array(
         [nrf[0] * box_size[0], nrf[1] * box_size[1], nrf[2] * box_size[2]]
     )
-    atom_type = frame["type"] * np.prod(nrf)
+    atom_type = frame.types * np.prod(nrf)
 
-    return {
-        "natoms": natoms,
-        "box": box_size,
-        "type": atom_type,
-        "x": np.asarray(newx, dtype=np.float32),
-        "y": np.asarray(newy, dtype=np.float32),
-        "z": np.asarray(newz, dtype=np.float32),
-    }
+    return AtomicSystem(
+        natoms=natoms,
+        box=box_size,
+        types=atom_type,
+        x=np.asarray(newx, dtype=np.float32),
+        y=np.asarray(newy, dtype=np.float32),
+        z=np.asarray(newz, dtype=np.float32),
+    )

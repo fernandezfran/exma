@@ -11,6 +11,7 @@
 # ============================================================================
 
 import exma._cluster
+from exma.core import AtomicSystem
 
 import numpy as np
 
@@ -30,14 +31,14 @@ def test_effective_neighbors():
     """
     enref = np.array([1.0, 2.0])
 
-    frame = {
-        "natoms": 5,
-        "box": np.array([1.0, 1.0, 1.0]),
-        "type": np.array([1, 1, 2, 2, 2]),
-        "x": np.array([0.5, 0.5, 0.5, 0.5, 0.5]),
-        "y": np.array([0.4, 0.6, 0.5, 0.5, 0.7]),
-        "z": np.array([0.5, 0.5, 0.4, 0.6, 0.5]),
-    }
+    frame = AtomicSystem(
+        natoms=5,
+        box=np.array([1.0, 1.0, 1.0]),
+        types=np.array([1, 1, 2, 2, 2]),
+        x=np.array([0.5, 0.5, 0.5, 0.5, 0.5]),
+        y=np.array([0.4, 0.6, 0.5, 0.5, 0.7]),
+        z=np.array([0.5, 0.5, 0.4, 0.6, 0.5]),
+    )
 
     result = exma._cluster.EffectiveNeighbors(1, 2).of_this_frame(frame)
 
@@ -48,13 +49,13 @@ def test_dbscan_id():
     """Test the dbscan cluster ids."""
     idref = np.array([0, 0, -1])
 
-    frame = {
-        "box": np.array([1.0, 1.0, 1.0]),
-        "type": np.array([1, 1, 1]),
-        "x": np.array([0.0, 0.0, 0.5]),
-        "y": np.array([0.0, 0.0, 0.0]),
-        "z": np.array([0.45, 0.55, 0.0]),
-    }
+    frame = AtomicSystem(
+        box=np.array([1.0, 1.0, 1.0]),
+        types=np.array([1, 1, 1]),
+        x=np.array([0.0, 0.0, 0.5]),
+        y=np.array([0.0, 0.0, 0.0]),
+        z=np.array([0.45, 0.55, 0.0]),
+    )
 
     rcut = 0.2
     result = exma._cluster.DBSCAN(1, 1, rcut).of_this_frame(frame)
@@ -67,13 +68,13 @@ def test_dbscan_characterize():
     isolatedref = 1
     clustersref = 1
 
-    frame = {
-        "box": np.array([1.0, 1.0, 1.0]),
-        "type": np.array([1, 1, 1]),
-        "x": np.array([0.0, 0.0, 0.5]),
-        "y": np.array([0.0, 0.0, 0.0]),
-        "z": np.array([0.45, 0.55, 0.0]),
-    }
+    frame = AtomicSystem(
+        box=np.array([1.0, 1.0, 1.0]),
+        types=np.array([1, 1, 1]),
+        x=np.array([0.0, 0.0, 0.5]),
+        y=np.array([0.0, 0.0, 0.0]),
+        z=np.array([0.45, 0.55, 0.0]),
+    )
 
     dbscan = exma._cluster.DBSCAN(1, 1, 0.2)
     dbscan.of_this_frame(frame)

@@ -61,33 +61,38 @@ def test_TrajectoryWriter_raises():
 )
 def test__is_sorted(arr, res):
     """Test the check if an array is sorted."""
-    assert exma.core._is_sorted(arr) == res
+    frame = exma.core.AtomicSystem(idx=arr)
+    assert frame._is_sorted() == res
 
 
 @pytest.mark.parametrize(
     ("frame", "sorted_frame"),
     [
         (
-            {
-                "natoms": 3,
-                "id": np.array([1, 2, 3]),
-                "x": np.array([0.1, 0.5, 0.7]),
-            },
-            {
-                "natoms": 3,
-                "id": np.array([1, 2, 3]),
-                "x": np.array([0.1, 0.5, 0.7]),
-            },
+            exma.core.AtomicSystem(
+                natoms=3,
+                idx=np.array([1, 2, 3]),
+                x=np.array([0.1, 0.5, 0.7]),
+            ),
+            exma.core.AtomicSystem(
+                natoms=3,
+                idx=np.array([1, 2, 3]),
+                x=np.array([0.1, 0.5, 0.7]),
+            ),
         ),
         (
-            {"natoms": 3, "id": np.array([3, 2, 1]), "x": np.array([1, 2, 3])},
-            {"natoms": 3, "id": np.array([1, 2, 3]), "x": np.array([3, 2, 1])},
+            exma.core.AtomicSystem(
+                natoms=3, idx=np.array([3, 2, 1]), x=np.array([1, 2, 3])
+            ),
+            exma.core.AtomicSystem(
+                natoms=3, idx=np.array([1, 2, 3]), x=np.array([3, 2, 1])
+            ),
         ),
         (
-            {
-                "natoms": 5,
-                "id": np.array([8, 2, 4, 5, 1]),
-                "x": np.array(
+            exma.core.AtomicSystem(
+                natoms=5,
+                idx=np.array([8, 2, 4, 5, 1]),
+                x=np.array(
                     [
                         0.85150696,
                         0.07836568,
@@ -96,11 +101,11 @@ def test__is_sorted(arr, res):
                         0.65905169,
                     ]
                 ),
-            },
-            {
-                "natoms": 5,
-                "id": np.array([1, 2, 4, 5, 8]),
-                "x": np.array(
+            ),
+            exma.core.AtomicSystem(
+                natoms=5,
+                idx=np.array([1, 2, 4, 5, 8]),
+                x=np.array(
                     [
                         0.65905169,
                         0.07836568,
@@ -109,12 +114,15 @@ def test__is_sorted(arr, res):
                         0.85150696,
                     ]
                 ),
-            },
+            ),
         ),
     ],
 )
 def test__sort_traj(frame, sorted_frame):
     """Test the check sorting of a traj."""
-    res = exma.core._sort_traj(frame)
-    for key in sorted_frame.keys():
-        np.testing.assert_array_almost_equal(res[key], sorted_frame[key])
+    res = frame._sort_traj()
+    for key in sorted_frame.__dict__.keys():
+        if res.__dict__[key] is not None:
+            np.testing.assert_array_almost_equal(
+                res.__dict__[key], sorted_frame.__dict__[key]
+            )

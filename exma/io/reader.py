@@ -58,14 +58,8 @@ class XYZ(TrajectoryReader):
 
         Returns
         -------
-        dict
-            frame with the keys `natoms`, `type`, `x`, `y`, `z`, the number
-            of atoms (int), the element of each atom (np array of strings)
-            and the x, y, z positions of the atoms (np.array), respectively.
-            If `ftype="property"` was selected, then the key `property` is
-            also a key. On the other hand, if `ftype="image"` was selected,
-            then `ix`, `iy` and `iz` are keys and have the positions images
-            in each direction (np.array), respectively.
+        frame : `exma.core.AtomicSystem`
+            This have all the information of the configurations of the system.
 
         Raises
         ------
@@ -81,7 +75,7 @@ class XYZ(TrajectoryReader):
 
         atom_type = []
         x, y, z = [], [], []
-        prop = [] if self.ftype == "property" else None
+        q = [] if self.ftype == "property" else None
         ix, iy, iz = [], [], [] if self.ftype == "image" else None
         for i in range(natoms):
             xyzline = self.file_traj_.readline().split()
@@ -93,35 +87,35 @@ class XYZ(TrajectoryReader):
             z.append(xyzline[3])
 
             if self.ftype == "property":
-                prop.append(xyzline[4])
+                q.append(xyzline[4])
             elif self.ftype == "image":
                 ix.append(xyzline[4])
                 iy.append(xyzline[5])
                 iz.append(xyzline[6])
 
-        frame = {
-            "natoms": natoms,
-            "type": np.asarray(atom_type, dtype=str),
-            "x": np.asarray(x, dtype=np.float32),
-            "y": np.asarray(y, dtype=np.float32),
-            "z": np.asarray(z, dtype=np.float32),
-        }
-        frame["property"] = (
-            np.asarray(prop, dtype=np.float32)
-            if self.ftype == "property"
-            else None
-        )
-        frame["ix"] = (
+        self.frame.natoms = natoms
+        self.frame.types = np.asarray(atom_type, dtype=str)
+        self.frame.x = np.asarray(x, dtype=np.float32)
+        self.frame.y = np.asarray(y, dtype=np.float32)
+        self.frame.z = np.asarray(z, dtype=np.float32)
+
+        self.frame.ix = (
             np.asarray(ix, dtype=np.intc) if self.ftype == "image" else None
         )
-        frame["iy"] = (
+        self.frame.iy = (
             np.asarray(iy, dtype=np.intc) if self.ftype == "image" else None
         )
-        frame["iz"] = (
+        self.frame.iz = (
             np.asarray(iz, dtype=np.intc) if self.ftype == "image" else None
         )
 
-        return frame
+        self.frame.q = (
+            np.asarray(q, dtype=np.float32)
+            if self.ftype == "property"
+            else None
+        )
+
+        return self.frame
 
 
 class LAMMPS(TrajectoryReader):
@@ -132,11 +126,11 @@ class LAMMPS(TrajectoryReader):
     filename : str
         name of the file where the trajectories of lammps are
 
-    headerint : list, default=["id", "type", "ix", "iy", "iz"]
+    headerint : list, default=["idx", "types", "ix", "iy", "iz"]
         the columns that have int data types, the others are considered floats.
     """
 
-    def __init__(self, filename, headerint=["id", "type", "ix", "iy", "iz"]):
+    def __init__(self, filename, headerint=["idx", "types", "ix", "iy", "iz"]):
         super(LAMMPS, self).__init__(filename, None)
         self.headerint = headerint
 
@@ -145,10 +139,8 @@ class LAMMPS(TrajectoryReader):
 
         Returns
         -------
-        dict
-            frame with the list of attributes selected by the `dump` command
-            of LAMMPS for each atom as keys and the corresponding frame values
-            as `np.array`; except the number of atoms, which is an `int`.
+        frame : `exma.core.AtomicSystem`
+            This have all the information of the configurations of the system.
 
         Raises
         ------
@@ -171,9 +163,16 @@ class LAMMPS(TrajectoryReader):
             box_size.append(np.float32(lohi[1]) - np.float32(lohi[0]))
         box = np.array(box_size)
 
-        cell = {"natoms": natoms, "box": box}
-
         keys = self.file_traj_.readline().split()[2:]
+
+        # make sure that the keywords id and type of lammps are not used in
+        # self.frame.
+        keys = list(
+            map(
+                lambda x: x.replace("id", "idx").replace("type", "types"), keys
+            )
+        )
+
         frame = {key: list() for key in keys}
         for _ in range(natoms):
             line = self.file_traj_.readline().split()
@@ -181,18 +180,18 @@ class LAMMPS(TrajectoryReader):
                 frame[keys[j]].append(element)
 
         # a way to know the type of data (always a np.float32 except when the
-        # data corresponds with integers: `id`, `type`, `ix`, `ìy`, `iz`)
+        # data corresponds with integers: `id`, `type`, `ix`, `iy`, `iz`)
         dtypes = [
             np.float32 if key not in self.headerint else np.intc
             for key in keys
         ]
 
-        frame = {
-            key: np.array(value, dtype=dtype)
-            for key, value, dtype in zip(frame.keys(), frame.values(), dtypes)
-        }
+        self.frame.natoms = natoms
+        self.frame.box = box
+        for key, value, dtype in zip(frame.keys(), frame.values(), dtypes):
+            self.frame.__dict__[key] = np.array(value, dtype=dtype)
 
-        return dict(cell, **frame)
+        return self.frame
 
 
 # ============================================================================

@@ -81,20 +81,18 @@ def test_XYZ(traj_dict, fname, ftype):
     with exma.io.reader.XYZ(fxyz, ftype) as rxyz:
         result = rxyz.read_frame()
 
-    assert result["natoms"] == traj_dict["natoms"]
-    np.testing.assert_array_equal(result["type"], traj_dict["type"])
-    np.testing.assert_array_almost_equal(result["x"], traj_dict["x"])
-    np.testing.assert_array_almost_equal(result["y"], traj_dict["y"])
-    np.testing.assert_array_almost_equal(result["z"], traj_dict["z"])
+    assert result.natoms == traj_dict["natoms"]
+    np.testing.assert_array_equal(result.types, traj_dict["type"])
+    np.testing.assert_array_almost_equal(result.x, traj_dict["x"])
+    np.testing.assert_array_almost_equal(result.y, traj_dict["y"])
+    np.testing.assert_array_almost_equal(result.z, traj_dict["z"])
 
     if "property" in traj_dict.keys():
-        np.testing.assert_array_almost_equal(
-            result["property"], traj_dict["property"]
-        )
+        np.testing.assert_array_almost_equal(result.q, traj_dict["property"])
     if "ix" in traj_dict.keys():
-        np.testing.assert_array_almost_equal(result["ix"], traj_dict["ix"])
-        np.testing.assert_array_almost_equal(result["iy"], traj_dict["iy"])
-        np.testing.assert_array_almost_equal(result["iz"], traj_dict["iz"])
+        np.testing.assert_array_almost_equal(result.ix, traj_dict["ix"])
+        np.testing.assert_array_almost_equal(result.iy, traj_dict["iy"])
+        np.testing.assert_array_almost_equal(result.iz, traj_dict["iz"])
 
 
 def test_XYZ_raise_ValueError():
@@ -184,7 +182,18 @@ def test_LAMMPS(fname, frame_dict):
         result = rlmp.read_frame()
 
     for key in frame_dict.keys():
-        np.testing.assert_array_almost_equal(result[key], frame_dict[key])
+        if key == "id":
+            np.testing.assert_array_almost_equal(
+                result.__dict__["idx"], frame_dict[key]
+            )
+        elif key == "type":
+            np.testing.assert_array_almost_equal(
+                result.__dict__["types"], frame_dict[key]
+            )
+        else:
+            np.testing.assert_array_almost_equal(
+                result.__dict__[key], frame_dict[key]
+            )
 
 
 def test_LAMMPS_raises():

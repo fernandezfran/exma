@@ -6,17 +6,22 @@ exma API
    :maxdepth: 4
 
 
-Pair Analyzer
-=============
+Core modules
+============
 
-``exma.distances`` module
--------------------------
+``exma.core`` module
+--------------------
 
-.. automodule:: exma.distances
+.. automodule:: exma.core
    :members:
+   :private-members:
    :undoc-members:
    :show-inheritance:
    :member-order: bysource
+
+
+Pair Analyzer
+=============
 
 ``exma.msd`` module
 -------------------
@@ -114,19 +119,6 @@ IO
 
 .. automodule:: exma.io.positions
    :members:
-   :undoc-members:
-   :show-inheritance:
-   :member-order: bysource
-
-Core modules
-============
-
-``exma.core`` module
---------------------
-
-.. automodule:: exma.core
-   :members:
-   :private-members:
    :undoc-members:
    :show-inheritance:
    :member-order: bysource

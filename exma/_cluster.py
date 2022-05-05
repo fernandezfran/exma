@@ -20,22 +20,13 @@ development.
 # IMPORTS
 # ============================================================================
 
-import os
-import pathlib
-
 import numpy as np
 
 import scipy.integrate
 
 import sklearn.cluster
 
-from .distances import pbc as pbc_distances
-
-# ============================================================================
-# CONSTANTS
-# ============================================================================
-
-PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
+from .core import pbc_distances
 
 
 # ============================================================================
@@ -79,8 +70,8 @@ class EffectiveNeighbors:
 
         Parameters
         ----------
-        frame : dict
-            dictionary with the keys `natoms`, `type`, `box`, `x`, `y`, `z`
+        frame : `exma.core.AtomicSystem`
+            with the information of the atomic system including the `box`
 
         Returns
         -------
@@ -88,8 +79,8 @@ class EffectiveNeighbors:
             effective (interact) neighbor of the central atoms in the same
             order that are in the positions vector
         """
-        natoms_c = np.count_nonzero(frame["type"] == self.type_c)
-        natoms_i = np.count_nonzero(frame["type"] == self.type_i)
+        natoms_c = np.count_nonzero(frame.types == self.type_c)
+        natoms_i = np.count_nonzero(frame.types == self.type_i)
 
         distrix = pbc_distances(frame, frame, self.type_c, self.type_i)
 
@@ -150,8 +141,8 @@ class DBSCAN:
 
         Parameters
         ----------
-        frame : dict
-            dictionary with the keys `natoms`, `type`, `box`, `x`, `y`, `z`
+        frame : `exma.core.AtomicSystem`
+            with the information of the atomic system including the `box`
 
         **kwargs
             additional keyword arguments that are passed and are documented
@@ -165,8 +156,8 @@ class DBSCAN:
             (the array is sorted). A value of -1 means that the atom is
             isolated.
         """
-        natoms_c = np.count_nonzero(frame["type"] == self.type_c)
-        natoms_i = np.count_nonzero(frame["type"] == self.type_i)
+        natoms_c = np.count_nonzero(frame.types == self.type_c)
+        natoms_i = np.count_nonzero(frame.types == self.type_i)
 
         distrix = pbc_distances(frame, frame, self.type_c, self.type_i)
 

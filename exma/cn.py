@@ -26,7 +26,6 @@ import numpy as np
 
 import pandas as pd
 
-from .core import _is_sorted, _sort_traj
 from .io import reader
 
 # ============================================================================
@@ -138,7 +137,7 @@ class CoordinationNumber:
     def _configure_ctypes(self, types):
         """To calculate natoms_c_ for ctypes requirements.
 
-        It receive frame["type"] as `types`. This is not an actually frame
+        It receive frame.types as `types`. This is not an actually frame
         accumulation of CN.
         """
         # calculate masks, natoms_c_ and natoms_i_
@@ -168,16 +167,16 @@ class CoordinationNumber:
 
     def _accumulate(self, frame):
         """Accumulates the info of each frame."""
-        box = frame["box"]
+        box = frame.box
         xc, yc, zc = (
-            frame["x"][self.mask_c_],
-            frame["y"][self.mask_c_],
-            frame["z"][self.mask_c_],
+            frame.x[self.mask_c_],
+            frame.y[self.mask_c_],
+            frame.z[self.mask_c_],
         )
         xi, yi, zi = (
-            frame["x"][self.mask_i_],
-            frame["y"][self.mask_i_],
-            frame["z"][self.mask_i_],
+            frame.x[self.mask_i_],
+            frame.y[self.mask_i_],
+            frame.z[self.mask_i_],
         )
 
         # accomodate the data type of pointers to C code
@@ -236,29 +235,27 @@ class CoordinationNumber:
                 frame = traj.read_frame()
 
                 # add the box if not in frame
-                frame["box"] = box if box is not None else frame["box"]
+                frame.box = box if box is not None else frame.box
 
                 # sort the traj if is not sorted, xyz are sorted by default
-                if "id" in frame.keys():
+                if frame.idx is not None:
                     frame = (
-                        _sort_traj(frame)
-                        if not _is_sorted(frame["id"])
-                        else frame
+                        frame._sort_traj() if not frame._is_sorted() else frame
                     )
 
-                self._configure_ctypes(frame["type"])
+                self._configure_ctypes(frame.types)
 
                 nmed = self.stop - self.start
                 while imed < nmed:
                     if imed % self.step == 0:
                         # add the box if not in frame
-                        frame["box"] = box if box is not None else frame["box"]
+                        frame.box = box if box is not None else frame.box
 
                         # sort the traj if is not sorted
-                        if "id" in frame.keys():
+                        if frame.idx is not None:
                             frame = (
-                                _sort_traj(frame)
-                                if not _is_sorted(frame["id"])
+                                frame._sort_traj()
+                                if not frame._is_sorted()
                                 else frame
                             )
 

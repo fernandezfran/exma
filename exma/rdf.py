@@ -183,14 +183,14 @@ class RadialDistributionFunction:
 
     def _accumulate(self, frame):
         """Accumulates the info of each frame."""
-        box = frame["box"]
+        box = frame.box
         self.volume_ += np.prod(box)
 
-        mask_c = frame["type"] == self.type_c
-        mask_i = frame["type"] == self.type_i
+        mask_c = frame.types == self.type_c
+        mask_i = frame.types == self.type_i
 
-        xc, yc, zc = frame["x"][mask_c], frame["y"][mask_c], frame["z"][mask_c]
-        xi, yi, zi = frame["x"][mask_i], frame["y"][mask_i], frame["z"][mask_i]
+        xc, yc, zc = frame.x[mask_c], frame.y[mask_c], frame.z[mask_c]
+        xi, yi, zi = frame.x[mask_i], frame.y[mask_i], frame.z[mask_i]
 
         # accomodate the data type of pointers to C code
         box = np.asarray(box, dtype=np.float32)
@@ -262,13 +262,13 @@ class RadialDistributionFunction:
 
                 frame = traj.read_frame()
 
-                self._configure_ctypes(frame["type"])
+                self._configure_ctypes(frame.types)
 
                 nmed = self.stop - self.start
                 while imed < nmed:
                     if imed % self.step == 0:
                         # add the box if not in frame
-                        frame["box"] = box if box is not None else frame["box"]
+                        frame.box = box if box is not None else frame.box
                         self._accumulate(frame)
 
                     imed += 1
