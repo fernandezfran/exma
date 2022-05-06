@@ -81,8 +81,8 @@ def pbc_distances(frame_c, frame_i, type_c, type_i):
 
     mask_c = frame_c._mask_type(type_c)
     mask_i = frame_i._mask_type(type_i)
-    natoms_c = np.count_nonzero(mask_c)
-    natoms_i = np.count_nonzero(mask_i)
+    natoms_c = frame_c._natoms_type(mask_c)
+    natoms_i = frame_i._natoms_type(mask_i)
 
     box = frame_i.box
     xc, yc, zc = frame_c.x[mask_c], frame_c.y[mask_c], frame_c.z[mask_c]

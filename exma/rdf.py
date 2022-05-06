@@ -140,8 +140,8 @@ class RadialDistributionFunction(MDObservable):
         # calculate natoms_c_ and natoms_i_
         self.mask_c_ = frame._mask_type(self.type_c)
         self.mask_i_ = frame._mask_type(self.type_i)
-        self.natoms_c_ = np.count_nonzero(self.mask_c_)
-        self.natoms_i_ = np.count_nonzero(self.mask_i_)
+        self.natoms_c_ = frame._natoms_type(self.mask_c_)
+        self.natoms_i_ = frame._natoms_type(self.mask_i_)
 
         # ctypes requirements to interact with C code
         lib_rdf = ct.CDLL(
