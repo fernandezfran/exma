@@ -90,9 +90,9 @@ def test__is_sorted(arr, res):
         ),
     ],
 )
-def test__sort_traj(frame, sorted_frame):
-    """Test the check sorting of a traj."""
-    res = frame._sort_traj()
+def test__sort_frame(frame, sorted_frame):
+    """Test the check sorting of a frame."""
+    res = frame._sort_frame()
     for key in sorted_frame.__dict__.keys():
         if res.__dict__[key] is not None:
             np.testing.assert_array_almost_equal(

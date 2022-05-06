@@ -98,8 +98,8 @@ class AtomicSystem:
         """Tells if the array x is sorted (-> True) or not (-> False)."""
         return (np.diff(self.idx) >= 0).all()
 
-    def _sort_traj(self, dontsort=("natoms", "box")):
-        """Sort all the traj from the sortening of the atoms id."""
+    def _sort_frame(self, dontsort=("natoms", "box")):
+        """Sort all the frame from the sortening of the atoms id."""
         id_argsort = np.argsort(self.idx)
 
         for key in self.__dict__.keys():

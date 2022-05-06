@@ -124,7 +124,9 @@ class MDObservable:
                 # for all observables.
                 if frame.idx is not None:
                     frame = (
-                        frame._sort_traj() if not frame._is_sorted() else frame
+                        frame._sort_frame()
+                        if not frame._is_sorted()
+                        else frame
                     )
 
                 self._local_configure(frame)
@@ -136,7 +138,7 @@ class MDObservable:
 
                         if frame.idx is not None:
                             frame = (
-                                frame._sort_traj()
+                                frame._sort_frame()
                                 if not frame._is_sorted()
                                 else frame
                             )
