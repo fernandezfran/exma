@@ -113,3 +113,7 @@ class AtomicSystem:
             self.__dict__[key] = self.__dict__[key][id_argsort]
 
         return self
+
+    def _mask_type(self, atom_type):
+        """Get a masked array by an specific type of atom."""
+        return self.types == atom_type

@@ -81,7 +81,7 @@ class MeanSquareDisplacement(MDObservable):
     def _local_configure(self, frame):
         """Define the reference frame."""
         # mask of atoms of type e
-        self.mask_e_ = frame.types == self.type_e
+        self.mask_e_ = frame._mask_type(self.type_e)
 
         # reference positions
         self.xref_ = frame.x[self.mask_e_]

@@ -137,11 +137,11 @@ class RadialDistributionFunction(MDObservable):
 
     def _local_configure(self, frame):
         """To calculate natoms and ctypes requires."""
-        types = frame.types
-
         # calculate natoms_c_ and natoms_i_
-        self.natoms_c_ = np.count_nonzero(types == self.type_c)
-        self.natoms_i_ = np.count_nonzero(types == self.type_i)
+        self.mask_c_ = frame._mask_type(self.type_c)
+        self.mask_i_ = frame._mask_type(self.type_i)
+        self.natoms_c_ = np.count_nonzero(self.mask_c_)
+        self.natoms_i_ = np.count_nonzero(self.mask_i_)
 
         # ctypes requirements to interact with C code
         lib_rdf = ct.CDLL(
@@ -168,11 +168,16 @@ class RadialDistributionFunction(MDObservable):
         box = frame.box
         self.volume_ += np.prod(box)
 
-        mask_c = frame.types == self.type_c
-        mask_i = frame.types == self.type_i
-
-        xc, yc, zc = frame.x[mask_c], frame.y[mask_c], frame.z[mask_c]
-        xi, yi, zi = frame.x[mask_i], frame.y[mask_i], frame.z[mask_i]
+        xc, yc, zc = (
+            frame.x[self.mask_c_],
+            frame.y[self.mask_c_],
+            frame.z[self.mask_c_],
+        )
+        xi, yi, zi = (
+            frame.x[self.mask_i_],
+            frame.y[self.mask_i_],
+            frame.z[self.mask_i_],
+        )
 
         # accomodate the data type of pointers to C code
         box = np.asarray(box, dtype=np.float32)

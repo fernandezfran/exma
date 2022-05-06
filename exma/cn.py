@@ -117,14 +117,11 @@ class CoordinationNumber(MDObservable):
     def _local_configure(self, frame):
         """To calculate natoms_c_ for ctypes requirements.
 
-        It receive frame.types as `types`. This is not an actually frame
-        accumulation of CN.
+        It receive a frame. This is not an actually frame accumulation of CN.
         """
-        types = frame.types
-
         # calculate masks, natoms_c_ and natoms_i_
-        self.mask_c_ = types == self.type_c
-        self.mask_i_ = types == self.type_i
+        self.mask_c_ = frame._mask_type(self.type_c)
+        self.mask_i_ = frame._mask_type(self.type_i)
         self.natoms_c_ = np.count_nonzero(self.mask_c_)
         self.natoms_i_ = np.count_nonzero(self.mask_i_)
 
