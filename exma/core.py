@@ -99,7 +99,7 @@ class AtomicSystem:
         return (np.diff(self.idx) >= 0).all()
 
     def _sort_frame(self, dontsort=("natoms", "box")):
-        """Sort all the frame from the sortening of the atoms id."""
+        """Sort the frame from the sortening of the atoms id."""
         id_argsort = np.argsort(self.idx)
 
         for key in self.__dict__.keys():
@@ -117,3 +117,7 @@ class AtomicSystem:
     def _mask_type(self, atom_type):
         """Get a masked array by an specific type of atom."""
         return self.types == atom_type
+
+    def _natoms_type(self, mask_type):
+        """Count the number of atoms of an specific type."""
+        return np.count_nonzero(mask_type)

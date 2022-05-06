@@ -79,8 +79,8 @@ class EffectiveNeighbors:
             effective (interact) neighbor of the central atoms in the same
             order that are in the positions vector
         """
-        natoms_c = np.count_nonzero(frame.types == self.type_c)
-        natoms_i = np.count_nonzero(frame.types == self.type_i)
+        natoms_c = frame._natoms_type(frame._mask_type(self.type_c))
+        natoms_i = frame._natoms_type(frame._mask_type(self.type_i))
 
         distrix = pbc_distances(frame, frame, self.type_c, self.type_i)
 
@@ -156,8 +156,8 @@ class DBSCAN:
             (the array is sorted). A value of -1 means that the atom is
             isolated.
         """
-        natoms_c = np.count_nonzero(frame.types == self.type_c)
-        natoms_i = np.count_nonzero(frame.types == self.type_i)
+        natoms_c = frame._natoms_type(frame._mask_type(self.type_c))
+        natoms_i = frame._natoms_type(frame._mask_type(self.type_i))
 
         distrix = pbc_distances(frame, frame, self.type_c, self.type_i)
 
