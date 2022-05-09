@@ -82,10 +82,10 @@ Electrochemistry
    :show-inheritance:
    :member-order: bysource
 
-``exma.electrochemistry.statistics`` module
--------------------------------------------
+``exma.statistics`` module
+--------------------------
 
-.. automodule:: exma.electrochemistry.statistics
+.. automodule:: exma.statistics
    :members:
    :undoc-members:
    :show-inheritance:
@@ -147,7 +147,7 @@ Dev Core modules
    :show-inheritance:
    :member-order: bysource
 
-.. automodule:: exma.io._rw
+.. automodule:: exma.io._trajectory_rw
    :noindex:
    :members:
    :private-members:

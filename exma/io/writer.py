@@ -18,7 +18,7 @@
 
 import numpy as np
 
-from ._rw import TrajectoryWriter
+from ._trajectory_rw import TrajectoryWriter
 
 # ============================================================================
 # CLASSES

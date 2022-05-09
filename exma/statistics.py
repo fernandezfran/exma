@@ -132,20 +132,3 @@ class BlockAverage:
         )
 
         return ax
-
-    def save(self, filename="block_average.csv", **kwargs):
-        """Save the block average info to a csv file.
-
-        Parameters
-        ----------
-        filename : str, default="block_average.csv"
-            name of the file as str to write the output
-
-        kwargs : dict, default={"index": False, "float_format": "%.6e"}
-            additional keyword arguments that are passed and are documented
-            in `pandas.DataFrame.to_csv`.
-        """
-        kwargs.setdefault("index", False)
-        kwargs.setdefault("float_format", "%.6e")
-
-        self.df_.to_csv(filename, **kwargs)

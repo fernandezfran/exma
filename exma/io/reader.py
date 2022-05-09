@@ -20,7 +20,7 @@ import numpy as np
 
 import pandas as pd
 
-from ._rw import TrajectoryReader
+from ._trajectory_rw import TrajectoryReader
 
 # ============================================================================
 # CLASSES

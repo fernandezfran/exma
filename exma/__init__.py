@@ -43,7 +43,7 @@ from .electrochemistry import (  # noqa
     formation_energy,  # noqa
     voltage,  # noqa
 )  # noqa
-from .electrochemistry.statistics import BlockAverage  # noqa
+from .statistics import BlockAverage  # noqa
 
 # io
 from .io import *  # noqa
