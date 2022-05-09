@@ -120,23 +120,24 @@ class RadialDistributionFunction(MDObservable):
         self.nbin = nbin
         self.pbc = pbc
 
-    def _global_configure(self):
-        """Define parameters needed for the calculation of g(r)."""
-        super()._global_configure()
+        # the width of the bar in the histogram
+        self.dgofr_ = self.rmax / self.nbin
 
+    def _local_configure(self, frame):
+        """Configure the Radial Distribution Function calculus.
+
+        It receive a frame and define the boundary conditions, initializate the
+        volumen, the counter and the ctypes requirements.
+        """
         # pbc = True -> 1; False -> 0 in C code
         self.pbc = 1 if self.pbc else 0
 
         # init volume
         self.volume_ = 0.0
 
-        # parameters of the g(r), the counter and the distance between
-        # points in the histogram
+        # g(r) the counter
         self.ngofr_ = 0
-        self.dgofr_ = self.rmax / self.nbin
 
-    def _local_configure(self, frame):
-        """To calculate natoms and ctypes requires."""
         # calculate natoms_c_ and natoms_i_
         self.mask_c_ = frame._mask_type(self.type_c)
         self.mask_i_ = frame._mask_type(self.type_i)

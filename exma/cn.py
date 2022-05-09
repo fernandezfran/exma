@@ -100,25 +100,18 @@ class CoordinationNumber(MDObservable):
 
         self.pbc = pbc
 
-    def _global_configure(self):
-        """Configure the calculation.
+    def _local_configure(self, frame):
+        """Configure the Coordination Number calculus.
 
-        It defines parameters needed for the calculation of CN and the
-        requirements of ctypes.
+        It receive a frame and define the boundary conditions, sets the counter
+        and the ctypes requirements.
         """
-        super()._global_configure()
-
         # pbc = True -> 1; False -> 0 in C code
         self.pbc = 1 if self.pbc else 0
 
         # frame counter
         self.ncn_ = 0
 
-    def _local_configure(self, frame):
-        """To calculate natoms_c_ for ctypes requirements.
-
-        It receive a frame. This is not an actually frame accumulation of CN.
-        """
         # calculate masks, natoms_c_ and natoms_i_
         self.mask_c_ = frame._mask_type(self.type_c)
         self.mask_i_ = frame._mask_type(self.type_i)

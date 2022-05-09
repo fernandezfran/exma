@@ -58,12 +58,11 @@ class MDObservable:
 
         self.xyztype = xyztype
 
-    def _global_configure(self):
-        """Configure the calculation.
+    def _configure_reader(self):
+        """Configure the reader.
 
         It defines the trajectory reader type (LAMMPS or XYZ) depending on
-        the extension or raises a ValueError. Then it is modificated by the
-        particular observable to configure other things.
+        the extension (or raises a ValueError) and define the last frame.
         """
         # configure the frame at which stop the calculation
         self.stop = np.inf if self.stop == -1 else self.stop
@@ -108,7 +107,7 @@ class MDObservable:
             but leave everything ready to be able to do self._end()
         """
         self.imed = 0
-        self._global_configure()
+        self._configure_reader()
 
         with self.traj_ as traj:
             try:
