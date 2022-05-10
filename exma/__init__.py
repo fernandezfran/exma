@@ -35,7 +35,7 @@ from .distances import pbc_distances  # noqa
 from .msd import MeanSquareDisplacement  # noqa
 from .rdf import RadialDistributionFunction  # noqa
 from .cn import CoordinationNumber  # noqa
-from ._cluster import EffectiveNeighbors, DBSCAN, sro  # noqa
+from .cluster import EffectiveNeighbors, DBSCAN, sro  # noqa
 
 # electrochemistry
 from .electrochemistry import (  # noqa

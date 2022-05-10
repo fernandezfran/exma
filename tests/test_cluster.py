@@ -10,10 +10,21 @@
 # IMPORTS
 # ============================================================================
 
-import exma._cluster
+import os
+import pathlib
+
+import exma.cluster
 from exma.core import AtomicSystem
 
 import numpy as np
+
+# ============================================================================
+# CONSTANTS
+# ============================================================================
+
+TEST_DATA_PATH = pathlib.Path(
+    os.path.join(os.path.abspath(os.path.dirname(__file__)), "test_data")
+)
 
 # ============================================================================
 # TESTS
@@ -23,24 +34,17 @@ import numpy as np
 def test_effective_neighbors():
     """Test the calculation of effective_neighbors.
 
-    this is a dumbell of atoms type 1 in y-direction crossed by a dumbell
-    of atoms type 2 in z-direction and an isolated atom near second
-    atom of type 1. then, the first atom of type 1 has 1 effective
-    neighbor (half of each dumbell of type 2), the same for the second
-    atom plus the isolated atom, so it has 2 effective neighbor.
+    this is a dumbell of atoms type Si in y-direction crossed by a dumbell
+    of atoms type Li in z-direction and an isolated atom near second
+    atom of type Si. then, the first atom of type Si has Si effective
+    neighbor (half of each dumbell of type Li), the same for the second
+    atom plus the isolated atom, so it has Li effective neighbor.
     """
     enref = np.array([1.0, 2.0])
 
-    frame = AtomicSystem(
-        natoms=5,
-        box=np.array([1.0, 1.0, 1.0]),
-        types=np.array([1, 1, 2, 2, 2]),
-        x=np.array([0.5, 0.5, 0.5, 0.5, 0.5]),
-        y=np.array([0.4, 0.6, 0.5, 0.5, 0.7]),
-        z=np.array([0.5, 0.5, 0.4, 0.6, 0.5]),
-    )
-
-    result = exma._cluster.EffectiveNeighbors(1, 2).of_this_frame(frame)
+    result = exma.cluster.EffectiveNeighbors(
+        str(TEST_DATA_PATH / "effnei.xyz"), "Si", "Li"
+    ).calculate(box=np.full(3, 1))
 
     np.testing.assert_array_almost_equal(result, enref, 5)
 
@@ -58,7 +62,7 @@ def test_dbscan_id():
     )
 
     rcut = 0.2
-    result = exma._cluster.DBSCAN(1, 1, rcut).of_this_frame(frame)
+    result = exma.cluster.DBSCAN(1, 1, rcut).of_this_frame(frame)
 
     np.testing.assert_array_equal(result, idref)
 
@@ -76,7 +80,7 @@ def test_dbscan_characterize():
         z=np.array([0.45, 0.55, 0.0]),
     )
 
-    dbscan = exma._cluster.DBSCAN(1, 1, 0.2)
+    dbscan = exma.cluster.DBSCAN(1, 1, 0.2)
     dbscan.of_this_frame(frame)
     isolated, clusters = dbscan.characterize()
 
@@ -105,6 +109,6 @@ def test_sro():
     )
     rcut = 0.375
 
-    result = exma._cluster.sro(rdf_x, rdf_y, rcut)
+    result = exma.cluster.sro(rdf_x, rdf_y, rcut)
 
     np.testing.assert_almost_equal(result, sroref)

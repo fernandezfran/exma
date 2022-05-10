@@ -10,11 +10,7 @@
 # DOCS
 # ============================================================================
 
-"""Implementations of clustering.
-
-The classes of these modules are not complete because they are under
-development.
-"""
+"""Implementations of clustering."""
 
 # ============================================================================
 # IMPORTS
@@ -26,6 +22,7 @@ import scipy.integrate
 
 import sklearn.cluster
 
+from ._mdobservable import MDObservable
 from .distances import pbc_distances
 
 
@@ -34,7 +31,7 @@ from .distances import pbc_distances
 # ============================================================================
 
 
-class EffectiveNeighbors:
+class EffectiveNeighbors(MDObservable):
     """Emipirical way to describe charge transfer and coordination in solids.
 
     The empirical effective coordination model [2]_, used to calculate the
@@ -44,11 +41,24 @@ class EffectiveNeighbors:
 
     Parameters
     ----------
+    ftraj : str
+        the string corresponding with the filename with the molecular
+        dynamics trajectory
+
     type_c : int or str
         type of central atoms
 
     type_i : int or str
         type of interacting atoms
+
+    start : int, default=0
+        the initial frame
+
+    stop : int, default=-1
+        the last frame, by default -1 means the last
+
+    step : int, default=1
+        the incrementation if it is necessary to skip frames
 
     References
     ----------
@@ -61,27 +71,28 @@ class EffectiveNeighbors:
 
     """
 
-    def __init__(self, type_c, type_i):
+    def __init__(self, ftraj, type_c, type_i, start=0, stop=-1, step=1):
+        super().__init__(ftraj, start, stop, step)
+
         self.type_c = type_c
         self.type_i = type_i
 
-    def of_this_frame(self, frame):
+    def _local_configure(self, frame):
+        """Configure the Effective Neighbors calculus."""
+        self.natoms_c_ = frame._natoms_type(frame._mask_type(self.type_c))
+        self.natoms_i_ = frame._natoms_type(frame._mask_type(self.type_i))
+
+        self.counter_ = 0
+        self.effnei_ = np.zeros(self.natoms_c_, dtype=np.float32)
+
+    def _accumulate(self, frame):
         """Obtain the efective (interact) neighbors of the actual frame.
 
         Parameters
         ----------
         frame : `exma.core.AtomicSystem`
             with the information of the atomic system including the `box`
-
-        Returns
-        -------
-        np.array
-            effective (interact) neighbor of the central atoms in the same
-            order that are in the positions vector
         """
-        natoms_c = frame._natoms_type(frame._mask_type(self.type_c))
-        natoms_i = frame._natoms_type(frame._mask_type(self.type_i))
-
         distrix = pbc_distances(frame, frame, self.type_c, self.type_i)
 
         # calculate the weigth of the ith neighbor of the interact atom
@@ -93,16 +104,42 @@ class EffectiveNeighbors:
 
         # reshape the weight matrix and transpose it to obtain an interact
         # atom in every row and normalize their weights
-        weitrix = np.reshape(weitrix, (natoms_c, natoms_i)).T
-        weitrix = [weitrix[i] / np.sum(weitrix[i]) for i in range(natoms_i)]
+        weitrix = np.reshape(weitrix, (self.natoms_c_, self.natoms_i_)).T
+        weitrix = [
+            weitrix[i] / np.sum(weitrix[i]) for i in range(self.natoms_i_)
+        ]
 
         # the matrix is transpose again so now we have central atoms in each
         # row an each fraction of every interact neighbor is added to obtain
         # the effective (interact) neighbor
         weitrix = np.transpose(weitrix)
-        effnei = [np.sum(weitrix[i]) for i in range(natoms_c)]
+        effnei = [np.sum(weitrix[i]) for i in range(self.natoms_c_)]
 
-        return np.array(effnei, dtype=np.float32)
+        self.counter_ += 1
+        self.effnei_ = self.effnei_ + np.array(effnei, dtype=np.float32)
+
+    def _end(self):
+        """Complete the calculation by normalizing the data."""
+        return self.effnei_ / self.counter_
+
+    def calculate(self, box=None):
+        """Calculate the Effective Neighbors.
+
+        Parameters
+        ----------
+        box : np.array, default=None
+            the lenght of the box in each x, y, z direction, required when
+            the trajectory is in an xyz file.
+
+        Returns
+        -------
+        np.array
+            effective (interact) neighbor of the central atoms in the same
+            order that are in the positions vector
+        """
+        super()._calculate(box)
+
+        return self._end()
 
 
 class DBSCAN:
@@ -156,12 +193,12 @@ class DBSCAN:
             (the array is sorted). A value of -1 means that the atom is
             isolated.
         """
-        natoms_c = frame._natoms_type(frame._mask_type(self.type_c))
-        natoms_i = frame._natoms_type(frame._mask_type(self.type_i))
+        self.natoms_c_ = frame._natoms_type(frame._mask_type(self.type_c))
+        self.natoms_i_ = frame._natoms_type(frame._mask_type(self.type_i))
 
         distrix = pbc_distances(frame, frame, self.type_c, self.type_i)
 
-        distrix = distrix.reshape((natoms_c, natoms_i))
+        distrix = distrix.reshape((self.natoms_c_, self.natoms_i_))
         db = sklearn.cluster.DBSCAN(
             eps=self.eps,
             min_samples=self.min_samples,

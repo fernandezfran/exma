@@ -60,10 +60,10 @@ Molecular Dynamics Observables
    :show-inheritance:
    :member-order: bysource
 
-``exma._cluster`` module
---------------------------
+``exma.cluster`` module
+-------------------------
 
-.. automodule:: exma._cluster
+.. automodule:: exma.cluster
    :members:
    :undoc-members:
    :show-inheritance:
