@@ -47,8 +47,9 @@ class MeanSquareDisplacement(MDObservable):
         the timestep, how separated the measured frames are from each
         other, in the corresponding time units
 
-    type_e : int or str
-        the type of the element for which the msd is going to be calculated
+    type_e : int or str, default="all"
+        the type of the element for which the msd is going to be calculated, by
+        default it calculates the msd of all atoms.
 
     start : int, default=0
         the initial frame
@@ -71,7 +72,7 @@ class MeanSquareDisplacement(MDObservable):
     """
 
     def __init__(
-        self, ftraj, dt, type_e, start=0, stop=-1, step=1, xyztype="xyz"
+        self, ftraj, dt, type_e="all", start=0, stop=-1, step=1, xyztype="xyz"
     ):
         super().__init__(ftraj, start, stop, step, xyztype)
 
@@ -81,7 +82,10 @@ class MeanSquareDisplacement(MDObservable):
     def _local_configure(self, frame):
         """Define the reference frame."""
         # mask of atoms of type e
-        self.mask_e_ = frame._mask_type(self.type_e)
+        if self.type_e == "all":
+            self.mask_e_ = np.array([True] * frame.natoms)
+        else:
+            self.mask_e_ = frame._mask_type(self.type_e)
 
         # reference positions
         self.xref_ = frame.x[self.mask_e_]

@@ -18,7 +18,7 @@
 
 __author__ = """Francisco Fernandez"""
 __email__ = "fernandezfrancisco2195@gmail.com"
-__version__ = "0.4.1"
+__version__ = "0.4.2"
 
 
 # ============================================================================
