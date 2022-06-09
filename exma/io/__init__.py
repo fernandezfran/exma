@@ -142,7 +142,7 @@ def lammpstrj2xyz(lammpstrjtraj, xyz_name, type_info, xyzftype="xyz"):
             while True:
                 lmp_frame = lmp.read_frame()
                 lmp_frame = (
-                    lmp_frame._sort_traj()
+                    lmp_frame._sort_frame()
                     if not lmp_frame._is_sorted()
                     else lmp_frame
                 )
@@ -186,5 +186,5 @@ def lammpstrj2inlmp(lammpstrjtraj, inlammps_name, nframe=-1):
                     f"therefore the last frame ({iframe}) was written."
                 )
 
-    dframe = dframe._sort_traj() if not dframe._is_sorted() else dframe
+    dframe = dframe._sort_frame() if not dframe._is_sorted() else dframe
     writer.in_lammps(inlammps_name, dframe)
