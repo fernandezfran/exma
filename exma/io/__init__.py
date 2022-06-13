@@ -16,6 +16,7 @@
 # IMPORTS
 # ============================================================================
 
+import contextlib
 import warnings
 
 import numpy as np
@@ -48,9 +49,9 @@ def xyz2lammpstrj(xyztraj, lammpstrj_name, cell_info, xyzftype="xyz"):
     xyzftype : str, default="xyz"
         the `ftype` of xyz file.
     """
-    with reader.XYZ(xyztraj, xyzftype) as xyz, writer.LAMMPS(
-        lammpstrj_name
-    ) as lmp:
+    with contextlib.ExitStack() as stack:
+        xyz = stack.enter_context(reader.XYZ(xyztraj, xyzftype))
+        lmp = stack.enter_context(writer.LAMMPS(lammpstrj_name))
         try:
             while True:
                 xyz_frame = xyz.read_frame()
@@ -135,9 +136,9 @@ def lammpstrj2xyz(lammpstrjtraj, xyz_name, type_info, xyzftype="xyz"):
     xyzftype : str, default="xyz"
         the `ftype` of xyz file.
     """
-    with reader.LAMMPS(lammpstrjtraj) as lmp, writer.XYZ(
-        xyz_name, xyzftype
-    ) as xyz:
+    with contextlib.ExitStack() as stack:
+        lmp = stack.enter_context(reader.LAMMPS(lammpstrjtraj))
+        xyz = stack.enter_context(writer.XYZ(xyz_name, xyzftype))
         try:
             while True:
                 lmp_frame = lmp.read_frame()
