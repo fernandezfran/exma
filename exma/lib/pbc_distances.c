@@ -26,9 +26,7 @@ void distance_matrix(const int natoms_c, const int natoms_i, const float *box,
     for (int i = 0; i < natoms_c; i++) {
 
         // select the vector position of a particular one
-        for (int k = 0; k < 3; k++) {
-            ri[k] = x_central[k * natoms_c + i];
-        }
+        for (int k = 0; k < 3; k++) { ri[k] = x_central[k * natoms_c + i]; }
 
         // computes the distance to all interacting atoms
         for (int j = 0; j < natoms_i; j++) {
@@ -36,10 +34,8 @@ void distance_matrix(const int natoms_c, const int natoms_i, const float *box,
             for (int k = 0; k < 3; k++) {
                 rj[k] = x_interact[k * natoms_i + j];
                 rij = rj[k] - ri[k];
-                while (rij > 0.5f * box[k])
-                    rij -= box[k];
-                while (rij < -0.5f * box[k])
-                    rij += box[k];
+                while (rij > 0.5f * box[k]) rij -= box[k];
+                while (rij < -0.5f * box[k]) rij += box[k];
                 rij2 += rij * rij;
             }
 

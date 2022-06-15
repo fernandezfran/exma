@@ -30,9 +30,7 @@ void cn_accumulate(const int natoms_c, const int natoms_i, const float *box,
     for (int i = 0; i < natoms_c; i++) {
 
         // select the vector position of a particular one
-        for (int k = 0; k < 3; k++) {
-            ri[k] = x_central[k * natoms_c + i];
-        }
+        for (int k = 0; k < 3; k++) { ri[k] = x_central[k * natoms_c + i]; }
 
         // computes the distance to all interacting atoms
         for (int j = 0; j < natoms_i; j++) {
@@ -42,10 +40,8 @@ void cn_accumulate(const int natoms_c, const int natoms_i, const float *box,
 
                 rij = rj[k] - ri[k];
                 if (pbc == 1) {
-                    while (rij > 0.5f * box[k])
-                        rij -= box[k];
-                    while (rij < -0.5f * box[k])
-                        rij += box[k];
+                    while (rij > 0.5f * box[k]) rij -= box[k];
+                    while (rij < -0.5f * box[k]) rij += box[k];
                 }
                 rij2 += rij * rij;
             }
@@ -53,9 +49,7 @@ void cn_accumulate(const int natoms_c, const int natoms_i, const float *box,
 
             // accumulate in cn if the distance is less than the external
             // cut-off radius and greater than the internal cut-off radius.
-            if ((rij > rcut_i) & (rij <= rcut_e)) {
-                cn[i] += 1;
-            }
+            if ((rij > rcut_i) & (rij <= rcut_e)) { cn[i] += 1; }
         }
     }
 }

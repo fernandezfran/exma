@@ -1,3 +1,6 @@
 ColumnLimit: 79
 IndentWidth: 4
 UseTab: Never
+AllowShortBlocksOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: true
+AllowShortLoopsOnASingleLine: true
