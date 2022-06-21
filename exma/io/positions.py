@@ -266,7 +266,7 @@ def spherical_nanoparticle(frame, rcut):
         y = y / box_size[1]
         z = z / box_size[2]
 
-    n = np.intc(np.ceil(rcut / np.max(box_size)))
+    n = np.intc(np.ceil(rcut / np.min(box_size)))
     boxes = list(it.product(range(-n, n + 1), repeat=3))
 
     npty, npx, npy, npz = [], [], [], []
