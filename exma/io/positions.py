@@ -76,14 +76,14 @@ class Positions:
             sites that a sc crystal structure has.
         """
         nside = np.cbrt(self.natoms, dtype=np.float32)
-        tmp = np.intc(nside)
-        if nside % tmp != 0:
+        nboxes = np.intc(nside)
+        if nside % nboxes != 0:
             raise ValueError("Number of atoms must be a power of three")
 
         s_range = range(int(nside))
-        positions = list(it.product(s_range, repeat=3))
+        positions = it.product(s_range, repeat=3)
 
-        positions = np.array(positions, dtype=np.float32)
+        positions = np.array(list(positions), dtype=np.float32)
         positions = np.transpose(positions) * (self.box_size / nside)
 
         return AtomicSystem(
@@ -112,18 +112,18 @@ class Positions:
             sites that a bcc crystal structure has.
         """
         nside = np.cbrt(self.natoms / 2, dtype=np.float32)
-        tmp = np.intc(nside)
-        if nside % tmp != 0:
+        nboxes = np.intc(nside)
+        if nside % nboxes != 0:
             raise ValueError(
                 "Number of atoms must be a power of three multiplied by two"
             )
 
         s_range = range(int(nside))
-        p0 = list(it.product(s_range, repeat=3))
+        p0 = it.product(s_range, repeat=3)
 
         # bcc lattice vectors: (0, 0, 0) and (0.5, 0.5, 0.5)
-        p0 = np.array(p0)
-        p1 = p0 + np.full((len(p0), 3), [0.5, 0.5, 0.5])
+        p0 = np.array(list(p0))
+        p1 = p0 + np.full((np.power(nboxes, 3), 3), [0.5, 0.5, 0.5])
 
         positions = np.concatenate((p0, p1), dtype=np.float32)
         positions = np.transpose(positions) * (self.box_size / nside)
@@ -154,21 +154,21 @@ class Positions:
             sites that a fcc crystal structure has.
         """
         nside = np.cbrt(self.natoms / 4, dtype=np.float32)
-        tmp = np.intc(nside)
-        if nside % tmp != 0:
+        nboxes = np.intc(nside)
+        if nside % nboxes != 0:
             raise ValueError(
                 "Number of atoms must be a power of three multiplied by four"
             )
 
-        s_range = range(int(nside))
-        p0 = list(it.product(s_range, repeat=3))
+        s_range = range(nboxes)
+        p0 = it.product(s_range, repeat=3)
 
         # fcc lattice vectors:
         # (0, 0, 0) (0.5, 0.5, 0) (0.5, 0, 0.5) (0, 0.5, 0.5)
-        p0 = np.array(p0)
-        p1 = p0 + np.full((len(p0), 3), [0.5, 0.5, 0.0])
-        p2 = p0 + np.full((len(p0), 3), [0.5, 0.0, 0.5])
-        p3 = p0 + np.full((len(p0), 3), [0.0, 0.5, 0.5])
+        p0 = np.array(list(p0))
+        p1 = p0 + np.full((np.power(nboxes, 3), 3), [0.5, 0.5, 0.0])
+        p2 = p0 + np.full((np.power(nboxes, 3), 3), [0.5, 0.0, 0.5])
+        p3 = p0 + np.full((np.power(nboxes, 3), 3), [0.0, 0.5, 0.5])
 
         positions = np.concatenate((p0, p1, p2, p3), dtype=np.float32)
         positions = np.transpose(positions) * (self.box_size / nside)
@@ -198,22 +198,22 @@ class Positions:
             sites that a dc crystal structure has.
         """
         nside = np.cbrt(self.natoms / 8, dtype=np.float32)
-        tmp = np.intc(nside)
-        if nside % tmp != 0:
+        nboxes = np.intc(nside)
+        if nside % nboxes != 0:
             raise ValueError("Number of atoms not valid")
 
-        s_range = range(int(nside))
-        p0 = list(it.product(s_range, repeat=3))
+        s_range = range(nboxes)
+        p0 = it.product(s_range, repeat=3)
 
-        p0 = np.array(p0)
-        p1 = p0 + np.full((len(p0), 3), [0.25, 0.75, 0.25])
-        p2 = p0 + np.full((len(p0), 3), [0.00, 0.00, 0.50])
-        p3 = p0 + np.full((len(p0), 3), [0.25, 0.25, 0.75])
-        p4 = p0 + np.full((len(p0), 3), [0.00, 0.50, 0.00])
-        p5 = p0 + np.full((len(p0), 3), [0.75, 0.75, 0.75])
-        p6 = p0 + np.full((len(p0), 3), [0.50, 0.00, 0.00])
-        p7 = p0 + np.full((len(p0), 3), [0.75, 0.25, 0.25])
-        p8 = p0 + np.full((len(p0), 3), [0.50, 0.50, 0.50])
+        p0 = np.array(list(p0))
+        p1 = p0 + np.full((np.power(nboxes, 3), 3), [0.25, 0.75, 0.25])
+        p2 = p0 + np.full((np.power(nboxes, 3), 3), [0.00, 0.00, 0.50])
+        p3 = p0 + np.full((np.power(nboxes, 3), 3), [0.25, 0.25, 0.75])
+        p4 = p0 + np.full((np.power(nboxes, 3), 3), [0.00, 0.50, 0.00])
+        p5 = p0 + np.full((np.power(nboxes, 3), 3), [0.75, 0.75, 0.75])
+        p6 = p0 + np.full((np.power(nboxes, 3), 3), [0.50, 0.00, 0.00])
+        p7 = p0 + np.full((np.power(nboxes, 3), 3), [0.75, 0.25, 0.25])
+        p8 = p0 + np.full((np.power(nboxes, 3), 3), [0.50, 0.50, 0.50])
 
         positions = np.concatenate(
             (p1, p2, p3, p4, p5, p6, p7, p8), dtype=np.float32
@@ -267,7 +267,7 @@ def spherical_nanoparticle(frame, rcut):
         z = z / box_size[2]
 
     n = np.intc(np.ceil(rcut / np.min(box_size)))
-    boxes = list(it.product(range(-n, n + 1), repeat=3))
+    boxes = it.product(range(-n, n + 1), repeat=3)
 
     npty, npx, npy, npz = [], [], [], []
     for box in boxes:
@@ -322,7 +322,7 @@ def replicate(frame, nrf):
         y = y / box_size[1]
         z = z / box_size[2]
 
-    boxes = list(it.product(range(np.max(nrf)), repeat=3))
+    boxes = it.product(range(np.max(nrf)), repeat=3)
     newx, newy, newz = [], [], []
     for box in boxes:
         if (box[0] >= nrf[0]) or (box[1] >= nrf[1]) or (box[2] >= nrf[2]):
