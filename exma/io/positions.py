@@ -80,7 +80,7 @@ class Positions:
         if nside % nboxes != 0:
             raise ValueError("Number of atoms must be a power of three")
 
-        s_range = range(int(nside))
+        s_range = range(nboxes)
         positions = it.product(s_range, repeat=3)
 
         positions = np.array(list(positions), dtype=np.float32)
@@ -118,7 +118,7 @@ class Positions:
                 "Number of atoms must be a power of three multiplied by two"
             )
 
-        s_range = range(int(nside))
+        s_range = range(nboxes)
         p0 = it.product(s_range, repeat=3)
 
         # bcc lattice vectors: (0, 0, 0) and (0.5, 0.5, 0.5)

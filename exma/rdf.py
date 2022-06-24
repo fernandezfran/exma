@@ -61,11 +61,11 @@ class RadialDistributionFunction(MDObservable):
         the string corresponding with the filename with the molecular
         dynamics trajectory
 
-    type_c : int or str
-        type of central atoms
+    type_c : int or str, default="all"
+        type of central atoms, by default it computes the total rdf
 
-    type_i : int or str
-        type of interacting atoms
+    type_i : int or str, default="all"
+        type of interacting atoms, by default it computes the total rdf
 
     start : int, default=0
         the initial frame
@@ -102,8 +102,8 @@ class RadialDistributionFunction(MDObservable):
     def __init__(
         self,
         ftraj,
-        type_c,
-        type_i,
+        type_c="all",
+        type_i="all",
         start=0,
         stop=-1,
         step=1,
@@ -139,10 +139,14 @@ class RadialDistributionFunction(MDObservable):
         self.ngofr_ = 0
 
         # calculate natoms_c_ and natoms_i_
-        self.mask_c_ = frame._mask_type(self.type_c)
-        self.mask_i_ = frame._mask_type(self.type_i)
-        self.natoms_c_ = frame._natoms_type(self.mask_c_)
-        self.natoms_i_ = frame._natoms_type(self.mask_i_)
+        if self.type_c == "all" or self.type_i == "all":
+            self.mask_c_ = self.mask_i_ = np.array([True] * frame.natoms)
+            self.natoms_c_ = self.natoms_i_ = frame.natoms
+        else:
+            self.mask_c_ = frame._mask_type(self.type_c)
+            self.mask_i_ = frame._mask_type(self.type_i)
+            self.natoms_c_ = frame._natoms_type(self.mask_c_)
+            self.natoms_i_ = frame._natoms_type(self.mask_i_)
 
         # ctypes requirements to interact with C code
         lib_rdf = ct.CDLL(
