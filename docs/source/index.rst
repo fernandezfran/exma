@@ -20,8 +20,8 @@ exma
    :alt: PyPI Version
 
 
-**exma** is a Python module with C extensions that allows to analyze 
-molecular dynamics trajectories and thermodynamic data with different tools.
+**exma** is a Python library with C extensions to analyze and manipulate
+molecular dynamics trajectories and electrochemical data.
 
 | **Authors**
 | Francisco Fernandez (E-mail: fernandezfrancisco2195@gmail.com)

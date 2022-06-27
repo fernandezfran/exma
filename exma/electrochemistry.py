@@ -60,9 +60,9 @@ def fractional_volume_change(df, reference_atoms, reference_volume):
     Returns
     -------
     pd.DataFrame
-        A `pd.DataFrame` with the fractional volume change corresponding
-        values to each `x` values and the respective error if it was
-        possible to calculate.
+        The input `pd.DataFrame` with extra columns with the fractional volume
+        change and the respective error if it was possible to calculate, `fvc`
+        and `err_fvc`, respectively.
 
     Raises
     ------
@@ -94,19 +94,16 @@ def fractional_volume_change(df, reference_atoms, reference_volume):
         for natoms, volume in zip(df.natoms_a, df.volume)
     ]
 
-    dffvc_ = {"x": df.x, "fvc": np.array(fvc, dtype=np.float32)}
+    df["fvc"] = np.array(fvc, dtype=np.float32)
 
     if "err_volume" in df:
-        errfvc = [
-            errvolume / (natoms * sfc)
-            for natoms, errvolume in zip(df.natoms_a, df.err_volume)
-        ]
-        dffvc_["errfvc"] = errfvc = np.array(errfvc, dtype=np.float32)
+        errfvc = df.err_volume / (df.natoms_a * sfc)
+        df["err_fvc"] = np.array(errfvc, dtype=np.float32)
 
-    return pd.DataFrame(dffvc_)
+    return df
 
 
-def formation_energy(df, reference_energy_a, reference_energy_b):
+def formation_energy(df, reference_energy_a, reference_energy_b, fetype="x"):
     r"""Ideal approximation to the formation energy (FE).
 
     .. math::
@@ -115,6 +112,11 @@ def formation_energy(df, reference_energy_a, reference_energy_b):
     where :math:`E_x` is the energy per atom of type A, :math:`x` the
     concentration and :math:`E_a` and :math:`E_b` the cohesive energies
     of A and B bulk materials.
+
+    The formation energy relative to the end members can also be calculated
+
+    .. math::
+        E_f(x) = \frac{E - n_a \cdot E_a - n_b \cdot E_b}{n_a + n_b}
 
     Parameters
     ----------
@@ -130,42 +132,73 @@ def formation_energy(df, reference_energy_a, reference_energy_b):
     reference_energy_b : float
         the pure energy of element B in bulk
 
+    fetype : str, default="x"
+        `"x"` or `"relative"`, where the first one is the formation energy as
+        a function of concentrations and the second one is relative to end
+        members
+
     Returns
     -------
     pd.DataFrame
-        A `pd.DataFrame` with the formation energy corresponding values
-        to each `x` values and the respective error if it was possible
-        to calculate.
+        The input `pd.DataFrame` with the formation energy corresponding
+        values, `"fe"`, and the respective error if it was possible to
+        calculate, `"err_fe"`.
 
     Notes
     -----
-    The names of the columns in the df must be the following ones:
+    The names of the columns in the df must include:
 
-    `"x"`: `x` values
-
-    `"epot"`: potential energy
+    `"x"` o `"mol"`: `x` or `mol` fraction values
 
     `"natoms_a"`: number of atoms of type A
 
+    `"natoms_b"`: number of atoms of type B
+
+    `"epot"`: potential energy
+
     `"err_epot"`: the error of each `"epot"` point, optional.
     """
-    if ("x" not in df) or ("natoms_a" not in df) or ("epot" not in df):
-        raise KeyError(
-            "The x values, the number of atoms of type A or the "
-            "corresponding potential energies are not specified in "
-            "the input DataFrame"
-        )
+    if fetype == "x":
+        if ("x" not in df) or ("natoms_a" not in df) or ("epot" not in df):
+            raise KeyError(
+                "The x values, the number of atoms of type A or the "
+                "corresponding potential energies are not specified in "
+                "the input DataFrame"
+            )
 
-    fe = [
-        energy / na - (x * reference_energy_b + reference_energy_a)
-        for x, na, energy in zip(df.x, df.natoms_a, df.epot)
-    ]
-    dffe_ = {"x": df.x, "fe": np.array(fe, dtype=np.float32)}
+        fe = [
+            epot / na - (x * reference_energy_b + reference_energy_a)
+            for x, na, epot in zip(df.x, df.natoms_a, df.epot)
+        ]
+
+    elif fetype == "relative":
+        if (
+            ("natoms_a" not in df)
+            or ("natoms_b" not in df)
+            or ("epot" not in df)
+        ):
+            raise KeyError(
+                "The number of atoms of type A or B or the corresponding "
+                "potential energies are not specified in the input DataFrame"
+            )
+
+        fe = [
+            (epot - na * reference_energy_a - nb * reference_energy_b)
+            / (na + nb)
+            for na, nb, epot in zip(df.natoms_a, df.natoms_b, df.epot)
+        ]
+
+    df["fe"] = np.array(fe, dtype=np.float32)
 
     if "err_epot" in df:
-        dffe_["errfe"] = np.asarray(df.err_epot, dtype=np.float32)
+        if fetype == "x":
+            natoms = df.natoms_a
+        elif fetype == "relative":
+            natoms = df.natoms_a + df.natoms_b
 
-    return pd.DataFrame(dffe_)
+        df["err_fe"] = np.asarray(df.err_epot / natoms, dtype=np.float32)
+
+    return df
 
 
 def voltage(df, nums=50, **kwargs):
@@ -180,9 +213,8 @@ def voltage(df, nums=50, **kwargs):
     Parameters
     ----------
     df : pd.DataFrame
-        a `pd.DataFrame` with the values of `x` (concentrations) in
-        the first column, the formation energy (`"fe"`) and, optionally,
-        the respective error
+        a `pd.DataFrame` with the values of `x` (concentrations), the formation
+        energy, `"fe"`, and, optionally, the respective error, `"err_fe"`.
 
     nums : int, default=50
         number of points at which to evaluate the spline and its
@@ -199,7 +231,7 @@ def voltage(df, nums=50, **kwargs):
         the spline and the estimated value to the voltage in function of
         `x`.
     """
-    weights = df.errfe if "errfe" in df else None
+    weights = df.errfe if "err_fe" in df else None
     spline = scipy.interpolate.UnivariateSpline(
         df.x, df.fe, w=weights, **kwargs
     )

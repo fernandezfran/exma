@@ -10,6 +10,9 @@
 # IMPORTS
 # ============================================================================
 
+import os
+import pathlib
+
 import exma.electrochemistry
 
 import numpy as np
@@ -17,6 +20,14 @@ import numpy as np
 import pandas as pd
 
 import pytest
+
+# ============================================================================
+# CONSTANTS
+# ============================================================================
+
+TEST_DATA_PATH = pathlib.Path(
+    os.path.join(os.path.abspath(os.path.dirname(__file__)), "test_data")
+)
 
 # ============================================================================
 # TESTS
@@ -60,7 +71,7 @@ def test_fractional_volume_change_err():
 
     np.testing.assert_almost_equal(result.x, x)
     np.testing.assert_almost_equal(result.fvc, reffvc)
-    np.testing.assert_almost_equal(result.errfvc, referrfvc)
+    np.testing.assert_almost_equal(result.err_fvc, referrfvc)
 
 
 def test_raise_fvc():
@@ -73,7 +84,7 @@ def test_raise_fvc():
         exma.electrochemistry.fractional_volume_change(df, 8, 125)
 
 
-def test_formation_energy():
+def test_formation_energy_x():
     """Test the formation energy."""
     reffe = np.array([0.875, 1.021875, 1.15625, 1.296875, 1.4375])
 
@@ -88,7 +99,21 @@ def test_formation_energy():
     np.testing.assert_almost_equal(result.fe, reffe)
 
 
-def test_formation_energy_error():
+def test_formation_energy_relative():
+    """Test the formation energy."""
+    df = pd.read_csv(TEST_DATA_PATH / "cristals.csv")
+    reffe = np.array(
+        [0.0, -0.21365, -0.209494, -0.229424, -0.172029, -0.302786, 0.0]
+    )
+
+    result = exma.electrochemistry.formation_energy(
+        df, -1.62041487, -4.71777201, fetype="relative"
+    )
+
+    np.testing.assert_almost_equal(result.fe, reffe, decimal=5)
+
+
+def test_formation_energy_x_error():
     """Test the formation energy error propagation."""
     reffe = np.array([0.875, 1.021875, 1.15625, 1.296875, 1.4375])
 
@@ -109,7 +134,28 @@ def test_formation_energy_error():
 
     np.testing.assert_almost_equal(result.x, x)
     np.testing.assert_almost_equal(result.fe, reffe)
-    np.testing.assert_almost_equal(result.errfe, epot_error)
+    np.testing.assert_almost_equal(result.err_fe, epot_error / natoms_a)
+
+
+def test_formation_energy_relative_error():
+    """Test the formation energy error propagation."""
+    df = pd.read_csv(TEST_DATA_PATH / "cristals.csv")
+    epot_error = np.full(7, 0.1)
+    df["err_epot"] = epot_error
+    reffe = np.array(
+        [0.0, -0.21365, -0.209494, -0.229424, -0.172029, -0.302786, 0.0]
+    )
+
+    result = exma.electrochemistry.formation_energy(
+        df, -1.62041487, -4.71777201, fetype="relative"
+    )
+
+    np.testing.assert_almost_equal(result.fe, reffe, decimal=5)
+    print(result.err_fe, epot_error / (df.natoms_a + df.natoms_b))
+    np.testing.assert_almost_equal(
+        result.err_fe.to_numpy(),
+        (epot_error / (df.natoms_a + df.natoms_b)).to_numpy(),
+    )
 
 
 def test_raise_fe():

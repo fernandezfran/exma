@@ -47,7 +47,7 @@ class XYZ(TrajectoryWriter):
     """
 
     def __init__(self, filename, ftype="xyz"):
-        if ftype not in ["xyz", "property", "image"]:
+        if ftype not in ("xyz", "property", "image"):
             raise ValueError("ftype must be 'xyz', 'property' or 'image'")
 
         super(XYZ, self).__init__(filename, ftype)
