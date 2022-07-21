@@ -4,6 +4,8 @@
 //     Full Text: https://github.com/fernandezfran/exma/blob/master/LICENSE
 #include "cn.h"
 
+#include <math.h>
+
 void cn_accumulate(const int natoms_c, const int natoms_i, const float *box,
                    const float *x_central, const float *x_interact,
                    const int pbc, const float rcut_i, const float rcut_e,
@@ -27,21 +29,25 @@ void cn_accumulate(const int natoms_c, const int natoms_i, const float *box,
     float rij2, rij;
 
     // i'm standing on the central atoms
-    for (int i = 0; i < natoms_c; i++) {
+    for (int i = 0; i < natoms_c; ++i) {
 
         // select the vector position of a particular one
-        for (int k = 0; k < 3; k++) { ri[k] = x_central[k * natoms_c + i]; }
+        for (int k = 0; k < 3; ++k) {
+            ri[k] = x_central[k * natoms_c + i];
+        }
 
         // computes the distance to all interacting atoms
-        for (int j = 0; j < natoms_i; j++) {
+        for (int j = 0; j < natoms_i; ++j) {
             rij2 = 0.0f;
-            for (int k = 0; k < 3; k++) {
+            for (int k = 0; k < 3; ++k) {
                 rj[k] = x_interact[k * natoms_i + j];
 
                 rij = rj[k] - ri[k];
                 if (pbc == 1) {
-                    while (rij > 0.5f * box[k]) rij -= box[k];
-                    while (rij < -0.5f * box[k]) rij += box[k];
+                    while (rij > 0.5f * box[k])
+                        rij -= box[k];
+                    while (rij < -0.5f * box[k])
+                        rij += box[k];
                 }
                 rij2 += rij * rij;
             }
@@ -49,7 +55,7 @@ void cn_accumulate(const int natoms_c, const int natoms_i, const float *box,
 
             // accumulate in cn if the distance is less than the external
             // cut-off radius and greater than the internal cut-off radius.
-            if ((rij > rcut_i) & (rij <= rcut_e)) { cn[i] += 1; }
+            if ((rij <= rcut_e) & (rij > rcut_i)) ++cn[i];
         }
     }
 }

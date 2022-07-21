@@ -5,10 +5,8 @@
 #ifndef PBC_DISTANCES_H
 #define PBC_DISTANCES_H
 
-#include <math.h>
-
-void distance_matrix(const int natoms_c, const int natoms_i,
-                     const float *box, const float *x_central,
-                     const float *x_interact, float *distrix);
+void distance_matrix(const int natoms_c, const int natoms_i, const float *box,
+                     const float *x_central, const float *x_interact,
+                     float *distrix);
 
 #endif
