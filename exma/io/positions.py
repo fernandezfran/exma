@@ -337,7 +337,7 @@ def replicate(frame, nrf):
     box_size = np.array(
         [nrf[0] * box_size[0], nrf[1] * box_size[1], nrf[2] * box_size[2]]
     )
-    atom_type = frame.types * np.prod(nrf)
+    atom_type = np.tile(frame.types, np.prod(nrf))
 
     return AtomicSystem(
         natoms=natoms,
