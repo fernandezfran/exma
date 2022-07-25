@@ -21,6 +21,103 @@ import numpy as np
 import pandas as pd
 
 from ._trajectory_rw import TrajectoryReader
+from ..core import AtomicSystem
+
+
+# ============================================================================
+# FUNCTIONS
+# ============================================================================
+
+
+def read_xyz(filename, ftype="xyz"):
+    """Read xyz file.
+
+    Parameters
+    ----------
+    filename : str
+        name of the file where the trajectories in xyz format are
+
+    ftype : str, default="xyz"
+        the possible values are `xyz`, `property` and `image`.
+        `xyz` if is the usual xyz file. `property` if in the last
+        column there is a property. `image` if in the last three columns
+        there are the image box of the corresponding atom.
+
+    Returns
+    -------
+    list
+        A list with an exma.core.AtomicSystem for each frame.
+    """
+    with XYZ(filename, ftype) as xyz:
+        frames = xyz.read_traj()
+
+    return frames
+
+
+def read_lammpstrj(filename, headerint=["idx", "types", "ix", "iy", "iz"]):
+    """Read lammpstrj file.
+
+    Parameters
+    ----------
+    filename : str
+        name of the file where the trajectories of lammps are
+
+    headerint : list, default=["idx", "types", "ix", "iy", "iz"]
+        the columns that have int data types, the others are considered floats.
+
+    Returns
+    -------
+    list
+        A list with an exma.core.AtomicSystem for each frame.
+    """
+    with LAMMPS(filename, headerint) as lmp:
+        frames = lmp.read_traj()
+
+    return frames
+
+
+def read_log_lammps(logname="log.lammps"):
+    """Read log file of lammps.
+
+    Parameters
+    ----------
+    logname : str, defalut="log.lammps".
+        the name of the file where the thermodynamic info was logged.
+
+    Returns
+    -------
+    pd.DataFrame
+        A `pd.DataFrame` with the columns corresponding to the thermodynamic
+        info.
+
+    Notes
+    -----
+    It only works if the first thermo parameter is `Step`.
+
+    """
+    with open(logname, "r") as flog:
+        # ignore all previous info
+        line = flog.readline()
+        while line.startswith("Step ") is False:
+            line = flog.readline()
+
+        keys = list(line.split())
+        thermo = {key: list() for key in keys}
+
+        # append info until subsequent info to be ignored
+        line = flog.readline()
+        while line.startswith("Loop time") is False:
+            for i, element in enumerate(line.split()):
+                thermo[keys[i]].append(element)
+            line = flog.readline()
+
+        thermo = {
+            key: np.array(value, dtype=np.float32)
+            for key, value in zip(thermo.keys(), thermo.values())
+        }
+
+        return pd.DataFrame(thermo)
+
 
 # ============================================================================
 # CLASSES
@@ -93,29 +190,31 @@ class XYZ(TrajectoryReader):
                 iy.append(xyzline[5])
                 iz.append(xyzline[6])
 
-        self.frame.natoms = natoms
-        self.frame.types = np.asarray(atom_type, dtype=str)
-        self.frame.x = np.asarray(x, dtype=np.float32)
-        self.frame.y = np.asarray(y, dtype=np.float32)
-        self.frame.z = np.asarray(z, dtype=np.float32)
+        frame = AtomicSystem()
 
-        self.frame.ix = (
+        frame.natoms = natoms
+        frame.types = np.asarray(atom_type, dtype=str)
+        frame.x = np.asarray(x, dtype=np.float32)
+        frame.y = np.asarray(y, dtype=np.float32)
+        frame.z = np.asarray(z, dtype=np.float32)
+
+        frame.ix = (
             np.asarray(ix, dtype=np.intc) if self.ftype == "image" else None
         )
-        self.frame.iy = (
+        frame.iy = (
             np.asarray(iy, dtype=np.intc) if self.ftype == "image" else None
         )
-        self.frame.iz = (
+        frame.iz = (
             np.asarray(iz, dtype=np.intc) if self.ftype == "image" else None
         )
 
-        self.frame.q = (
+        frame.q = (
             np.asarray(q, dtype=np.float32)
             if self.ftype == "property"
             else None
         )
 
-        return self.frame
+        return frame
 
 
 class LAMMPS(TrajectoryReader):
@@ -173,11 +272,11 @@ class LAMMPS(TrajectoryReader):
             )
         )
 
-        frame = {key: list() for key in keys}
+        rframe = {key: list() for key in keys}
         for _ in range(natoms):
             line = self.file_traj_.readline().split()
             for j, element in enumerate(line):
-                frame[keys[j]].append(element)
+                rframe[keys[j]].append(element)
 
         # a way to know the type of data (always a np.float32 except when the
         # data corresponds with integers: `id`, `type`, `ix`, `iy`, `iz`)
@@ -186,57 +285,11 @@ class LAMMPS(TrajectoryReader):
             for key in keys
         ]
 
-        self.frame.natoms = natoms
-        self.frame.box = box
-        for key, value, dtype in zip(frame.keys(), frame.values(), dtypes):
-            self.frame.__dict__[key] = np.array(value, dtype=dtype)
+        frame = AtomicSystem()
 
-        return self.frame
+        frame.natoms = natoms
+        frame.box = box
+        for key, value, dtype in zip(rframe.keys(), rframe.values(), dtypes):
+            frame.__dict__[key] = np.array(value, dtype=dtype)
 
-
-# ============================================================================
-# FUNCTIONS
-# ============================================================================
-
-
-def read_log_lammps(logname="log.lammps"):
-    """Read log file of lammps.
-
-    Parameters
-    ----------
-    logname : str, defalut="log.lammps".
-        the name of the file where the thermodynamic info was logged.
-
-    Returns
-    -------
-    pd.DataFrame
-        A `pd.DataFrame` with the columns corresponding to the thermodynamic
-        info.
-
-    Notes
-    -----
-    It only works if the first thermo parameter is `Step`.
-
-    """
-    with open(logname, "r") as flog:
-        # ignore all previous info
-        line = flog.readline()
-        while line.startswith("Step ") is False:
-            line = flog.readline()
-
-        keys = list(line.split())
-        thermo = {key: list() for key in keys}
-
-        # append info until subsequent info to be ignored
-        line = flog.readline()
-        while line.startswith("Loop time") is False:
-            for i, element in enumerate(line.split()):
-                thermo[keys[i]].append(element)
-            line = flog.readline()
-
-        thermo = {
-            key: np.array(value, dtype=np.float32)
-            for key, value in zip(thermo.keys(), thermo.values())
-        }
-
-        return pd.DataFrame(thermo)
+        return frame

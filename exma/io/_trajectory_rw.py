@@ -12,12 +12,6 @@
 
 """Trajectory Reader and Writer superclasses."""
 
-# ============================================================================
-# IMPORTS
-# ============================================================================
-
-from ..core import AtomicSystem
-
 
 # ============================================================================
 # CLASSES
@@ -40,8 +34,6 @@ class TrajectoryReader:
         self.filename = filename
         self.ftype = ftype
 
-        self.frame = AtomicSystem()
-
     def __enter__(self):
         """Use the open() method."""
         self.file_traj_ = open(self.filename, "r")
@@ -54,6 +46,17 @@ class TrajectoryReader:
     def read_frame(self):
         """Read the actual frame of the file."""
         raise NotImplementedError("Implemented in child classes.")
+
+    def read_traj(self):
+        """Read all the trajectory of the file."""
+        frames = []
+        try:
+            while True:
+                frames.append(self.read_frame())
+        except (EOFError, NotImplementedError):
+            ...
+
+        return frames
 
 
 class TrajectoryWriter:

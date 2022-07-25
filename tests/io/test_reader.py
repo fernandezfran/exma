@@ -222,3 +222,49 @@ def test_read_log_lammps():
     np.testing.assert_almost_equal(
         np.mean(log["Volume"]), 1310.3907, decimal=4
     )
+
+
+def test_read_xyz():
+    """Test the read of xyz file"""
+    frames = exma.io.reader.read_xyz(TEST_DATA_PATH / "read_xyz.xyz")
+
+    natoms = 5
+    types = np.array(5 * ["H"])
+    x = np.array([2.67583, 0.93241, 1.23424, 4.42636, 3.00023])
+    y = np.array([0.05432, 0.89325, 0.43142, 0.23451, 0.55556])
+    z = np.array([1.15145, 2.31451, 3.96893, 4.96905, 5.98693])
+
+    for k, frame in enumerate(frames):
+        assert frame.natoms == natoms
+        np.testing.assert_array_equal(frame.types, types)
+        np.testing.assert_array_almost_equal(
+            frame.x, x * 10**k, decimal=1e-5
+        )
+        np.testing.assert_array_almost_equal(frame.y, y)
+        np.testing.assert_array_almost_equal(frame.z, z)
+
+
+def test_read_lammpstrj():
+    """Test the read of lammpstrj file"""
+    frames = exma.io.reader.read_lammpstrj(
+        TEST_DATA_PATH / "read_lammpstrj.lammpstrj"
+    )
+
+    natoms = 5
+    box = np.array([4.5, 1.0, 6.0])
+    idx = np.arange(1, 6)
+    types = np.array([1, 1, 1, 2, 2])
+    x = np.array([2.67583, 0.93241, 1.23424, 4.42636, 3.00023])
+    y = np.array([0.05432, 0.89325, 0.43142, 0.23451, 0.55556])
+    z = np.array([1.15145, 2.31451, 3.96893, 4.96905, 5.98693])
+
+    for k, frame in enumerate(frames):
+        assert frame.natoms == natoms
+
+        np.testing.assert_array_almost_equal(frame.box, box)
+        np.testing.assert_array_equal(frame.idx, idx)
+        np.testing.assert_array_equal(frame.types, types)
+
+        np.testing.assert_array_almost_equal(frame.x, x)
+        np.testing.assert_array_almost_equal(frame.y, y)
+        np.testing.assert_array_almost_equal(frame.z, z + k)
