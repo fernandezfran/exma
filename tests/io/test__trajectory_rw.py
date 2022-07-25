@@ -40,6 +40,6 @@ def test_TrajectoryWriter_raises():
     fxyz = TEST_DATA_PATH / "test_data" / "exma_test.xyz"
     with pytest.raises(NotImplementedError):
         with exma.io._trajectory_rw.TrajectoryWriter(fxyz, "error") as tw:
-            tw.write_frame()
+            tw.write_frame(0)
 
     os.remove(fxyz)

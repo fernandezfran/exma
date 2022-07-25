@@ -85,6 +85,11 @@ class TrajectoryWriter:
         """Use the close() method."""
         self.file_traj_.close()
 
-    def write_frame(self):
+    def write_frame(self, frame):
         """Write the actual frame on the file."""
         raise NotImplementedError("Implemented in child classes.")
+
+    def write_traj(self, frames):
+        """Read all frames of the trajectory to a file."""
+        for frame in frames:
+            self.write_frame(frame)

@@ -115,7 +115,7 @@ def xyz2inlmp(xyztraj, inlammps_name, cell_info, nframe=-1, xyzftype="xyz"):
     if "q" in cell_info.keys():
         dframe.q = cell_info["q"]
 
-    writer.in_lammps(inlammps_name, dframe)
+    writer.write_in_lammps(inlammps_name, dframe)
 
 
 def lammpstrj2xyz(lammpstrjtraj, xyz_name, type_info, xyzftype="xyz"):
@@ -188,4 +188,4 @@ def lammpstrj2inlmp(lammpstrjtraj, inlammps_name, nframe=-1):
                 )
 
     dframe = dframe._sort_frame() if not dframe._is_sorted() else dframe
-    writer.in_lammps(inlammps_name, dframe)
+    writer.write_in_lammps(inlammps_name, dframe)
