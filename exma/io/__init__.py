@@ -16,8 +16,6 @@
 # IMPORTS
 # ============================================================================
 
-import warnings
-
 import numpy as np
 
 from . import reader
@@ -80,12 +78,18 @@ def xyz2inlmp(xyztraj, inlammps_name, cell_info, nframe=-1, xyzftype="xyz"):
 
     xyzftype : str, default="xyz"
         the `ftype` of xyz file.
+
+    Raises
+    ------
+    IndexError
+        If the number of the frame to write is not in the trajectory file.
     """
     frames = reader.read_xyz(xyztraj, xyzftype)
     try:
         frame = frames[nframe]
-    except IndexError:
-        warnings.warn(f"frame {nframe} does not exist in the trajectory file.")
+    except IndexError as exc:
+        errmsg = f"frame {nframe} does not exist in the trajectory file."
+        raise IndexError(errmsg) from exc
 
     frame.box = cell_info["box"]
     frame.idx = np.arange(1, frame.natoms + 1)
@@ -135,12 +139,18 @@ def lammpstrj2inlmp(lammpstrjtraj, inlammps_name, nframe=-1):
 
     nframe : int, default=-1
         number of the frame to write, by default is -1, that is, the last.
+
+    Raises
+    ------
+    IndexError
+        If the number of the frame to write is not in the trajectory file.
     """
     frames = reader.read_lammpstrj(lammpstrjtraj)
     try:
         frame = frames[nframe]
-    except IndexError:
-        warnings.warn(f"frame {nframe} does not exist in the trajectory file.")
+    except IndexError as exc:
+        errmsg = f"frame {nframe} does not exist in the trajectory file."
+        raise IndexError(errmsg) from exc
 
     frame = frame._sort_frame() if not frame._is_sorted() else frame
 

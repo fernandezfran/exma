@@ -47,18 +47,6 @@ from .statistics import BlockAverage  # noqa
 
 # io
 from .io import *  # noqa
-from .io.reader import (  # noqa
-    read_xyz,  # noqa
-    read_lammpstrj,  # noqa
-    read_log_lammps,  # noqa
-    XYZ,  # noqa
-    LAMMPS,  # noqa
-)  # noqa
-from .io.writer import (  # noqa
-    write_xyz,  # noqa
-    write_lammpstrj,  # noqa
-    write_in_lammps,  # noqa
-    XYZ,  # noqa
-    LAMMPS,  # noqa
-)  # noqa
+from .io.reader import read_xyz, read_lammpstrj, read_log_lammps  # noqa
+from .io.writer import write_xyz, write_lammpstrj, write_in_lammps  # noqa
 from .io.positions import Positions, spherical_nanoparticle, replicate  # noqa

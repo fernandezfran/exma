@@ -12,10 +12,14 @@
 
 import os
 import pathlib
+from unittest import mock
 
 import exma.io
+from exma.core import AtomicSystem
 
 import numpy as np
+
+import pytest
 
 
 # ============================================================================
@@ -221,3 +225,41 @@ def test_lammpstrj2inlmp():
         )
 
     os.remove(fo)
+
+
+def test_xyz2inlmp_IndexError():
+    """Test the IndexError raise of xyz2inlmp."""
+    mock_frames = [
+        AtomicSystem(
+            natoms=5,
+            types=np.array(5 * ["H"]),
+            x=np.array([2.67583, 0.93241, 1.23424, 4.42636, 3.00023]),
+            y=np.array([0.05432, 0.89325, 0.43142, 0.23451, 0.55556]),
+            z=np.array([1.15145, 2.31451, 3.96893, 4.96905, 5.98693]),
+        )
+    ]
+
+    with pytest.raises(IndexError):
+        with mock.patch("exma.io.reader.read_xyz", return_value=mock_frames):
+            exma.io.xyz2inlmp("mock.xyz", "in.mock", None, nframe=2)
+
+
+def test_lammpstr2inlmp_IndexError():
+    """Test the IndexError raise of lammpstrj2inlmp."""
+    mock_frames = [
+        AtomicSystem(
+            natoms=5,
+            box=np.array([4.5, 1.0, 6.0]),
+            idx=np.arange(1, 6),
+            types=np.array([1, 1, 1, 2, 2]),
+            x=np.array([2.67583, 0.93241, 1.23424, 4.42636, 3.00023]),
+            y=np.array([0.05432, 0.89325, 0.43142, 0.23451, 0.55556]),
+            z=np.array([1.15145, 2.31451, 3.96893, 4.96905, 5.98693]),
+        )
+    ]
+
+    with pytest.raises(IndexError):
+        with mock.patch(
+            "exma.io.reader.read_lammpstrj", return_value=mock_frames
+        ):
+            exma.io.lammpstrj2inlmp("mock.lammpstrj", "in.mock", nframe=2)
