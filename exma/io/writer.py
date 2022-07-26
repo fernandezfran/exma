@@ -64,16 +64,16 @@ def write_lammpstrj(frames, filename):
         lmp.write_traj(frames)
 
 
-def write_in_lammps(file_in, frame):
+def write_in_lammps(frame, file_in):
     """Write a frame as an input file for LAMMPS.
 
     Parameters
     ----------
-    file_in : str
-        name of the file where you want to write the input info
-
     frame : `exma.core.AtomicSystem`
         This have all the information of the configurations of the system.
+
+    file_in : str
+        name of the file where you want to write the input info
     """
     header = ("natoms", "box")
     with open(file_in, "w") as f_in:

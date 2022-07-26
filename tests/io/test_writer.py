@@ -117,7 +117,7 @@ def test_write_in_lammps():
         iz=np.array([-2, -1, 0, 0, 1]),
     )
     fin = TEST_DATA_PATH / "exma_in.test"
-    exma.io.writer.write_in_lammps(fin, frame)
+    exma.io.writer.write_in_lammps(frame, fin)
 
     with open(fin, "r") as f:
         assert f.readline() == "# the first three lines are comments...\n"

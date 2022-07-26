@@ -16,7 +16,6 @@
 # IMPORTS
 # ============================================================================
 
-import contextlib
 import warnings
 
 import numpy as np
@@ -49,23 +48,14 @@ def xyz2lammpstrj(xyztraj, lammpstrj_name, cell_info, xyzftype="xyz"):
     xyzftype : str, default="xyz"
         the `ftype` of xyz file.
     """
-    with contextlib.ExitStack() as stack:
-        xyz = stack.enter_context(reader.XYZ(xyztraj, xyzftype))
-        lmp = stack.enter_context(writer.LAMMPS(lammpstrj_name))
-        try:
-            while True:
-                xyz_frame = xyz.read_frame()
+    frames = reader.read_xyz(xyztraj, xyzftype)
 
-                xyz_frame.box = cell_info["box"]
-                xyz_frame.idx = np.arange(1, xyz_frame.natoms + 1)
-                xyz_frame.types = [
-                    cell_info["type"][t] for t in xyz_frame.types
-                ]
+    for frame in frames:
+        frame.box = cell_info["box"]
+        frame.idx = np.arange(1, frame.natoms + 1)
+        frame.types = [cell_info["type"][t] for t in frame.types]
 
-                lmp.write_frame(xyz_frame)
-
-        except EOFError:
-            ...
+    writer.write_lammpstrj(frames, lammpstrj_name)
 
 
 def xyz2inlmp(xyztraj, inlammps_name, cell_info, nframe=-1, xyzftype="xyz"):
@@ -91,31 +81,18 @@ def xyz2inlmp(xyztraj, inlammps_name, cell_info, nframe=-1, xyzftype="xyz"):
     xyzftype : str, default="xyz"
         the `ftype` of xyz file.
     """
-    nframe = np.inf if nframe == -1 else nframe
-    with reader.XYZ(xyztraj, xyzftype) as xyz:
-        try:
-            iframe = 0
-            dframe = xyz.read_frame()
-            while iframe < nframe:
-                xyz_frame = xyz.read_frame()
+    frames = reader.read_xyz(xyztraj, xyzftype)
+    try:
+        frame = frames[nframe]
+    except IndexError:
+        warnings.warn(f"frame {nframe} does not exist in the trajectory file.")
 
-                iframe += 1
-                dframe = xyz_frame
+    frame.box = cell_info["box"]
+    frame.idx = np.arange(1, frame.natoms + 1)
+    frame.types = [cell_info["type"][t] for t in frame.types]
+    frame.q = cell_info["q"] if "q" in cell_info.keys() else None
 
-        except EOFError:
-            if nframe != np.inf:
-                warnings.warn(
-                    f"frame {nframe} does not exist in the trajectory file, "
-                    f"therefore the last frame ({iframe}) was written."
-                )
-
-    dframe.box = cell_info["box"]
-    dframe.idx = np.arange(1, dframe.natoms + 1)
-    dframe.types = [cell_info["type"][t] for t in dframe.types]
-    if "q" in cell_info.keys():
-        dframe.q = cell_info["q"]
-
-    writer.write_in_lammps(inlammps_name, dframe)
+    writer.write_in_lammps(frame, inlammps_name)
 
 
 def lammpstrj2xyz(lammpstrjtraj, xyz_name, type_info, xyzftype="xyz"):
@@ -136,23 +113,13 @@ def lammpstrj2xyz(lammpstrjtraj, xyz_name, type_info, xyzftype="xyz"):
     xyzftype : str, default="xyz"
         the `ftype` of xyz file.
     """
-    with contextlib.ExitStack() as stack:
-        lmp = stack.enter_context(reader.LAMMPS(lammpstrjtraj))
-        xyz = stack.enter_context(writer.XYZ(xyz_name, xyzftype))
-        try:
-            while True:
-                lmp_frame = lmp.read_frame()
-                lmp_frame = (
-                    lmp_frame._sort_frame()
-                    if not lmp_frame._is_sorted()
-                    else lmp_frame
-                )
-                lmp_frame.types = [type_info[t] for t in lmp_frame.types]
+    frames = reader.read_lammpstrj(lammpstrjtraj)
 
-                xyz.write_frame(lmp_frame)
+    for frame in frames:
+        frame = frame._sort_frame() if not frame._is_sorted() else frame
+        frame.types = [type_info[t] for t in frame.types]
 
-        except EOFError:
-            ...
+    writer.write_xyz(frames, xyz_name, xyzftype)
 
 
 def lammpstrj2inlmp(lammpstrjtraj, inlammps_name, nframe=-1):
@@ -169,23 +136,12 @@ def lammpstrj2inlmp(lammpstrjtraj, inlammps_name, nframe=-1):
     nframe : int, default=-1
         number of the frame to write, by default is -1, that is, the last.
     """
-    nframe = np.inf if nframe == -1 else nframe
-    with reader.LAMMPS(lammpstrjtraj) as lmp:
-        try:
-            iframe = 0
-            dframe = lmp.read_frame()
-            while iframe < nframe:
-                lmp_frame = lmp.read_frame()
+    frames = reader.read_lammpstrj(lammpstrjtraj)
+    try:
+        frame = frames[nframe]
+    except IndexError:
+        warnings.warn(f"frame {nframe} does not exist in the trajectory file.")
 
-                iframe += 1
-                dframe = lmp_frame
+    frame = frame._sort_frame() if not frame._is_sorted() else frame
 
-        except EOFError:
-            if nframe != np.inf:
-                warnings.warn(
-                    f"frame {nframe} does not exist in the trajectory file, "
-                    f"therefore the last frame ({iframe}) was written."
-                )
-
-    dframe = dframe._sort_frame() if not dframe._is_sorted() else dframe
-    writer.write_in_lammps(inlammps_name, dframe)
+    writer.write_in_lammps(frame, inlammps_name)
