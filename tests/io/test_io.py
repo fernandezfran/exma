@@ -227,7 +227,7 @@ def test_lammpstrj2inlmp():
     os.remove(fo)
 
 
-def test_xyz2inlmp_IndexError():
+def test_xyz2inlmp_ieraise():
     """Test the IndexError raise of xyz2inlmp."""
     mock_frames = [
         AtomicSystem(
@@ -244,7 +244,7 @@ def test_xyz2inlmp_IndexError():
             exma.io.xyz2inlmp("mock.xyz", "in.mock", None, nframe=2)
 
 
-def test_lammpstr2inlmp_IndexError():
+def test_lammpstr2inlmp_ieraise():
     """Test the IndexError raise of lammpstrj2inlmp."""
     mock_frames = [
         AtomicSystem(

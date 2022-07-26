@@ -10,7 +10,7 @@
 # DOCS
 # ============================================================================
 
-"""Core Atomic System class of exma."""
+"""Core Atomic System and MDTrajectory classes of exma."""
 
 # ============================================================================
 # IMPORTS
@@ -27,6 +27,8 @@ import numpy as np
 class AtomicSystem:
     """Define the configurations of the atomic system.
 
+    Parameters
+    ----------
     natoms : int, default=None
         the number of atoms in the atomic system
 

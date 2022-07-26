@@ -178,7 +178,7 @@ def test_write_in_lammps():
         ),
     ],
 )
-def test_XYZ(traj_atomic_system, fname, ftype):
+def test_xyz(traj_atomic_system, fname, ftype):
     """Test the write of an xyz file."""
     fxyz = TEST_DATA_PATH / fname
 
@@ -196,7 +196,7 @@ def test_XYZ(traj_atomic_system, fname, ftype):
     assert writed == expected
 
 
-def test_XYZ_ValueError_raise():
+def test_xyz_veraise():
     """Test the ValueError raise of write xyz file."""
     fxyz = TEST_DATA_PATH / "exma_test1.xyz"
 
@@ -265,7 +265,7 @@ def test_XYZ_ValueError_raise():
         ),
     ],
 )
-def test_LAMMPS(fname, frame_atomic_system):
+def test_lammps(fname, frame_atomic_system):
     """Test the write of an .lammpstrj file."""
     flmp = TEST_DATA_PATH / fname
 

@@ -14,6 +14,7 @@ import os
 import pathlib
 
 import exma.msd
+from exma import read_xyz
 
 from matplotlib.testing.decorators import check_figures_equal
 
@@ -455,59 +456,26 @@ TEST_DATA_PATH = pathlib.Path(
         ),
     ],
 )
-def test_MeanSquareDisplacement_calculate(fname, box, msd_res):
+def test_msd_calculate(fname, box, msd_res):
     """Test the MSD calculation in LJ liquid and solid."""
-    result = exma.msd.MeanSquareDisplacement(
-        str(TEST_DATA_PATH / fname), 0.005, "Ar", start=1, xyztype="image"
-    ).calculate(box)
+    frames = read_xyz(TEST_DATA_PATH / fname, ftype="image")
+    result = exma.msd.MeanSquareDisplacement(frames, 0.005, start=1).calculate(
+        box
+    )
 
     np.testing.assert_array_almost_equal(result["t"], 0.005 * np.arange(200))
     np.testing.assert_array_almost_equal(result["msd"], msd_res)
 
 
-@pytest.mark.parametrize(
-    "fname",
-    ["liquid.out", "solid.xtc", "gas.lammsptrj", "dump.asd.123.lammptsrj"],
-)
-def test_MeanSquareDisplacement_raises(fname):
-    """Test the MSD ValueError raise."""
-    with pytest.raises(ValueError):
-        exma.msd.MeanSquareDisplacement(fname, 1000, "H").calculate()
-
-
-@pytest.mark.parametrize(
-    ("fname", "box"),
-    [("liquid.xyz", np.full(3, 8.54988)), ("solid.xyz", np.full(3, 7.46901))],
-)
-def test_MeanSquareDisplacement_warning(fname, box):
-    """Test the MSD EOF warning."""
-    with pytest.warns(UserWarning):
-        exma.msd.MeanSquareDisplacement(
-            str(TEST_DATA_PATH / fname),
-            0.005,
-            "Ar",
-            start=190,
-            stop=210,
-            step=5,
-            xyztype="image",
-        ).calculate(box)
-
-
 @check_figures_equal(extensions=["pdf", "png"])
-def test_MeanSquareDisplacement_plot(fig_test, fig_ref):
+def test_msd_plot(fig_test, fig_ref):
     """Test the MSD plot."""
     files = ["liquid.xyz", "solid.xyz"]
     boxes = [np.full(3, 8.54988), np.full(3, 7.46901)]
     msds = []
     for fname, box in zip(files, boxes):
-        msd = exma.msd.MeanSquareDisplacement(
-            str(TEST_DATA_PATH / fname),
-            0.005,
-            "Ar",
-            start=10,
-            stop=20,
-            xyztype="image",
-        )
+        frames = read_xyz(TEST_DATA_PATH / fname, ftype="image")
+        msd = exma.msd.MeanSquareDisplacement(frames, 0.005, start=10, stop=20)
         msd.calculate(box)
         msds.append(msd)
 

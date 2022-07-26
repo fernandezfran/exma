@@ -14,6 +14,7 @@ import os
 import pathlib
 
 import exma.rdf
+from exma import read_xyz
 
 from matplotlib.testing.decorators import check_figures_equal
 
@@ -255,12 +256,13 @@ TEST_DATA_PATH = pathlib.Path(
         ),
     ],
 )
-def test_RadialDistributionFunction_calculate(fname, box, rdf_res):
+def test_rdf_calculate(fname, box, rdf_res):
     """Test the RDF calculation in LJ liquid and solid."""
     nbin = 100
     rmax = np.min(box) / 2
+    frames = read_xyz(TEST_DATA_PATH / fname)
     result = exma.rdf.RadialDistributionFunction(
-        str(TEST_DATA_PATH / fname), "Ar", "Ar", start=1, nbin=nbin, rmax=rmax
+        frames, start=1, nbin=nbin, rmax=rmax
     ).calculate(box)
 
     dr = rmax / nbin
@@ -270,47 +272,16 @@ def test_RadialDistributionFunction_calculate(fname, box, rdf_res):
     np.testing.assert_array_almost_equal(result["rdf"], rdf_res)
 
 
-@pytest.mark.parametrize(
-    "fname",
-    ["liquid.out", "solid.xtc", "gas.lammsptrj", "dump.asd.123.lammptsrj"],
-)
-def test_RadialDistributionFunction_raises(fname):
-    """Test the RDF ValueError raise."""
-    with pytest.raises(ValueError):
-        exma.rdf.RadialDistributionFunction(fname, "H", "H").calculate()
-
-
-@pytest.mark.parametrize(
-    ("fname", "box"),
-    [("liquid.xyz", np.full(3, 8.54988)), ("solid.xyz", np.full(3, 7.46901))],
-)
-def test_RadialDistributionFunction_warning(fname, box):
-    """Test the RDF EOF warning."""
-    with pytest.warns(UserWarning):
-        exma.rdf.RadialDistributionFunction(
-            str(TEST_DATA_PATH / fname),
-            "Ar",
-            "Ar",
-            start=190,
-            stop=210,
-            step=5,
-        ).calculate(box)
-
-
 @check_figures_equal(extensions=["pdf", "png"])
-def test_RadialDistributionFunction_plot(fig_test, fig_ref):
+def test_rdf_plot(fig_test, fig_ref):
     """Test the RDF plot."""
     files = ["liquid.xyz", "solid.xyz"]
     boxes = [np.full(3, 8.54988), np.full(3, 7.46901)]
     rdfs = []
     for fname, box in zip(files, boxes):
+        frames = read_xyz(TEST_DATA_PATH / fname)
         rdf = exma.rdf.RadialDistributionFunction(
-            str(TEST_DATA_PATH / fname),
-            "Ar",
-            "Ar",
-            start=10,
-            stop=20,
-            rmax=np.min(box) / 2,
+            frames, start=10, stop=20, rmax=np.min(box) / 2
         )
         rdf.calculate(box)
         rdfs.append(rdf)

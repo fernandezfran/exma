@@ -41,9 +41,9 @@ class EffectiveNeighbors(MDObservable):
 
     Parameters
     ----------
-    ftraj : str
-        the string corresponding with the filename with the molecular
-        dynamics trajectory
+    frames : list
+        a list with all the frames of the molecular dynamics trajectory, where
+        each one is an `exma.core.AtomicSystem`.
 
     type_c : int or str
         type of central atoms
@@ -71,8 +71,8 @@ class EffectiveNeighbors(MDObservable):
 
     """
 
-    def __init__(self, ftraj, type_c, type_i, start=0, stop=-1, step=1):
-        super().__init__(ftraj, start, stop, step)
+    def __init__(self, frames, type_c, type_i, start=0, stop=-1, step=1):
+        super().__init__(frames, start, stop, step)
 
         self.type_c = type_c
         self.type_i = type_i

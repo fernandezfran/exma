@@ -49,14 +49,14 @@ class TrajectoryReader:
 
     def read_traj(self):
         """Read all the trajectory of the file."""
-        frames = []
+        traj = []
         try:
             while True:
-                frames.append(self.read_frame())
+                traj.append(self.read_frame())
         except (EOFError, NotImplementedError):
             ...
 
-        return frames
+        return traj
 
 
 class TrajectoryWriter:
@@ -90,6 +90,6 @@ class TrajectoryWriter:
         raise NotImplementedError("Implemented in child classes.")
 
     def write_traj(self, frames):
-        """Read all frames of the trajectory to a file."""
+        """Write all frames of the trajectory to a file."""
         for frame in frames:
             self.write_frame(frame)

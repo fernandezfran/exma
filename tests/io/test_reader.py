@@ -139,7 +139,7 @@ def test_read_log_lammps():
         ),
     ],
 )
-def test_XYZ(traj_dict, fname, ftype):
+def test_xyz(traj_dict, fname, ftype):
     """Test the write of an xyz file."""
     fxyz = TEST_DATA_PATH / fname
 
@@ -160,7 +160,7 @@ def test_XYZ(traj_dict, fname, ftype):
         np.testing.assert_array_almost_equal(result.iz, traj_dict["iz"])
 
 
-def test_XYZ_raise_ValueError():
+def test_xyz_veraise():
     """Test the ValueError raise read xyz file."""
     fxyz = TEST_DATA_PATH / "test_ref.xyz"
 
@@ -168,7 +168,7 @@ def test_XYZ_raise_ValueError():
         exma.io.reader.XYZ(fxyz, "error")
 
 
-def test_XYZ_raise_EOFError():
+def test_xyz_eofraise():
     """Test the EOFError raise of read xyz file."""
     fxyz = TEST_DATA_PATH / "test_ref.xyz"
 
@@ -239,7 +239,7 @@ def test_XYZ_raise_EOFError():
         ),
     ],
 )
-def test_LAMMPS(fname, frame_dict):
+def test_lammps(fname, frame_dict):
     """Test the read of an .lammpstrj file."""
     flmp = TEST_DATA_PATH / fname
 
@@ -261,7 +261,7 @@ def test_LAMMPS(fname, frame_dict):
             )
 
 
-def test_LAMMPS_raises():
+def test_lammps_raises():
     """Test the ValueError raise of write .lammpstrj file."""
     flmp = TEST_DATA_PATH / "exma_ref.lammpstrj"
     with pytest.raises(EOFError):

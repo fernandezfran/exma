@@ -39,9 +39,9 @@ class MeanSquareDisplacement(MDObservable):
 
     Parameters
     ----------
-    ftraj : str
-        the string corresponding with the filename with the molecular
-        dynamics trajectory
+    frames : list
+        a list with all the frames of the molecular dynamics trajectory, where
+        each one is an `exma.core.AtomicSystem`.
 
     dt : int or float
         the timestep, how separated the measured frames are from each
@@ -60,10 +60,6 @@ class MeanSquareDisplacement(MDObservable):
     step : int, default=1
         the incrementation if it is necessary to skip frames
 
-    xyztype : str, default="xyz"
-        the string that describes the type of xyz file, to pass to reader, it
-        is only necessary if ftraj ends with .xyz extension
-
     Notes
     -----
     The trajectory must be unwrapped outside the simulation cell, if it
@@ -71,10 +67,8 @@ class MeanSquareDisplacement(MDObservable):
     in the trajectory file.
     """
 
-    def __init__(
-        self, ftraj, dt, type_e="all", start=0, stop=-1, step=1, xyztype="xyz"
-    ):
-        super().__init__(ftraj, start, stop, step, xyztype)
+    def __init__(self, frames, dt, type_e="all", start=0, stop=-1, step=1):
+        super().__init__(frames, start, stop, step)
 
         self.dt = dt
         self.type_e = type_e
@@ -134,7 +128,7 @@ class MeanSquareDisplacement(MDObservable):
         super()._calculate(box)
         self.df_msd_ = pd.DataFrame(
             {
-                "t": self.dt * np.arange(0, self.imed, self.step),
+                "t": self.dt * np.arange(0, len(self.frames), self.step),
                 "msd": np.array(self.mean_square_displacement),
             }
         )

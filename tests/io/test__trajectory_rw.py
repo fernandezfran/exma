@@ -28,7 +28,7 @@ TEST_DATA_PATH = pathlib.Path((os.path.abspath(os.path.dirname(__file__))))
 # ============================================================================
 
 
-def test_TrajectoryReader_raises():
+def test_tr_raises():
     with pytest.raises(NotImplementedError):
         with exma.io._trajectory_rw.TrajectoryReader(
             TEST_DATA_PATH / "test_data" / "test_ref.xyz", "error"
@@ -36,7 +36,7 @@ def test_TrajectoryReader_raises():
             tr.read_frame()
 
 
-def test_TrajectoryWriter_raises():
+def test_tw_raises():
     fxyz = TEST_DATA_PATH / "test_data" / "exma_test.xyz"
     with pytest.raises(NotImplementedError):
         with exma.io._trajectory_rw.TrajectoryWriter(fxyz, "error") as tw:

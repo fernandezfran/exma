@@ -57,9 +57,9 @@ class RadialDistributionFunction(MDObservable):
 
     Parameters
     ----------
-    ftraj : str
-        the string corresponding with the filename with the molecular
-        dynamics trajectory
+    frames : list
+        a list with all the frames of the molecular dynamics trajectory, where
+        each one is an `exma.core.AtomicSystem`.
 
     type_c : int or str, default="all"
         type of central atoms, by default it computes the total rdf
@@ -101,7 +101,7 @@ class RadialDistributionFunction(MDObservable):
 
     def __init__(
         self,
-        ftraj,
+        frames,
         type_c="all",
         type_i="all",
         start=0,
@@ -111,7 +111,7 @@ class RadialDistributionFunction(MDObservable):
         nbin=100,
         pbc=True,
     ):
-        super().__init__(ftraj, start, stop, step)
+        super().__init__(frames, start, stop, step)
 
         self.type_c = type_c
         self.type_i = type_i
@@ -140,7 +140,7 @@ class RadialDistributionFunction(MDObservable):
 
         # calculate natoms_c_ and natoms_i_
         if self.type_c == "all" or self.type_i == "all":
-            self.mask_c_ = self.mask_i_ = np.array([True] * frame.natoms)
+            self.mask_c_ = self.mask_i_ = np.full(frame.natoms, True)
             self.natoms_c_ = self.natoms_i_ = frame.natoms
         else:
             self.mask_c_ = frame._mask_type(self.type_c)

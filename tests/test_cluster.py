@@ -10,21 +10,10 @@
 # IMPORTS
 # ============================================================================
 
-import os
-import pathlib
-
 import exma.cluster
 from exma.core import AtomicSystem
 
 import numpy as np
-
-# ============================================================================
-# CONSTANTS
-# ============================================================================
-
-TEST_DATA_PATH = pathlib.Path(
-    os.path.join(os.path.abspath(os.path.dirname(__file__)), "test_data")
-)
 
 # ============================================================================
 # TESTS
@@ -42,9 +31,18 @@ def test_effective_neighbors():
     """
     enref = np.array([1.0, 2.0])
 
-    result = exma.cluster.EffectiveNeighbors(
-        str(TEST_DATA_PATH / "effnei.xyz"), "Si", "Li"
-    ).calculate(box=np.full(3, 1))
+    frames = [
+        AtomicSystem(
+            natoms=5,
+            types=np.array(["Si", "Si", "Li", "Li", "Li"]),
+            x=np.full(5, 0.5),
+            y=np.array([0.4, 0.6, 0.5, 0.5, 0.7]),
+            z=np.array([0.5, 0.5, 0.4, 0.6, 0.5]),
+        )
+    ]
+    result = exma.cluster.EffectiveNeighbors(frames, "Si", "Li").calculate(
+        box=np.full(3, 1)
+    )
 
     np.testing.assert_array_almost_equal(result, enref, 5)
 
