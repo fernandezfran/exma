@@ -98,7 +98,7 @@ def read_log_lammps(logname="log.lammps"):
     with open(logname, "r") as flog:
         # ignore all previous info
         line = flog.readline()
-        while line.startswith("Step ") is False:
+        while line.strip().startswith("Step ") is False:
             line = flog.readline()
 
         keys = list(line.split())
@@ -106,7 +106,7 @@ def read_log_lammps(logname="log.lammps"):
 
         # append info until subsequent info to be ignored
         line = flog.readline()
-        while line.startswith("Loop time") is False:
+        while line.strip().startswith("Loop time") is False:
             for i, element in enumerate(line.split()):
                 thermo[keys[i]].append(element)
             line = flog.readline()
@@ -164,7 +164,7 @@ class XYZ(TrajectoryReader):
             If there are no more frames to read
         """
         natoms = self.file_traj_.readline()
-        if not natoms:
+        if not natoms or natoms == "\n":
             raise EOFError("There is no more frames to read")
 
         natoms = np.intc(natoms)
@@ -247,7 +247,7 @@ class LAMMPS(TrajectoryReader):
             If there are no more frames to read
         """
         comment = self.file_traj_.readline()
-        if not comment:
+        if not comment or comment == "\n":
             raise EOFError("There is no more frames to read")
         self.file_traj_.readline()
         self.file_traj_.readline()
