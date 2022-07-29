@@ -82,26 +82,23 @@ class MeanSquareDisplacement(MDObservable):
             self.mask_e_ = frame._mask_type(self.type_e)
 
         # reference positions
+        frame = frame._unwrap(self.mask_e_) if frame.ix is not None else frame
+
         self.xref_ = frame.x[self.mask_e_]
         self.yref_ = frame.y[self.mask_e_]
         self.zref_ = frame.z[self.mask_e_]
-        if frame.ix is not None:
-            self.xref_ = self.xref_ + frame.box[0] * frame.ix[self.mask_e_]
-            self.yref_ = self.yref_ + frame.box[1] * frame.iy[self.mask_e_]
-            self.zref_ = self.zref_ + frame.box[2] * frame.iz[self.mask_e_]
+
+        frame = frame._wrap(self.mask_e_) if frame.ix is not None else frame
 
         self.mean_square_displacement = []
 
     def _accumulate(self, frame):
         """Calculate the msd of a single frame."""
+        frame = frame._unwrap(self.mask_e_) if frame.ix is not None else frame
+
         x = frame.x[self.mask_e_]
         y = frame.y[self.mask_e_]
         z = frame.z[self.mask_e_]
-
-        if frame.ix is not None:
-            x = x + frame.box[0] * frame.ix[self.mask_e_]
-            y = y + frame.box[1] * frame.iy[self.mask_e_]
-            z = z + frame.box[2] * frame.iz[self.mask_e_]
 
         x = x - self.xref_
         y = y - self.yref_

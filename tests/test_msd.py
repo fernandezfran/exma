@@ -464,7 +464,7 @@ def test_msd_calculate(fname, box, msd_res):
     )
 
     np.testing.assert_array_almost_equal(result["t"], 0.005 * np.arange(200))
-    np.testing.assert_array_almost_equal(result["msd"], msd_res)
+    np.testing.assert_array_almost_equal(result["msd"], msd_res, decimal=5)
 
 
 @check_figures_equal(extensions=["pdf", "png"])

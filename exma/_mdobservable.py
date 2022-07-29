@@ -78,9 +78,7 @@ class MDObservable:
             # sort the traj if is not sorted, this might not be necessary for
             # all observables and all trajectories
             if frame.idx is not None:
-                frame = (
-                    frame._sort_frame() if not frame._is_sorted() else frame
-                )
+                frame = frame._sort() if not frame._is_sorted() else frame
 
             if i == 0:
                 self._local_configure(frame)

@@ -96,12 +96,20 @@ class AtomicSystem:
         self.iy = iy
         self.iz = iz
 
+    def _mask_type(self, atom_type):
+        """Get a masked array by an specific type of atom."""
+        return self.types == atom_type
+
+    def _natoms_type(self, mask_type):
+        """Count the number of atoms of an specific type."""
+        return np.count_nonzero(mask_type)
+
     def _is_sorted(self):
         """Tells if the array x is sorted (-> True) or not (-> False)."""
         return (np.diff(self.idx) >= 0).all()
 
-    def _sort_frame(self, dontsort=("natoms", "box")):
-        """Sort the frame from the sortening of the atoms id."""
+    def _sort(self, dontsort=("natoms", "box")):
+        """Sort the Atomic System from the sortening of the atoms id."""
         id_argsort = np.argsort(self.idx)
 
         for key in self.__dict__.keys():
@@ -116,10 +124,33 @@ class AtomicSystem:
 
         return self
 
-    def _mask_type(self, atom_type):
-        """Get a masked array by an specific type of atom."""
-        return self.types == atom_type
+    def _unwrap(self, m=None):
+        """Unwrap the Atomic System m masked outside the box."""
+        m = np.full(True, self.natoms) if m is None else m
 
-    def _natoms_type(self, mask_type):
-        """Count the number of atoms of an specific type."""
-        return np.count_nonzero(mask_type)
+        self.x[m] = self.x[m] + self.box[0] * self.ix[m]
+        self.y[m] = self.y[m] + self.box[1] * self.iy[m]
+        self.z[m] = self.z[m] + self.box[2] * self.iz[m]
+
+        return self
+
+    def _wrap(self, m=None):
+        """Wrap the Atomic System m masked inside the box."""
+        m = np.full(True, self.natoms) if m is None else m
+        pos = np.zeros(3, dtype=np.float32)
+
+        for i in range(self.natoms):
+
+            if m[i] is False:
+                continue
+
+            pos[0], pos[1], pos[2] = self.x[i], self.y[i], self.z[i]
+            for k, kbox in enumerate(self.box):
+                while pos[k] < kbox:
+                    pos[k] += kbox
+                while pos[k] > kbox:
+                    pos[k] -= kbox
+
+            self.x[i], self.y[i], self.z[i] = pos[0], pos[1], pos[2]
+
+        return self
