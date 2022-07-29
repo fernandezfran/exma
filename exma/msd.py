@@ -22,7 +22,7 @@ import numpy as np
 
 import pandas as pd
 
-from ._mdobservable import MDObservable
+from .core import MDObservable
 
 # ============================================================================
 # CLASSES
@@ -96,13 +96,9 @@ class MeanSquareDisplacement(MDObservable):
         """Calculate the msd of a single frame."""
         frame = frame._unwrap(self.mask_e_) if frame.ix is not None else frame
 
-        x = frame.x[self.mask_e_]
-        y = frame.y[self.mask_e_]
-        z = frame.z[self.mask_e_]
-
-        x = x - self.xref_
-        y = y - self.yref_
-        z = z - self.zref_
+        x = frame.x[self.mask_e_] - self.xref_
+        y = frame.y[self.mask_e_] - self.yref_
+        z = frame.z[self.mask_e_] - self.zref_
 
         msd = np.square(x) + np.square(y) + np.square(z)
 

@@ -10,7 +10,7 @@
 # DOCS
 # ============================================================================
 
-"""Core Atomic System and MDTrajectory classes of exma."""
+"""Core classes of exma."""
 
 # ============================================================================
 # IMPORTS
@@ -104,7 +104,7 @@ class AtomicSystem:
         """Count the number of atoms of an specific type."""
         return np.count_nonzero(mask_type)
 
-    def _is_sorted(self):
+    def _sorted(self):
         """Tells if the array x is sorted (-> True) or not (-> False)."""
         return (np.diff(self.idx) >= 0).all()
 
@@ -154,3 +154,161 @@ class AtomicSystem:
             self.x[i], self.y[i], self.z[i] = pos[0], pos[1], pos[2]
 
         return self
+
+
+class MDObservable:
+    """Class to define the structure of the molecular dynamics observable.
+
+    Parameters
+    ----------
+    frames : list
+        a list with all the frames of the molecular dynamics trajectory, where
+        each one is an `exma.core.AtomicSystem`.
+
+    start : int, default=0
+        the initial frame
+
+    stop : int, default=-1
+        the last frame, by default -1 means the last
+
+    step : int, default=1
+        the incrementation if it is necessary to skip frames
+    """
+
+    def __init__(self, frames, start=0, stop=-1, step=1):
+        self.frames = frames
+
+        self.start = start
+        self.stop = stop
+        self.step = step
+
+    def _local_configure(self, frame):
+        """Specific configuration of each observable."""
+        raise NotImplementedError("Implemented in child classes.")
+
+    def _accumulate(self, frame):
+        """Accumulate the data of the frame."""
+        raise NotImplementedError("Implemented in child classes.")
+
+    def _end(self, frame):
+        """Finish the calculation and normilize the data."""
+        raise NotImplementedError("Implemented in child classes.")
+
+    def _calculate(self, box=None):
+        """Observable main loop, leave everything ready to do self._end().
+
+        Parameters
+        ----------
+        box : np.array, default=None
+            the lenght of the box in each x, y, z direction, required when
+            the trajectory comes from an xyz file.
+        """
+        # select the production frames
+        self.frames = (
+            self.frames[self.start :: self.step]
+            if self.stop == -1
+            else self.frames[self.start : self.stop : self.step]
+        )
+
+        for i, frame in enumerate(self.frames):
+            # add the box if not in frame
+            frame.box = box if box is not None else frame.box
+
+            # sort the frames if is not sorted, this might not be necessary
+            # for all observables and all trajectories
+            if frame.idx is not None:
+                frame = frame._sort() if not frame._sorted() else frame
+
+            if i == 0:
+                self._local_configure(frame)
+
+            self._accumulate(frame)
+
+    def calculate(self):
+        """Calculate the observable."""
+        raise NotImplementedError("Implemented in child classes.")
+
+    def to_dataframe(self):
+        """Convert the results to pandas.DataFrame."""
+        raise NotImplementedError("Implemented in child classes.")
+
+    def plot(self):
+        """Make a plot of the observable."""
+        raise NotImplementedError("Implemented in child classes.")
+
+
+class TrajectoryReader:
+    """Class to read trajectory files.
+
+    Parameters
+    ----------
+    filename : str
+        name of the file where the trajectories in xyz format are
+
+    ftype : str
+        different type of files depending on the child class.
+    """
+
+    def __init__(self, filename, ftype):
+        self.filename = filename
+        self.ftype = ftype
+
+    def __enter__(self):
+        """Use the open() method."""
+        self.file_traj_ = open(self.filename, "r")
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        """Use the close() method."""
+        self.file_traj_.close()
+
+    def read_frame(self):
+        """Read the actual frame of the file."""
+        raise NotImplementedError("Implemented in child classes.")
+
+    def read_traj(self):
+        """Read all the trajectory of the file."""
+        traj = []
+        try:
+            while True:
+                traj.append(self.read_frame())
+        except (EOFError, NotImplementedError):
+            ...
+
+        return traj
+
+
+class TrajectoryWriter:
+    """Class to write trajectory files.
+
+    Parameters
+    ----------
+    filename : str
+        name of the file where the trajectories in xyz format are going to
+        be written
+
+    ftype : str
+        different type of files depending on the child class.
+    """
+
+    def __init__(self, filename, ftype):
+        self.filename = filename
+        self.ftype = ftype
+
+    def __enter__(self):
+        """Use the open() method."""
+        self.file_traj_ = open(self.filename, "w")
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        """Use the close() method."""
+        self.file_traj_.close()
+
+    def write_frame(self, frame):
+        """Write the actual frame on the file."""
+        raise NotImplementedError("Implemented in child classes.")
+
+    def write_traj(self, frames):
+        """Write all frames of the trajectory to a file."""
+        for frame in frames:
+            self.write_frame(frame)

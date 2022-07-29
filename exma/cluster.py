@@ -22,7 +22,7 @@ import scipy.integrate
 
 import sklearn.cluster
 
-from ._mdobservable import MDObservable
+from .core import MDObservable
 from .distances import pbc_distances
 
 

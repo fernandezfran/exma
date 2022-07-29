@@ -20,8 +20,7 @@ import numpy as np
 
 import pandas as pd
 
-from ._trajectory_rw import TrajectoryReader
-from ..core import AtomicSystem
+from ..core import AtomicSystem, TrajectoryReader
 
 
 # ============================================================================

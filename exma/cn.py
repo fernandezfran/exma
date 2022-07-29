@@ -25,7 +25,7 @@ import numpy as np
 
 import pandas as pd
 
-from ._mdobservable import MDObservable
+from .core import MDObservable
 
 # ============================================================================
 # CONSTANTS

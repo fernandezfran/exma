@@ -10,11 +10,20 @@
 # IMPORTS
 # ============================================================================
 
+import os
+import pathlib
+
 import exma.core
 
 import numpy as np
 
 import pytest
+
+# ============================================================================
+# CONSTANTS
+# ============================================================================
+
+TEST_DATA_PATH = pathlib.Path((os.path.abspath(os.path.dirname(__file__))))
 
 # ============================================================================
 # TESTS
@@ -31,10 +40,10 @@ import pytest
         (np.sort(np.random.rand(100, 100)), True),
     ],
 )
-def test__is_sorted(arr, res):
+def test__sorted(arr, res):
     """Test the check if an array is sorted."""
     frame = exma.core.AtomicSystem(idx=arr)
-    assert frame._is_sorted() == res
+    assert frame._sorted() == res
 
 
 @pytest.mark.parametrize(
@@ -98,3 +107,20 @@ def test__sort(frame, sorted_frame):
             np.testing.assert_array_almost_equal(
                 res.__dict__[key], sorted_frame.__dict__[key]
             )
+
+
+def test_tr_raises():
+    with pytest.raises(NotImplementedError):
+        with exma.core.TrajectoryReader(
+            TEST_DATA_PATH / "test_data" / "test_ref.xyz", "error"
+        ) as tr:
+            tr.read_frame()
+
+
+def test_tw_raises():
+    fxyz = TEST_DATA_PATH / "test_data" / "exma_test.xyz"
+    with pytest.raises(NotImplementedError):
+        with exma.core.TrajectoryWriter(fxyz, "error") as tw:
+            tw.write_frame(0)
+
+    os.remove(fxyz)

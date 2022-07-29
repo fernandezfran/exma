@@ -6,30 +6,6 @@ exma API
    :maxdepth: 4
 
 
-Core modules
-============
-
-``exma.core`` module
---------------------
-
-.. automodule:: exma.core
-   :members:
-   :private-members:
-   :undoc-members:
-   :show-inheritance:
-   :member-order: bysource
-
-``exma.distances`` module
--------------------------
-
-.. automodule:: exma.distances
-   :members:
-   :private-members:
-   :undoc-members:
-   :show-inheritance:
-   :member-order: bysource
-
-
 Molecular Dynamics Observables
 ==============================
 
@@ -140,15 +116,17 @@ Dev Core modules
 ``exma.core`` module
 --------------------
 
-.. automodule:: exma._mdobservable
+.. automodule:: exma.core
    :members:
    :private-members:
    :undoc-members:
    :show-inheritance:
    :member-order: bysource
 
-.. automodule:: exma.io._trajectory_rw
-   :noindex:
+``exma.distances`` module
+-------------------------
+
+.. automodule:: exma.distances
    :members:
    :private-members:
    :undoc-members:
