@@ -77,18 +77,18 @@ class MeanSquareDisplacement(MDObservable):
         """Define the reference frame."""
         # mask of atoms of type e
         if self.type_e == "all":
-            self.mask_e_ = np.array([True] * frame.natoms)
+            self.mask_e_ = np.full(frame.natoms, True)
         else:
             self.mask_e_ = frame._mask_type(self.type_e)
 
         # reference positions
-        frame = frame._unwrap(self.mask_e_) if frame.ix is not None else frame
-
         self.xref_ = frame.x[self.mask_e_]
         self.yref_ = frame.y[self.mask_e_]
         self.zref_ = frame.z[self.mask_e_]
-
-        frame = frame._wrap(self.mask_e_) if frame.ix is not None else frame
+        if frame.ix is not None:
+            self.xref_ = self.xref_ + frame.box[0] * frame.ix[self.mask_e_]
+            self.yref_ = self.yref_ + frame.box[1] * frame.iy[self.mask_e_]
+            self.zref_ = self.zref_ + frame.box[2] * frame.iz[self.mask_e_]
 
         self.mean_square_displacement = []
 

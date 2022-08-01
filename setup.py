@@ -31,8 +31,8 @@ from distutils.core import Extension, setup  # noqa: I100
 PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
 
 REQUIREMENTS = [
-    "more-itertools",
     "matplotlib",
+    "more-itertools",
     "numpy",
     "pandas",
     "scikit-learn",

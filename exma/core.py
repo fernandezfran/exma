@@ -126,7 +126,7 @@ class AtomicSystem:
 
     def _unwrap(self, m=None):
         """Unwrap the Atomic System m masked outside the box."""
-        m = np.full(True, self.natoms) if m is None else m
+        m = m if m is not None else np.full(self.natoms, True)
 
         self.x[m] = self.x[m] + self.box[0] * self.ix[m]
         self.y[m] = self.y[m] + self.box[1] * self.iy[m]
@@ -136,22 +136,20 @@ class AtomicSystem:
 
     def _wrap(self, m=None):
         """Wrap the Atomic System m masked inside the box."""
-        m = np.full(True, self.natoms) if m is None else m
+        m = m if m is not None else np.full(self.natoms, True)
+        indexes = np.where(m)[0]
+
         pos = np.zeros(3, dtype=np.float32)
+        for im, x, y, z in zip(indexes, self.x[m], self.y[m], self.z[m]):
 
-        for i in range(self.natoms):
-
-            if m[i] is False:
-                continue
-
-            pos[0], pos[1], pos[2] = self.x[i], self.y[i], self.z[i]
+            pos[0], pos[1], pos[2] = x, y, z
             for k, kbox in enumerate(self.box):
                 while pos[k] < kbox:
                     pos[k] += kbox
                 while pos[k] > kbox:
                     pos[k] -= kbox
 
-            self.x[i], self.y[i], self.z[i] = pos[0], pos[1], pos[2]
+            self.x[im], self.y[im], self.z[im] = pos[0], pos[1], pos[2]
 
         return self
 
