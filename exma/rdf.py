@@ -131,6 +131,8 @@ class RadialDistributionFunction(MDObservable):
         """
         # pbc = True -> 1; False -> 0 in C code
         self.pbc = 1 if self.pbc else 0
+        if self.pbc and frame.box is None:
+            raise RuntimeError("box not defined in pbc calculation.")
 
         # init volume
         self.volume_ = 0.0
@@ -168,10 +170,26 @@ class RadialDistributionFunction(MDObservable):
         ]
         self.gofr_c_ = (ct.c_int * self.nbin)()
 
+    def _fake_box(self, frame):
+        """Box definition for clusters that do not have a defined one.
+
+        this prevents C from being passed a pointer to an array that is
+        expected to have three components and gives an array of a single nan
+        for box = None.
+        """
+        xsize = np.max(frame.x) - np.min(frame.x)
+        ysize = np.max(frame.y) - np.min(frame.y)
+        zsize = np.max(frame.z) - np.min(frame.z)
+        return np.array([xsize, ysize, zsize])
+
     def _accumulate(self, frame):
         """Accumulates the info of each frame."""
-        box = frame.box
-        self.volume_ += np.prod(box)
+        if self.pbc:
+            box = frame.box
+            self.volume_ += np.prod(box)
+        else:
+            box = self._fake_box(frame)
+            self.volume_ = 4.0 * np.pi * np.power(0.5 * np.mean(box), 3) / 3.0
 
         xc, yc, zc = (
             frame.x[self.mask_c_],
