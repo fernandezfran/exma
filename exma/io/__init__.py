@@ -120,7 +120,7 @@ def lammpstrj2xyz(lammpstrjtraj, xyz_name, type_info, xyzftype="xyz"):
     frames = reader.read_lammpstrj(lammpstrjtraj)
 
     for frame in frames:
-        frame = frame._sort_frame() if not frame._sorted() else frame
+        frame = frame._sort() if not frame._sorted() else frame
         frame.types = [type_info[t] for t in frame.types]
 
     writer.write_xyz(frames, xyz_name, xyzftype)
@@ -152,6 +152,6 @@ def lammpstrj2inlmp(lammpstrjtraj, inlammps_name, nframe=-1):
         errmsg = f"frame {nframe} does not exist in the trajectory file."
         raise IndexError(errmsg) from exc
 
-    frame = frame._sort_frame() if not frame._sorted() else frame
+    frame = frame._sort() if not frame._sorted() else frame
 
     writer.write_in_lammps(frame, inlammps_name)
