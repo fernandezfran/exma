@@ -137,19 +137,10 @@ class AtomicSystem:
     def _wrap(self, m=None):
         """Wrap the Atomic System m masked inside the box."""
         m = m if m is not None else np.full(self.natoms, True)
-        indexes = np.where(m)[0]
 
-        pos = np.zeros(3, dtype=np.float32)
-        for im, x, y, z in zip(indexes, self.x[m], self.y[m], self.z[m]):
-
-            pos[0], pos[1], pos[2] = x, y, z
-            for k, kbox in enumerate(self.box):
-                while pos[k] < kbox:
-                    pos[k] += kbox
-                while pos[k] > kbox:
-                    pos[k] -= kbox
-
-            self.x[im], self.y[im], self.z[im] = pos[0], pos[1], pos[2]
+        self.x[m] = np.mod(self.x[m], self.box[0])
+        self.y[m] = np.mod(self.y[m], self.box[1])
+        self.z[m] = np.mod(self.z[m], self.box[2])
 
         return self
 
