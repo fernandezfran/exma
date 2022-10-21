@@ -35,7 +35,7 @@ PATH = pathlib.Path(os.path.abspath(os.path.dirname(__file__)))
 # ============================================================================
 
 
-def pbc_distances(frame_c, frame_i, type_c, type_i):
+def pbc_distances(frame_c, frame_i, type_c="all", type_i="all"):
     """Periodic boundary conditions distances.
 
     A function to compute the distances between a central and an interact
@@ -52,11 +52,13 @@ def pbc_distances(frame_c, frame_i, type_c, type_i):
         which have the atomic configurations of the interact atoms and must
         include `box` not None.
 
-    type_c : int or str
-        type of central atoms
+    type_c : int or str, default="all"
+        type of central atoms, by default it computes the distances for all
+        the atoms
 
-    type_i : int or str
-        type of interacting atoms
+    type_i : int or str, default="all"
+        type of interacting atoms, by default it computes the distances for all
+        the atoms
 
     Returns
     -------
@@ -79,10 +81,19 @@ def pbc_distances(frame_c, frame_i, type_c, type_i):
         ct.c_void_p,
     ]
 
-    mask_c = frame_c._mask_type(type_c)
-    mask_i = frame_i._mask_type(type_i)
-    natoms_c = frame_c._natoms_type(mask_c)
-    natoms_i = frame_i._natoms_type(mask_i)
+    if type_c == "all":
+        natoms_c = frame_c.natoms
+        mask_c = np.full(natoms_c, True)
+    else:
+        mask_c = frame_c._mask_type(type_c)
+        natoms_c = frame_c._natoms_type(mask_c)
+
+    if type_i == "all":
+        natoms_i = frame_i.natoms
+        mask_i = np.full(natoms_i, True)
+    else:
+        mask_i = frame_i._mask_type(type_i)
+        natoms_i = frame_i._natoms_type(mask_i)
 
     box = frame_i.box
     xc, yc, zc = frame_c.x[mask_c], frame_c.y[mask_c], frame_c.z[mask_c]
