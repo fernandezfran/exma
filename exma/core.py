@@ -105,8 +105,12 @@ class AtomicSystem:
         return np.count_nonzero(mask_type)
 
     def _sorted(self):
-        """Tells if the array x is sorted (-> True) or not (-> False)."""
-        return (np.diff(self.idx) >= 0).all()
+        """Tells if the array x is sorted (-> True) or not (-> False).
+
+        Note that for xyz files self.idx is None and the frame is sorted by
+        definition.
+        """
+        return (np.diff(self.idx) >= 0).all() if self.idx is not None else True
 
     def _sort(self, dontsort=("natoms", "box")):
         """Sort the Atomic System from the sortening of the atoms id."""
@@ -205,8 +209,7 @@ class MDObservable:
 
             # sort the frames if is not sorted, this might not be necessary
             # for all observables and all trajectories
-            if frame.idx is not None:
-                frame = frame._sort() if not frame._sorted() else frame
+            frame = frame._sort() if not frame._sorted() else frame
 
             if i == 0:
                 self._local_configure(frame)

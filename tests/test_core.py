@@ -38,6 +38,7 @@ TEST_DATA_PATH = pathlib.Path((os.path.abspath(os.path.dirname(__file__))))
         (np.random.rand(100), False),
         (np.sort(np.random.rand(100)), True),
         (np.sort(np.random.rand(100, 100)), True),
+        (None, True),
     ],
 )
 def test__sorted(arr, res):
