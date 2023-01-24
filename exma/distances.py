@@ -63,9 +63,8 @@ def pbc_distances(frame_c, frame_i, type_c="all", type_i="all"):
     Returns
     -------
     np.array
-        array with a vector where the first natoms_i components are the
-        distances of the interacting atoms to the first central one, then the
-        second natoms_i to the second central atom, etc.
+        array with the distance matrix where the rows are the central atoms
+        and the columns the interacting ones.
     """
     lib_pbc_distances = ct.CDLL(
         str(PATH / "lib" / "lib_pbc_distances")
@@ -118,4 +117,4 @@ def pbc_distances(frame_c, frame_i, type_c="all", type_i="all"):
         natoms_c, natoms_i, box_c, xcentral_c, xinteract_c, distrix_c
     )
 
-    return distrix
+    return distrix.reshape((natoms_c, natoms_i))

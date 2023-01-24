@@ -102,9 +102,9 @@ class EffectiveNeighbors(MDObservable):
 
         weitrix = np.exp(1.0 - np.power(distrix / bondavg, 6))
 
-        # reshape the weight matrix and transpose it to obtain an interact
-        # atom in every row and normalize their weights
-        weitrix = np.reshape(weitrix, (self.natoms_c_, self.natoms_i_)).T
+        # transpose the weight matrix to obtain an interact atom in every row
+        # and normalize their weights
+        weitrix = weitrix.T
         weitrix = [
             weitrix[i] / np.sum(weitrix[i]) for i in range(self.natoms_i_)
         ]
@@ -198,7 +198,6 @@ class DBSCAN:
 
         distrix = pbc_distances(frame, frame, self.type_c, self.type_i)
 
-        distrix = distrix.reshape((self.natoms_c_, self.natoms_i_))
         db = sklearn.cluster.DBSCAN(
             eps=self.eps,
             min_samples=self.min_samples,
