@@ -55,7 +55,6 @@ class Positions:
     """
 
     def __init__(self, natoms, box_size):
-
         self.natoms = natoms
         self.box_size = box_size
 

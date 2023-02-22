@@ -77,7 +77,6 @@ def write_in_lammps(frame, file_in):
     """
     header = ("natoms", "box")
     with open(file_in, "w") as f_in:
-
         f_in.write("# the first three lines are comments...\n")
 
         f_in_header = "# columns in order:"
