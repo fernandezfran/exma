@@ -6,6 +6,20 @@ exma API
    :maxdepth: 4
 
 
+Distances with periodic boundary conditions (PBC distances)
+===========================================================
+
+``exma.distances`` module
+-------------------------
+
+.. automodule:: exma.distances
+   :members:
+   :private-members:
+   :undoc-members:
+   :show-inheritance:
+   :member-order: bysource
+
+
 Molecular Dynamics Observables
 ==============================
 
@@ -117,16 +131,6 @@ Dev Core modules
 --------------------
 
 .. automodule:: exma.core
-   :members:
-   :private-members:
-   :undoc-members:
-   :show-inheritance:
-   :member-order: bysource
-
-``exma.distances`` module
--------------------------
-
-.. automodule:: exma.distances
    :members:
    :private-members:
    :undoc-members:
