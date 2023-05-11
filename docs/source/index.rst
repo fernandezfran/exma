@@ -24,7 +24,7 @@ exma
 molecular dynamics trajectories and electrochemical data.
 
 | **Authors**
-| Francisco Fernandez (E-mail: fernandezfrancisco2195@gmail.com)
+| Francisco Fernandez (E-mail: ffernandev@gmail.com)
 
 
 Repository
