@@ -3,8 +3,8 @@
 [![exma CI](https://github.com/fernandezfran/exma/actions/workflows/exma_ci.yml/badge.svg)](https://github.com/fernandezfran/exma/actions/workflows/exma_ci.yml)
 [![Documentation Status](https://readthedocs.org/projects/exma/badge/?version=latest)](https://exma.readthedocs.io/en/latest/?badge=latest)
 [![PyPI](https://img.shields.io/pypi/v/exma)](https://pypi.org/project/exma/)
-[![python version](https://img.shields.io/badge/python-3.8%2B-77b7fe)](https://www.python.org/)
-[![mit license](https://img.shields.io/badge/License-MIT-fcf695)](https://github.com/fernandezfran/galpynostatic/blob/main/LICENSE)
+[![python version](https://img.shields.io/badge/python-3.8%2B-4584b6)](https://www.python.org/)
+[![mit license](https://img.shields.io/badge/License-MIT-ffde57)](https://github.com/fernandezfran/galpynostatic/blob/main/LICENSE)
 [![Downloads](https://static.pepy.tech/personalized-badge/exma?period=total&units=international_system&left_color=black&right_color=black&left_text=downloads)](https://pepy.tech/project/exma)
 
 **exma** is a Python library with C extensions to analyze and manipulate 

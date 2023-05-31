@@ -74,7 +74,7 @@ setup(
     long_description_content_type="text/markdown",
     packages=find_packages(),
     author="Francisco Fernandez",
-    author_email="fernandezfrancisco2195@gmail.com",
+    author_email="ffernandev@gmail.com",
     url="https://github.com/fernandezfran/exma",
     license="MIT",
     install_requires=REQUIREMENTS,
