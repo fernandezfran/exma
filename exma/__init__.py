@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # This file is part of exma (https://github.com/fernandezfran/exma/).
-# Copyright (c) 2021, Francisco Fernandez
+# Copyright (c) 2021-2023, Francisco Fernandez
 # License: MIT
 #   Full Text: https://github.com/fernandezfran/exma/blob/master/LICENSE
 
@@ -10,15 +10,16 @@
 # DOCS
 # ============================================================================
 
-"""An extendable molecular analyzer."""
+"""A Python library with C extensions to analyze and manipulate molecular \
+dynamics trajectories and electrochemical data."""
 
 # ============================================================================
 # CONSTANTS
 # ============================================================================
 
 __author__ = """Francisco Fernandez"""
-__email__ = "fernandezfrancisco2195@gmail.com"
-__version__ = "0.5.9"
+__email__ = "ffernandev@gmail.com"
+__version__ = "0.5.10"
 
 
 # ============================================================================
