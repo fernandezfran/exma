@@ -19,7 +19,7 @@ dynamics trajectories and electrochemical data."""
 
 __author__ = """Francisco Fernandez"""
 __email__ = "ffernandev@gmail.com"
-__version__ = "0.5.10"
+__version__ = "0.6.0"
 
 
 # ============================================================================
@@ -34,6 +34,7 @@ from .distances import pbc_distances  # noqa
 
 # molecular dynamics observables
 from .msd import MeanSquareDisplacement  # noqa
+from .vacf import VelocityAutocorrelationFunction  # noqa
 from .rdf import RadialDistributionFunction  # noqa
 from .cn import CoordinationNumber  # noqa
 from .cluster import EffectiveNeighbors, DBSCAN, sro  # noqa

@@ -16,6 +16,7 @@ molecular dynamics trajectories and electrochemical data.
 Some of the main calculations that can be performed are listed below:
 
 * mean square displacement,
+* velocity autocorrelation function,
 * radial distribution function,
 * coordination number, the ligancy or in a shell,
 

@@ -63,6 +63,15 @@ class AtomicSystem:
     iz : np.array, default=None
         the corresponding image of the positions of the atoms in the z
         direction
+
+    vx : np.array, default=None
+        the velocities of the atoms in the x direction
+
+    vy : np.array, default=None
+        the velocities of the atoms in the y direction
+
+    vz : np.array, default=None
+        the velocities of the atoms in the z direction
     """
 
     def __init__(
@@ -78,6 +87,9 @@ class AtomicSystem:
         ix=None,
         iy=None,
         iz=None,
+        vx=None,
+        vy=None,
+        vz=None,
     ):
         self.natoms = natoms
         self.box = box
@@ -94,6 +106,10 @@ class AtomicSystem:
         self.ix = ix
         self.iy = iy
         self.iz = iz
+
+        self.vx = vx
+        self.vy = vy
+        self.vz = vz
 
     def _mask_type(self, atom_type):
         """Get a masked array by an specific type of atom."""

@@ -37,10 +37,12 @@ def read_xyz(filename, ftype="xyz"):
         name of the file where the trajectories in xyz format are
 
     ftype : str, default="xyz"
-        the possible values are `xyz`, `property` and `image`.
+        the possible values are `xyz`, `property`, `image` and `velocity`.
         `xyz` if is the usual xyz file. `property` if in the last
         column there is a property. `image` if in the last three columns
-        there are the image box of the corresponding atom.
+        there are the image box of the corresponding atom. `velocity` if in
+        the last three columns there are the velocities in each direction of
+        the corresponding atoms.
 
     Returns
     -------
@@ -92,7 +94,6 @@ def read_log_lammps(logname="log.lammps"):
     Notes
     -----
     It only works if the first thermo parameter is `Step`.
-
     """
     with open(logname, "r") as flog:
         # ignore all previous info
@@ -132,10 +133,12 @@ class XYZ(TrajectoryReader):
         name of the file where the trajectories in xyz format are
 
     ftype : str, default="xyz"
-        the possible values are `xyz`, `property` and `image`.
+        the possible values are `xyz`, `property`, `image` and `velocity`.
         `xyz` if is the usual xyz file. `property` if in the last
         column there is a property. `image` if in the last three columns
-        there are the image box of the corresponding atom.
+        there are the image box of the corresponding atom. `velocity` if in
+        the last three columns there are the velocities in each direction of
+        the corresponding atoms.
 
     Raises
     ------
@@ -144,8 +147,10 @@ class XYZ(TrajectoryReader):
     """
 
     def __init__(self, filename, ftype="xyz"):
-        if ftype not in ("xyz", "property", "image"):
-            raise ValueError("ftype must be 'xyz', 'property' or 'image'")
+        if ftype not in ("xyz", "property", "image", "velocity"):
+            raise ValueError(
+                "ftype must be 'xyz', 'property', 'image' or 'velocity'"
+            )
 
         super().__init__(filename, ftype)
 
@@ -167,12 +172,14 @@ class XYZ(TrajectoryReader):
             raise EOFError("There is no more frames to read")
 
         natoms = np.intc(natoms)
+
         self.file_traj_.readline()  # usually a comment in .xyz files
 
         atom_type = []
         x, y, z = [], [], []
         q = [] if self.ftype == "property" else None
         ix, iy, iz = [], [], [] if self.ftype == "image" else None
+        vx, vy, vz = [], [], [] if self.ftype == "velocity" else None
         for i in range(natoms):
             xyzline = self.file_traj_.readline().split()
 
@@ -184,34 +191,39 @@ class XYZ(TrajectoryReader):
 
             if self.ftype == "property":
                 q.append(xyzline[4])
+
             elif self.ftype == "image":
                 ix.append(xyzline[4])
                 iy.append(xyzline[5])
                 iz.append(xyzline[6])
 
+            elif self.ftype == "velocity":
+                vx.append(xyzline[4])
+                vy.append(xyzline[5])
+                vz.append(xyzline[6])
+
         frame = AtomicSystem()
 
         frame.natoms = natoms
+
         frame.types = np.asarray(atom_type, dtype=str)
+
         frame.x = np.asarray(x, dtype=np.float32)
         frame.y = np.asarray(y, dtype=np.float32)
         frame.z = np.asarray(z, dtype=np.float32)
 
-        frame.ix = (
-            np.asarray(ix, dtype=np.intc) if self.ftype == "image" else None
-        )
-        frame.iy = (
-            np.asarray(iy, dtype=np.intc) if self.ftype == "image" else None
-        )
-        frame.iz = (
-            np.asarray(iz, dtype=np.intc) if self.ftype == "image" else None
-        )
+        if self.ftype == "property":
+            frame.q = np.asarray(q, dtype=np.float32)
 
-        frame.q = (
-            np.asarray(q, dtype=np.float32)
-            if self.ftype == "property"
-            else None
-        )
+        elif self.ftype == "image":
+            frame.ix = np.asarray(ix, dtype=np.intc)
+            frame.iy = np.asarray(iy, dtype=np.intc)
+            frame.iz = np.asarray(iz, dtype=np.intc)
+
+        elif self.ftype == "velocity":
+            frame.vx = np.asarray(vx, dtype=np.float32)
+            frame.vy = np.asarray(vy, dtype=np.float32)
+            frame.vz = np.asarray(vz, dtype=np.float32)
 
         return frame
 

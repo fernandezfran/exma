@@ -134,8 +134,22 @@ def test_read_log_lammps():
                 "iy": np.array([2, 3, 0, 0, 1]),
                 "iz": np.array([-2, -1, 0, 0, 1]),
             },
-            "test_ref.xyz",
+            "test_ref_im.xyz",
             "image",
+        ),
+        (
+            {
+                "natoms": 5,
+                "type": np.array(5 * ["H"]),
+                "x": np.array([2.67583, 0.93241, 1.23424, 4.42636, 3.00023]),
+                "y": np.array([0.05432, 0.89325, 0.43142, 0.23451, 0.55556]),
+                "z": np.array([1.15145, 2.31451, 3.96893, 4.96905, 5.98693]),
+                "vx": np.array([0.01, -0.05, 0.014, -0.00003, 0.007]),
+                "vy": np.array([-0.01, 0.05, -0.014, 0.00003, -0.007]),
+                "vz": np.array([-1.9999, -1.0001, 0.0, 1.3, 2.1]),
+            },
+            "test_ref_vel.xyz",
+            "velocity",
         ),
     ],
 )
@@ -154,10 +168,16 @@ def test_xyz(traj_dict, fname, ftype):
 
     if "property" in traj_dict.keys():
         np.testing.assert_array_almost_equal(result.q, traj_dict["property"])
+
     if "ix" in traj_dict.keys():
         np.testing.assert_array_almost_equal(result.ix, traj_dict["ix"])
         np.testing.assert_array_almost_equal(result.iy, traj_dict["iy"])
         np.testing.assert_array_almost_equal(result.iz, traj_dict["iz"])
+
+    if "vx" in traj_dict.keys():
+        np.testing.assert_array_almost_equal(result.vx, traj_dict["vx"])
+        np.testing.assert_array_almost_equal(result.vy, traj_dict["vy"])
+        np.testing.assert_array_almost_equal(result.vz, traj_dict["vz"])
 
 
 def test_xyz_veraise():
