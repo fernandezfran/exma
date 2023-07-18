@@ -61,6 +61,11 @@ with open(PATH / "exma" / "__init__.py") as fp:
 with open("README.md") as file_readme:
     LONG_DESCRIPTION = file_readme.read()
 
+SHORT_DESCRIPTION = (
+    "A Python library with C extensions to analyze and manipulate molecular "
+    "dynamics trajectories and electrochemical data."
+)
+
 
 # =============================================================================
 # FUNCTIONS
@@ -69,7 +74,7 @@ with open("README.md") as file_readme:
 setup(
     name="exma",
     version=VERSION,
-    description="extendable molecular dynamics analyzer",
+    description=SHORT_DESCRIPTION,
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     packages=find_packages(),
